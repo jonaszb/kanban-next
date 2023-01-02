@@ -1,6 +1,7 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import Header from './Header';
 import Logo from './Logo';
+import Sidebar from './Sidebar';
 
 // Check default color scheme preference OR apply one from local storage
 const prefersDark = (() => {
@@ -15,6 +16,11 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     // Set consistent initial state to avoid hydration mismatch. Actual value will be set in useEffect
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
 
+    const onChangeTheme = () => {
+        setDarkModeEnabled(!darkModeEnabled);
+        localStorage.setItem('darkModeEnabled', (!darkModeEnabled).toString());
+    };
+
     useEffect(() => {
         setDarkModeEnabled(prefersDark);
     }, []);
@@ -27,7 +33,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         >
             <Logo />
             <Header />
-            <div className="hidden h-full bg-white dark:bg-dark-grey sm:block sm:w-64 lg:w-72">Sidebar placeholder</div>
+            <Sidebar darkModeEnabled={darkModeEnabled} onChangeTheme={onChangeTheme} />
             <section className="col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey sm:col-start-2 sm:border-l">
                 {children}
             </section>

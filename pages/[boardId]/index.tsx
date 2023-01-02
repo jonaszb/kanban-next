@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { ButtonPrimaryLarge } from '../components/Buttons/Buttons';
+import { ButtonPrimaryLarge } from '../../components/Buttons/Buttons';
 
 export default function Home() {
     return (
