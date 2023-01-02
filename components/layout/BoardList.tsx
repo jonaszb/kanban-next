@@ -1,13 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
-import Image from 'next/image';
-import BoardIcon from '../Icons/Icons';
+import { BoardIcon } from '../Icons/Icons';
 
 const boards = [
     { id: 1, name: 'Platform Launch' },
     { id: 2, name: 'Product Roadmap' },
-    { id: 3, name: 'Marketing Campaign asdzxcawdasd' },
+    { id: 3, name: 'Marketing Campaign' },
 ];
 
 const BoardLink: FC<{ board: { id: number; name: string } }> = ({ board }) => {

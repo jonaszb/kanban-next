@@ -1,7 +1,5 @@
-import Image from 'next/image';
 import { ButtonPrimaryLarge } from '../Buttons/Buttons';
-import EllipsisIcon from './icon-vertical-ellipsis.svg';
-import PlusIcon from './icon-add-task-mobile.svg';
+import { VerticalEllipsisIcon, AddTaskIconMobile } from '../Icons/Icons';
 
 const Header = () => {
     return (
@@ -10,10 +8,10 @@ const Header = () => {
             <div className="flex items-center">
                 <ButtonPrimaryLarge name="new-task" className="mr-2 !px-5 py-3 sm:mr-4 sm:py-4">
                     <span className="hidden sm:block">+ Add New Task</span>
-                    <Image src={PlusIcon} alt="Plus icon" className="sm:hidden" />
+                    <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
                 <button className="mr-2 inline-flex w-6 justify-center">
-                    <Image src={EllipsisIcon} alt="Ellipsis icon" />
+                    <VerticalEllipsisIcon />
                 </button>
             </div>
         </header>
