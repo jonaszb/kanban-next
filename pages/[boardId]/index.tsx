@@ -1,7 +1,9 @@
 import Head from 'next/head';
+import { ReactElement } from 'react';
+import Layout from '../../components/layout/Layout';
 import { ButtonPrimaryLarge } from '../../components/Buttons/Buttons';
 
-export default function Home() {
+export default function BoardPage() {
     return (
         <>
             <Head>
@@ -17,3 +19,7 @@ export default function Home() {
         </>
     );
 }
+
+BoardPage.getLayout = function getLayout(page: ReactElement) {
+    return <Layout>{page}</Layout>;
+};

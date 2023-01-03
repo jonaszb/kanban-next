@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { FC, MouseEventHandler, PropsWithChildren, useEffect, useState } from 'react';
+import { ShowSidebarIcon } from '../Icons/Icons';
 import Header from './Header';
 import Logo from './Logo';
 import Sidebar from './Sidebar';
@@ -12,13 +13,33 @@ const prefersDark = (() => {
         : window.matchMedia('(prefers-color-scheme: dark)').matches;
 })();
 
+const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSidebar }) => {
+    return (
+        <button
+            onClick={onShowSidebar}
+            className={`absolute bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary hover:bg-primary-light sm:flex`}
+        >
+            <ShowSidebarIcon />
+        </button>
+    );
+};
+
 const Layout: FC<PropsWithChildren> = ({ children }) => {
     // Set consistent initial state to avoid hydration mismatch. Actual value will be set in useEffect
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+    const [sidebarHidden, setSidebarHidden] = useState(false);
 
     const onChangeTheme = () => {
         setDarkModeEnabled(!darkModeEnabled);
         localStorage.setItem('darkModeEnabled', (!darkModeEnabled).toString());
+    };
+
+    const hideSidebarHandler = () => {
+        setSidebarHidden(true);
+    };
+
+    const showSidebarHandler = () => {
+        setSidebarHidden(false);
     };
 
     useEffect(() => {
@@ -33,9 +54,18 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         >
             <Logo />
             <Header />
-            <Sidebar darkModeEnabled={darkModeEnabled} onChangeTheme={onChangeTheme} />
-            <section className="col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey sm:col-start-2 sm:border-l">
-                {children}
+            <Sidebar
+                darkModeEnabled={darkModeEnabled}
+                onChangeTheme={onChangeTheme}
+                onHideSidebar={hideSidebarHandler}
+                isHidden={sidebarHidden}
+            />
+            <section
+                className={`relative col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
+                    sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'
+                }`}
+            >
+                {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
         </div>
     );

@@ -19,7 +19,7 @@ const BoardLink: FC<{ board: { id: number; name: string } }> = ({ board }) => {
             className={`group mr-5 flex items-center rounded-r-full py-3.5 pl-3 text-base font-bold tracking-wide transition-all lg:pl-6  ${
                 isActive
                     ? 'bg-primary text-white'
-                    : ' text-mid-grey hover:bg-light-grey hover:text-primary dark:hover:bg-white'
+                    : ' text-mid-grey hover:bg-grey-highlight hover:text-primary dark:hover:bg-white'
             }`}
         >
             <BoardIcon

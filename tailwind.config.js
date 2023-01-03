@@ -14,6 +14,7 @@ module.exports = {
         'v-dark-grey': '#20212C',
         'dark-grey': '#2B2C37',
         'mid-grey': '#828FA3',
+        'grey-highlight': '#9797971a',
         'light-grey': '#F4F7FD',
         'danger': '#EA5555',
         'danger-light': '#FF9898',
