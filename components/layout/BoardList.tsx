@@ -30,6 +30,21 @@ const BoardLink: FC<{ board: { id: number; name: string } }> = ({ board }) => {
     );
 };
 
+const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
+    const { className, ...restProps } = props;
+    return (
+        <button
+            className={`group flex items-center py-3.5 pl-3 font-bold tracking-wide text-primary transition-all hover:text-primary-light lg:pl-6 ${
+                className ?? ''
+            }`}
+            {...restProps}
+        >
+            <BoardIcon className="mr-2 h-4 fill-primary group-hover:fill-primary-light" />
+            <span>+ Create New Board</span>
+        </button>
+    );
+};
+
 const BoardList = () => {
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
@@ -37,6 +52,7 @@ const BoardList = () => {
             {boards.map((board) => (
                 <BoardLink key={board.id} board={board} />
             ))}
+            <NewBoardButton />
         </div>
     );
 };
