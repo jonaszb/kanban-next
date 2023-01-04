@@ -28,6 +28,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
     const { className, ...restProps } = props;
     return (
         <button
+            id="new-board-btn"
             className={`group flex items-center py-3.5 pl-3 font-bold tracking-wide text-primary transition-all hover:text-primary-light lg:pl-6 ${
                 className ?? ''
             }`}
@@ -43,7 +44,10 @@ const BoardList: FC<{ boards: { uuid: string; name: string }[] }> = (props) => {
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
             {props.boards && (
-                <span className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6">{`All Boards (${props.boards.length})`}</span>
+                <span
+                    id="board-count"
+                    className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
+                >{`All Boards (${props.boards.length})`}</span>
             )}{' '}
             {props.boards?.map((board) => (
                 <BoardLink key={board.uuid} board={board} />

@@ -13,8 +13,10 @@ export default function BoardPage() {
                 <link rel="icon" href="/favicon.png" />
             </Head>
             <main className="text-bold flex h-full flex-col items-center justify-center overflow-scroll px-4 text-center font-jakarta text-lg text-mid-grey dark:text-white">
-                <p className="mb-8">The board is empty. Create a new column to get started</p>
-                <ButtonPrimaryLarge>+ Add New Column</ButtonPrimaryLarge>
+                <p id="empty-board-msg" className="mb-8">
+                    The board is empty. Create a new column to get started
+                </p>
+                <ButtonPrimaryLarge id="new-column-btn">+ Add New Column</ButtonPrimaryLarge>
             </main>
         </>
     );
