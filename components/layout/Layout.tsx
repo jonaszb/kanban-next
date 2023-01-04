@@ -16,6 +16,7 @@ const prefersDark = (() => {
 const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSidebar }) => {
     return (
         <button
+            id="show-sidebar-btn"
             onClick={onShowSidebar}
             className={`fixed bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary hover:bg-primary-light sm:flex`}
         >
