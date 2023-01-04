@@ -10,7 +10,7 @@ const Header = () => {
                     <span className="hidden sm:block">+ Add New Task</span>
                     <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
-                <button className="mr-2 inline-flex w-6 justify-center">
+                <button aria-label="Board options" className="mr-2 inline-flex w-6 justify-center">
                     <VerticalEllipsisIcon />
                 </button>
             </div>

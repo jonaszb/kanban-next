@@ -3,19 +3,13 @@ import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { BoardIcon } from '../Icons/Icons';
 
-const boards = [
-    { id: 1, name: 'Platform Launch' },
-    { id: 2, name: 'Product Roadmap' },
-    { id: 3, name: 'Marketing Campaign' },
-];
-
-const BoardLink: FC<{ board: { id: number; name: string } }> = ({ board }) => {
+const BoardLink: FC<{ board: { uuid: string; name: string } }> = ({ board }) => {
     const router = useRouter();
-    const isActive = router.query.boardId === board.id.toString();
+    const isActive = router.query.boardId === board.uuid;
 
     return (
         <Link
-            href={`/${board.id}`}
+            href={`/board/${board.uuid}`}
             className={`group mr-5 flex items-center rounded-r-full py-3.5 pl-3 text-base font-bold tracking-wide transition-all lg:pl-6  ${
                 isActive
                     ? 'bg-primary text-white'
@@ -45,12 +39,14 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-const BoardList = () => {
+const BoardList: FC<{ boards: { uuid: string; name: string }[] }> = (props) => {
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
-            <span className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6">{`All Boards (${boards.length})`}</span>
-            {boards.map((board) => (
-                <BoardLink key={board.id} board={board} />
+            {props.boards && (
+                <span className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6">{`All Boards (${props.boards.length})`}</span>
+            )}{' '}
+            {props.boards?.map((board) => (
+                <BoardLink key={board.uuid} board={board} />
             ))}
             <NewBoardButton />
         </div>

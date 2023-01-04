@@ -28,6 +28,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
     // Set consistent initial state to avoid hydration mismatch. Actual value will be set in useEffect
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
     const [sidebarHidden, setSidebarHidden] = useState(false);
+    const [boards, setBoards] = useState([]);
+    const [selectedBoard, setSelectedBoard] = useState(null);
 
     const onChangeTheme = () => {
         setDarkModeEnabled(!darkModeEnabled);
@@ -44,6 +46,9 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
     useEffect(() => {
         setDarkModeEnabled(prefersDark);
+        fetch('/api/boards')
+            .then((res) => res.json())
+            .then((data) => setBoards(data));
     }, []);
 
     return (
@@ -59,6 +64,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 onChangeTheme={onChangeTheme}
                 onHideSidebar={hideSidebarHandler}
                 isHidden={sidebarHidden}
+                boards={boards}
             />
             <section
                 className={`relative col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${

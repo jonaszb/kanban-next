@@ -23,12 +23,13 @@ const Sidebar: FC<{
     onChangeTheme: Function;
     onHideSidebar: MouseEventHandler;
     isHidden: boolean;
+    boards: { uuid: string; name: string }[];
 }> = (props) => {
     return (
         <>
             {props.isHidden || (
                 <div className="hidden h-full flex-col bg-white py-8 dark:bg-dark-grey sm:flex sm:w-64 lg:w-72">
-                    <BoardList />
+                    <BoardList boards={props.boards} />
                     <ThemeToggle darkModeEnabled={props.darkModeEnabled} changeThemeHandler={props.onChangeTheme} />
                     <HideSideBarButton className="my-3.5 py-3.5 pl-3 lg:pl-6" onClick={props.onHideSidebar} />
                 </div>
