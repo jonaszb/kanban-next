@@ -1,0 +1,35 @@
+name: Deployment tests
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test_setup:
+    name: Test setup
+    runs-on: ubuntu-latest
+    outputs:
+      preview_url: ${{ steps.waitForVercelPreviewDeployment.outputs.url }}
+    steps:
+      - name: Wait for Vercel preview deployment to be ready
+        uses: patrickedqvist/wait-for-vercel-preview@1.2.0
+        id: waitForVercelPreviewDeployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+    test_e2e:
+    needs: tests_setup
+    name: Playwright tests
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare testing env
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with
+          node-version: "18"
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - name: Run tests
+        run: npm run test:e2e
+        env:
+          BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
