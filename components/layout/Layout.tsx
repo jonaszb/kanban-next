@@ -17,7 +17,7 @@ const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSid
     return (
         <button
             onClick={onShowSidebar}
-            className={`absolute bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary hover:bg-primary-light sm:flex`}
+            className={`fixed bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary hover:bg-primary-light sm:flex`}
         >
             <ShowSidebarIcon />
         </button>
