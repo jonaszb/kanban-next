@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Layout from '../components/layout/Layout';
+import Layout from '../components/Layout/Layout';
 import { ButtonPrimaryLarge } from '../components/Buttons/Buttons';
 import { ReactElement } from 'react';
 
