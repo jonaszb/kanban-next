@@ -54,7 +54,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
     return (
         <div
-            className={`app-container grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
+            className={`app-container grid max-h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
                 darkModeEnabled ? 'dark' : ''
             }`}
         >
@@ -68,12 +68,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 boards={boards}
             />
             <section
-                className={`relative col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
+                className={`relative col-start-1 col-end-3 overflow-scroll border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
                     sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'
                 }`}
             >
                 {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
+            <div></div>
         </div>
     );
 };
