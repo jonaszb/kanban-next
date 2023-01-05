@@ -14,8 +14,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const response: any[] = await apiUtils.sendQuery(sql);
                 if (response[0].length === 0) {
                     res.status(404).end('Board not found');
+                } else if (response[0].length > 1) {
+                    console.error('Multiple boards found with the same uuid');
+                    res.status(500).json({ error: 'Something went wrong' });
                 } else {
-                    res.status(200).json(response[0]);
+                    res.status(200).json(response[0][0]);
                 }
             } catch (e) {
                 console.error(e);

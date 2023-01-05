@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test-ct": "playwright test -c playwright-ct.config.ts"
   },
   "dependencies": {
     "@next/font": "13.1.0",
@@ -25,6 +26,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@playwright/experimental-ct-react": "^1.29.1",
     "@playwright/test": "^1.29.1",
     "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.13",

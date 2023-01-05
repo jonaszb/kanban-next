@@ -1,4 +1,5 @@
 import { FC, MouseEventHandler } from 'react';
+import type { Board } from '../../types';
 import { HideSidebarIcon } from '../Icons/Icons';
 import BoardList from './BoardList';
 import ThemeToggle from './ThemeToggle';
@@ -24,7 +25,7 @@ const Sidebar: FC<{
     onChangeTheme: Function;
     onHideSidebar: MouseEventHandler;
     isHidden: boolean;
-    boards: { uuid: string; name: string }[];
+    boards: Board[];
 }> = (props) => {
     return (
         <>

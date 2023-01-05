@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
 import { BoardIcon } from '../Icons/Icons';
+import type { Board } from '../../types';
 
-const BoardLink: FC<{ board: { uuid: string; name: string } }> = ({ board }) => {
+const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();
     const isActive = router.query.boardId === board.uuid;
 
@@ -40,7 +41,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-const BoardList: FC<{ boards: { uuid: string; name: string }[] }> = (props) => {
+const BoardList: FC<{ boards: Board[] }> = (props) => {
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
             {props.boards && (
