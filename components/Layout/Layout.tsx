@@ -1,8 +1,8 @@
 import { FC, MouseEventHandler, PropsWithChildren, useEffect, useState } from 'react';
 import { ShowSidebarIcon } from '../Icons/Icons';
-import Header from './Header';
-import Logo from './Logo';
-import Sidebar from './Sidebar';
+import Header from './Header/Header';
+import Logo from './Header/Logo';
+import Sidebar from './Sidebar/Sidebar';
 
 // Check default color scheme preference OR apply one from local storage
 const prefersDark = (() => {

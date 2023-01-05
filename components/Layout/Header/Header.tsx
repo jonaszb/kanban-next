@@ -1,5 +1,5 @@
-import { ButtonPrimaryLarge } from '../Buttons/Buttons';
-import { VerticalEllipsisIcon, AddTaskIconMobile } from '../Icons/Icons';
+import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
+import { VerticalEllipsisIcon, AddTaskIconMobile } from '../../Icons/Icons';
 
 const Header = () => {
     return (

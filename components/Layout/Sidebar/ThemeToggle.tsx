@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { LightThemeIcon, DarkThemeIcon } from '../Icons/Icons';
+import { LightThemeIcon, DarkThemeIcon } from '../../Icons/Icons';
 
 const ThemeToggle: FC<{ darkModeEnabled: boolean; changeThemeHandler: Function; className?: string }> = (props) => {
     const [isDark, setIsDark] = useState(props.darkModeEnabled);
