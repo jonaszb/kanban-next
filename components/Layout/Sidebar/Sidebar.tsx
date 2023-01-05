@@ -1,6 +1,6 @@
 import { FC, MouseEventHandler } from 'react';
-import type { Board } from '../../types';
-import { HideSidebarIcon } from '../Icons/Icons';
+import type { Board } from '../../../types';
+import { HideSidebarIcon } from '../../Icons/Icons';
 import BoardList from './BoardList';
 import ThemeToggle from './ThemeToggle';
 

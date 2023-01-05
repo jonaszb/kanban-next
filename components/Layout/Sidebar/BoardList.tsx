@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
-import { BoardIcon } from '../Icons/Icons';
-import type { Board } from '../../types';
+import { BoardIcon } from '../../Icons/Icons';
+import type { Board } from '../../../types';
 
 const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();

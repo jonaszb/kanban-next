@@ -1,4 +1,4 @@
-import { LogoDark, LogoLight, LogoMobile } from '../Icons/Icons';
+import { LogoDark, LogoLight, LogoMobile } from '../../Icons/Icons';
 
 const Logo = () => {
     return (
