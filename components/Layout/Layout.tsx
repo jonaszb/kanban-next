@@ -54,7 +54,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
     return (
         <div
-            className={`app-container grid max-h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
+            className={`app-container grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
                 darkModeEnabled ? 'dark' : ''
             }`}
         >
