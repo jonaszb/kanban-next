@@ -1,12 +1,9 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useState } from 'react';
 import Column from './Column/Column';
-import type { DragStartEvent, DragEndEvent, DragMoveEvent, DragCancelEvent, DragOverEvent } from '@dnd-kit/core';
+import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import {
     DndContext,
-    DragOverlay,
-    closestCorners,
-    KeyboardSensor,
-    PointerSensor,
+    closestCenter,
     useSensor,
     useSensors,
     MouseSensor,
@@ -14,7 +11,7 @@ import {
     MeasuringStrategy,
     UniqueIdentifier,
 } from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 
 type Items = Record<
     UniqueIdentifier,
@@ -63,7 +60,7 @@ const testColumns: Items = {
         ],
     },
     done: {
-        color: '#777777',
+        color: '#67E2AE',
         tasks: [],
     },
 };
@@ -78,7 +75,12 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             distance: 10,
         },
     });
-    const touchSensor = useSensor(TouchSensor);
+    const touchSensor = useSensor(TouchSensor, {
+        activationConstraint: {
+            delay: 250,
+            tolerance: 10,
+        },
+    });
 
     const sensors = useSensors(mouseSensor, touchSensor);
 
@@ -106,7 +108,6 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         // Find the containers
         const activeContainer = findContainer(id);
         const overContainer = findContainer(overId);
-        console.log(overContainer);
 
         if (!activeContainer || !overContainer || activeContainer === overContainer) {
             return;
@@ -126,9 +127,6 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 newIndex = overItems.length + 1;
             } else {
                 const isBelowLastItem = over && overIndex === overItems.length - 1;
-                // &&
-                // draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
-
                 const modifier = isBelowLastItem ? 1 : 0;
 
                 newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
@@ -190,7 +188,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                         strategy: MeasuringStrategy.Always,
                     },
                 }}
-                collisionDetection={closestCorners}
+                collisionDetection={closestCenter}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}

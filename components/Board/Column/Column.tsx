@@ -17,7 +17,7 @@ type Column = {
 
 const Column: FC<Column> = (props) => {
     return (
-        <Droppable id={props.name} className="min-h-screen w-72">
+        <Droppable id={props.name} className="w-72">
             <ColumnHeader color={props.color} name={props.name.toString()} taskCount={props.tasks.length} />
             <SortableContext items={props.tasks.map((task) => task.title)} strategy={verticalListSortingStrategy}>
                 <ul>
