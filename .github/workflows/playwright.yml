@@ -16,16 +16,15 @@ jobs:
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
                   max_timeout: 600
-    publish_report:
-        - name: Publish HTML report to testresults.marcusfelling.com
-          if: always() # We want this to always run, even if test fail prior to this step running
-          uses: peaceiris/actions-gh-pages@v3.7.3
-          with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
-              publish_dir: playwright-report/
-              keep_files: true
-              user_name: 'github-actions[bot]'
-              user_email: 'github-actions[bot]@users.noreply.github.com'
+            - name: Publish HTML report
+              if: always()
+              uses: peaceiris/actions-gh-pages@v3.7.3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: playwright-report/
+                  keep_files: true
+                  user_name: 'github-actions[bot]'
+                  user_email: 'github-actions[bot]@users.noreply.github.com'
     test_e2e:
         needs: test_setup
         name: Playwright tests
