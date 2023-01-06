@@ -31,18 +31,9 @@ jobs:
             - run: npx playwright install --with-deps
             - name: Run unit tests
               id: unit-test
-              run: npm run test-ct
+              run: npm run test-ct    
             - name: Run e2e tests
               if: steps.unit-test.outcome == 'success'
               run: npm run test:e2e
               env:
                   BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
-            - name: Publish HTML report
-              if: always()
-              uses: peaceiris/actions-gh-pages@v3.7.3
-              with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: playwright-report/
-                  keep_files: true
-                  user_name: 'github-actions[bot]'
-                  user_email: 'github-actions[bot]@users.noreply.github.com'
