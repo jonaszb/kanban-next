@@ -55,8 +55,8 @@ const BoardList: FC<{ boards: Board[]; onBoardSelect?: Function }> = (props) => 
             )}{' '}
             <ul>
                 {props.boards?.map((board) => (
-                    <li onClick={boardSelectHandler}>
-                        <BoardLink key={board.uuid} board={board} />
+                    <li key={board.uuid} onClick={boardSelectHandler}>
+                        <BoardLink board={board} />
                     </li>
                 ))}
             </ul>
