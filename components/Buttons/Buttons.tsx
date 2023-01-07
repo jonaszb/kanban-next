@@ -4,7 +4,7 @@ const ButtonBase: FC<{ fullWidth?: boolean; className?: string } & React.Compone
     const { fullWidth, className, ...restProps } = props;
     return (
         <button
-            className={`transition-color rounded-full py-4 px-6 font-jakarta text-base font-bold text-white disabled:opacity-25 ${
+            className={`rounded-full py-4 px-6 font-jakarta text-base font-bold text-white transition-colors disabled:opacity-25 ${
                 fullWidth ? 'w-full' : 'w-fit'
             } ${className || ''}`}
             {...restProps}
