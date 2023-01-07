@@ -1,4 +1,6 @@
+import { useRouter } from 'next/router';
 import { FC, MouseEventHandler, PropsWithChildren, useEffect, useState } from 'react';
+import { Board } from '../../types';
 import { ShowSidebarIcon } from '../Icons/Icons';
 import Header from './Header/Header';
 import Logo from './Header/Logo';
@@ -26,11 +28,12 @@ const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSid
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
+    const router = useRouter();
     // Set consistent initial state to avoid hydration mismatch. Actual value will be set in useEffect
     const [darkModeEnabled, setDarkModeEnabled] = useState(false);
     const [sidebarHidden, setSidebarHidden] = useState(false);
-    const [boards, setBoards] = useState([]);
-    const [selectedBoard, setSelectedBoard] = useState(null);
+    const [boards, setBoards] = useState<Board[]>([]);
+    const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
 
     const onChangeTheme = () => {
         setDarkModeEnabled(!darkModeEnabled);
@@ -52,6 +55,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             .then((data) => setBoards(data));
     }, []);
 
+    useEffect(() => {
+        setSelectedBoard(router.query.boardId as string);
+    }, [router.query.boardId]);
+
     return (
         <div
             className={`app-container grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
@@ -59,7 +66,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             }`}
         >
             <Logo />
-            <Header />
+            <Header selectedBoard={boards.find((board) => board.uuid === selectedBoard)?.name} />
             <Sidebar
                 darkModeEnabled={darkModeEnabled}
                 onChangeTheme={onChangeTheme}
@@ -68,12 +75,13 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 boards={boards}
             />
             <section
-                className={`relative col-start-1 col-end-3 border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
+                className={`relative col-start-1 col-end-3 overflow-scroll border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
                     sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'
                 }`}
             >
                 {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
+            <div></div>
         </div>
     );
 };

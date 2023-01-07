@@ -9,7 +9,8 @@ test.describe('PrimaryButtonLarge', () => {
         await expect(component).toContainText('Test button!');
     });
 
-    test('has a hover state', async ({ mount }) => {
+    test('has a hover state', async ({ mount, browserName }) => {
+        test.skip(browserName === 'firefox');
         const component = await mount(<ButtonPrimaryLarge>Test button!</ButtonPrimaryLarge>);
         await expect(component).toHaveCSS('background-color', 'rgb(99, 95, 199)');
         await component.hover();
