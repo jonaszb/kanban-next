@@ -8,7 +8,7 @@ export default function Home() {
         <>
             <Head>
                 <title>Kanban Board</title>
-                <meta name="description" content="Kanban project management tool" />
+                <meta name="description" content="Task management web app" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.png" />
             </Head>
