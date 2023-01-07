@@ -20,7 +20,7 @@ const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSid
         <button
             id="show-sidebar-btn"
             onClick={onShowSidebar}
-            className={`fixed bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary hover:bg-primary-light sm:flex`}
+            className={`fixed bottom-8 hidden h-12 w-14 items-center justify-center rounded-r-full bg-primary transition-colors hover:bg-primary-light sm:flex`}
         >
             <ShowSidebarIcon />
         </button>
@@ -66,7 +66,12 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             }`}
         >
             <Logo />
-            <Header selectedBoard={boards.find((board) => board.uuid === selectedBoard)?.name} />
+            <Header
+                selectedBoard={boards.find((board) => board.uuid === selectedBoard)?.name}
+                darkModeEnabled={darkModeEnabled}
+                onChangeTheme={onChangeTheme}
+                boards={boards}
+            />
             <Sidebar
                 darkModeEnabled={darkModeEnabled}
                 onChangeTheme={onChangeTheme}
@@ -79,6 +84,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'
                 }`}
             >
+                <div id="mobile-menu-root"></div>
                 {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
             <div></div>

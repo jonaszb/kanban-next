@@ -41,7 +41,10 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-const BoardList: FC<{ boards: Board[] }> = (props) => {
+const BoardList: FC<{ boards: Board[]; onBoardSelect?: Function }> = (props) => {
+    const boardSelectHandler = () => {
+        props.onBoardSelect && props.onBoardSelect();
+    };
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
             {props.boards && (
@@ -50,9 +53,13 @@ const BoardList: FC<{ boards: Board[] }> = (props) => {
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${props.boards.length})`}</span>
             )}{' '}
-            {props.boards?.map((board) => (
-                <BoardLink key={board.uuid} board={board} />
-            ))}
+            <ul>
+                {props.boards?.map((board) => (
+                    <li key={board.uuid} onClick={boardSelectHandler}>
+                        <BoardLink board={board} />
+                    </li>
+                ))}
+            </ul>
             <NewBoardButton />
         </div>
     );
