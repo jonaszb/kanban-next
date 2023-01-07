@@ -3,7 +3,7 @@ import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
 import ReactDOM from 'react-dom';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
 import { Board } from '../../../types';
-import MobileMenu from '../Modals/MobileMenu';
+import MobileMenu from '../../Modals/MobileMenu';
 
 const Header: FC<{ selectedBoard?: string; darkModeEnabled: boolean; onChangeTheme: Function; boards: Board[] }> = (
     props

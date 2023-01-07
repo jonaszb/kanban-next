@@ -1,7 +1,7 @@
 import { Dispatch, FC, SetStateAction } from 'react';
-import { Board } from '../../../types';
-import BoardList from '../Sidebar/BoardList';
-import ThemeToggle from '../Sidebar/ThemeToggle';
+import { Board } from '../../types';
+import BoardList from '../Layout/Sidebar/BoardList';
+import ThemeToggle from '../Layout/Sidebar/ThemeToggle';
 import Backdrop from './Backdrop';
 
 const MobileMenu: FC<{
