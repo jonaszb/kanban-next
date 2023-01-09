@@ -2,13 +2,15 @@ import { useDroppable } from '@dnd-kit/core';
 import { FC, PropsWithChildren } from 'react';
 import { UniqueIdentifier } from '@dnd-kit/core';
 
-const Droppable: FC<PropsWithChildren<{ id: UniqueIdentifier; className?: string }>> = (props) => {
+const Droppable: FC<PropsWithChildren<{ droppableId: UniqueIdentifier } & React.ComponentProps<'div'>>> = (props) => {
+    const { droppableId, ...restProps } = props;
+
     const { setNodeRef } = useDroppable({
-        id: props.id,
+        id: droppableId,
     });
 
     return (
-        <div ref={setNodeRef} className={props.className}>
+        <div ref={setNodeRef} {...restProps}>
             {props.children}
         </div>
     );
