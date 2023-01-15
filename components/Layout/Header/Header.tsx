@@ -36,11 +36,20 @@ const Header: FC<{ selectedBoard?: string; darkModeEnabled: boolean; onChangeThe
                     )}
             </div>
             <div className="flex items-center">
-                <ButtonPrimaryLarge id="new-task" className="mr-2 !px-5 py-3 sm:mr-4 sm:py-4">
+                <ButtonPrimaryLarge
+                    id="new-task"
+                    className="mr-2 !px-5 py-3 sm:mr-4 sm:py-4"
+                    disabled={!props.selectedBoard}
+                >
                     <span className="hidden sm:block">+ Add New Task</span>
                     <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
-                <button aria-label="Board options" id="board-options" className="mr-2 inline-flex w-6 justify-center">
+                <button
+                    aria-label="Board options"
+                    id="board-options"
+                    className="mr-2 inline-flex w-6 justify-center"
+                    disabled={!props.selectedBoard}
+                >
                     <VerticalEllipsisIcon />
                 </button>
             </div>
