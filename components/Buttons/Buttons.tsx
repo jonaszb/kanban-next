@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-const ButtonBase: FC<{ fullWidth?: boolean; className?: string } & React.ComponentProps<'button'>> = (props) => {
+const Button: FC<{ fullWidth?: boolean; className?: string } & React.ComponentProps<'button'>> = (props) => {
     const { fullWidth, className, ...restProps } = props;
     return (
         <button
@@ -17,10 +17,10 @@ const ButtonBase: FC<{ fullWidth?: boolean; className?: string } & React.Compone
 const ButtonPrimaryLarge: FC<React.ComponentProps<'button'>> = (props) => {
     const { className, ...restProps } = props;
     return (
-        <ButtonBase className={`bg-primary enabled:hover:bg-primary-light ${className || ''}`} {...restProps}>
+        <Button className={`bg-primary enabled:hover:bg-primary-light ${className || ''}`} {...restProps}>
             {props.children}
-        </ButtonBase>
+        </Button>
     );
 };
 
-export { ButtonPrimaryLarge };
+export { ButtonPrimaryLarge, Button };
