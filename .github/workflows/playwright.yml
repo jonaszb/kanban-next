@@ -4,7 +4,21 @@ on:
         branches:
             - main
 jobs:
+    unit_test:
+        name: Unit tests
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Use Node.js 18
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 18
+            - name: npm ci, build and test
+              run: |
+                  npm ci
+                  npm test
     test_setup:
+        needs: unit_test
         name: Test setup
         runs-on: ubuntu-latest
         outputs:
@@ -29,11 +43,7 @@ jobs:
                   node-version: '18'
             - run: npm ci
             - run: npx playwright install --with-deps
-            - name: Run unit tests
-              id: unit-test
-              run: npm run test-ct    
             - name: Run e2e tests
-              if: steps.unit-test.outcome == 'success'
               run: npm run test:e2e
               env:
                   BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
