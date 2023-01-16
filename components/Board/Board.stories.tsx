@@ -56,11 +56,7 @@ export default {
     component: BoardElem,
 } as ComponentMeta<typeof BoardElem & { darkMode: boolean }>;
 
-const Template: ComponentStory<typeof BoardElem> = (args) => (
-    <div className="bg-light-grey dark:bg-v-dark-grey">
-        <BoardElem {...args} />
-    </div>
-);
+const Template: ComponentStory<typeof BoardElem> = (args) => <BoardElem {...args} />;
 
 export const DarkTheme = Template.bind({});
 DarkTheme.args = { columns: testColumns, boardUUID: uuidv4() };
