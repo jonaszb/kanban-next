@@ -10,7 +10,8 @@
     "test:e2e": "playwright test",
     "test": "jest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=ecd23124c8ae"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.0.7",
@@ -49,6 +50,7 @@
     "@types/uuid": "^9.0.0",
     "autoprefixer": "^10.4.13",
     "babel-loader": "^8.3.0",
+    "chromatic": "^6.14.0",
     "eslint-plugin-storybook": "^0.6.10",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
@@ -59,5 +61,7 @@
     "tailwindcss": "^3.2.4",
     "ts-jest": "^29.0.5",
     "typescript": "^4.9.4"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "sample@0.1.0"
 }
