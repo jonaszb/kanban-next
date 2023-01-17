@@ -1,15 +1,17 @@
 import Logo from './Logo';
 import React, { FC } from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
-    title: 'Layout/Header',
+    title: 'Components/Layout/Header',
     component: Logo,
-} as ComponentMeta<typeof Logo>;
+} as Meta<typeof Logo>;
 
-const Template: ComponentStory<typeof Logo> = () => <Logo />;
+export const LogoDark: StoryObj<typeof Logo> = {
+    render: () => <Logo />,
+    parameters: { theme: 'dark' },
+};
 
-export const LogoDark = Template.bind({});
-LogoDark.parameters = { theme: 'dark' };
-
-export const LogoLight = Template.bind({});
+export const LogoLight: StoryObj<typeof Logo> = {
+    render: () => <Logo />,
+};

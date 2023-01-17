@@ -1,13 +1,11 @@
 import { Button, ButtonPrimaryLarge } from './Buttons';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
-    title: 'Button',
+    title: 'Components/Buttons',
     component: Button,
-} as ComponentMeta<typeof Button>;
+} as Meta<typeof Button>;
 
-const BtnPrimaryLargeTemplate: ComponentStory<typeof ButtonPrimaryLarge> = (args) => (
-    <ButtonPrimaryLarge {...args}>Button</ButtonPrimaryLarge>
-);
-
-export const PrimaryLarge = BtnPrimaryLargeTemplate.bind({});
+export const PrimaryLarge: StoryObj<typeof ButtonPrimaryLarge> = {
+    render: () => <ButtonPrimaryLarge>Button</ButtonPrimaryLarge>,
+};

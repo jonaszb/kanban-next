@@ -1,6 +1,6 @@
 import BoardElem from './Board';
-import React, { FC } from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Columns } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -52,15 +52,24 @@ const testColumns: Columns = {
 };
 
 export default {
-    title: 'Board',
+    title: 'Components/Board',
     component: BoardElem,
-} as ComponentMeta<typeof BoardElem & { darkMode: boolean }>;
+} as Meta<typeof BoardElem>;
 
-const Template: ComponentStory<typeof BoardElem> = (args) => <BoardElem {...args} />;
+export const DarkTheme: StoryObj<typeof BoardElem> = {
+    render: (args) => <BoardElem {...args} />,
+    args: { columns: testColumns, boardUUID: uuidv4() },
+    parameters: { theme: 'dark' },
+};
 
-export const DarkTheme = Template.bind({});
-DarkTheme.args = { columns: testColumns, boardUUID: uuidv4() };
-DarkTheme.parameters = { theme: 'dark' };
+export const LightTheme: StoryObj<typeof BoardElem> = {
+    render: (args) => <BoardElem {...args} />,
+    args: { columns: testColumns, boardUUID: uuidv4() },
+};
 
-export const LightTheme = Template.bind({});
-LightTheme.args = DarkTheme.args;
+// export const DarkTheme = Template.bind({});
+// DarkTheme.args = { columns: testColumns, boardUUID: uuidv4() };
+// DarkTheme.parameters = { theme: 'dark' };
+
+// export const LightTheme = Template.bind({});
+// LightTheme.args = DarkTheme.args;
