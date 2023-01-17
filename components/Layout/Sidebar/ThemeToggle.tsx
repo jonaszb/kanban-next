@@ -24,6 +24,7 @@ const ThemeToggle: FC<{ darkModeEnabled: boolean; changeThemeHandler: Function; 
                 <label
                     className={`flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-primary transition-all group-hover:bg-primary-light  `}
                     htmlFor="themeSwitch"
+                    role="switch"
                 >
                     <span
                         className={`aspect-square w-4 cursor-pointer  rounded-full bg-white transition-all duration-300 ease-in-out ${

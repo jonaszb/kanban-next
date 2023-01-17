@@ -50,6 +50,7 @@ const BoardList: FC<{ boards: Board[]; onBoardSelect?: Function }> = (props) => 
             {props.boards && (
                 <span
                     id="board-count"
+                    role="heading"
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${props.boards.length})`}</span>
             )}{' '}

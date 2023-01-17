@@ -9,6 +9,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'menu-dark': '0 1rem 3rem -1rem rgba(59,130,246,.2)',
+        menu: '0 1rem 3rem -1rem rgba(0,0,0,.3)'
+      },
+      width: {
+        '86': '21.5rem',
+        '120': '30rem' 
+      },
       colors: {
         'lines-dark': '#3E3F4E',
         'lines-light': '#E4EBFA',
