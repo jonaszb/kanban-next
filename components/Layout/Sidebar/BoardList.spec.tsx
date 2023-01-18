@@ -2,6 +2,9 @@ import { fireEvent, render, screen } from '../../../utils/test-utils';
 import BoardList from './BoardList';
 import '@testing-library/jest-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { ReactElement } from 'react';
+import BoardListContextProvider, { BoardListContextProps } from '../../../store/BoardListContext';
+import React from 'react';
 
 const boards = [
     {
@@ -27,21 +30,32 @@ jest.mock('next/router', () => ({
     },
 }));
 
+jest.spyOn(React, 'useEffect').mockImplementation((f) => {});
+
+const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) => {
+    return render(<BoardListContextProvider value={providerProps}>{ui}</BoardListContextProvider>);
+};
+
+const providerProps = {
+    boards: boards,
+    selectedBoard: boards[1].uuid,
+};
+
 describe('Board List', () => {
     test('Renders each board', () => {
-        render(<BoardList boards={boards} />);
+        renderWithCtx(<BoardList />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links.length).toEqual(3);
     });
 
     test('Can be rendered with no boards', () => {
-        render(<BoardList boards={[]} />);
+        renderWithCtx(<BoardList />, { ...providerProps, boards: [] });
         const links = screen.queryAllByRole('link');
         expect(links.length).toEqual(0);
     });
 
     test('Renders each board name', () => {
-        render(<BoardList boards={boards} />);
+        renderWithCtx(<BoardList />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).toHaveTextContent('Platform Launch');
         expect(links[1]).toHaveTextContent('Marketing Plan');
@@ -49,7 +63,7 @@ describe('Board List', () => {
     });
 
     test('Renders each board link', async () => {
-        render(<BoardList boards={boards} />);
+        renderWithCtx(<BoardList />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).toHaveAttribute('href', `/board/${boards[0].uuid}`);
         expect(links[1]).toHaveAttribute('href', `/board/${boards[1].uuid}`);
@@ -57,7 +71,7 @@ describe('Board List', () => {
     });
 
     test('Link to current board is active', async () => {
-        render(<BoardList boards={boards} />);
+        renderWithCtx(<BoardList />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).not.toHaveClass('bg-primary');
         expect(links[1]).toHaveClass('bg-primary');
@@ -66,7 +80,7 @@ describe('Board List', () => {
 
     test('onBoardSelect is called when a board is clicked', async () => {
         let i = 0;
-        render(<BoardList boards={boards} onBoardSelect={() => i++} />);
+        renderWithCtx(<BoardList onBoardSelect={() => i++} />, providerProps);
         const links = screen.getAllByRole('link');
         fireEvent.click(links[0]);
         expect(i).toEqual(1);
@@ -77,7 +91,7 @@ describe('Board List', () => {
     });
 
     test('Header is displayed', async () => {
-        const result = render(<BoardList boards={boards} />);
+        const result = renderWithCtx(<BoardList />, providerProps);
         const header = result.container.querySelector('#board-count');
         expect(header).toBeInTheDocument();
         expect(header).toBeVisible();
@@ -85,19 +99,19 @@ describe('Board List', () => {
     });
 
     test('Header contains the number of boards', async () => {
-        const result = render(<BoardList boards={boards} />);
+        const result = renderWithCtx(<BoardList />, providerProps);
         const header = result.container.querySelector('#board-count');
         expect(header).toHaveTextContent('All Boards (3)');
     });
 
     test('Header contains the number of boards when there are no boards', async () => {
-        const result = render(<BoardList boards={[]} />);
+        const result = renderWithCtx(<BoardList />, { ...providerProps, boards: [] });
         const header = result.container.querySelector('#board-count');
         expect(header).toHaveTextContent('All Boards (0)');
     });
 
     test('New Board button is rendered when boards exist', async () => {
-        render(<BoardList boards={boards} />);
+        renderWithCtx(<BoardList />, providerProps);
         const button = screen.getByRole('button');
         expect(button).toBeInTheDocument();
         expect(button).toBeVisible();
@@ -106,7 +120,7 @@ describe('Board List', () => {
     });
 
     test('New Board button is rendered if no boards exist', async () => {
-        render(<BoardList boards={[]} />);
+        renderWithCtx(<BoardList />, providerProps);
         const button = screen.getByRole('button');
         expect(button).toBeInTheDocument();
         expect(button).toBeVisible();

@@ -1,18 +1,27 @@
 import { Decorator } from '@storybook/react';
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/globals.css';
+import ThemeContextProvider from '../store/ThemeContext';
+import { ThemeContext } from '../store/ThemeContext';
+
+export const ThemeCtxProvider: Decorator = (StoryFn, context) => {
+    return (
+        <ThemeContextProvider>
+            <StoryFn />
+        </ThemeContextProvider>
+    );
+};
 
 export const withTheme: Decorator = (StoryFn, context) => {
-    const [theme, setTheme] = useState<'light' | 'dark'>(context.parameters.theme || 'light');
-    const toggleTheme = () => {
-        setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-    };
-
-    return (
-        <div className={theme === 'dark' ? 'dark' : ''}>
-            <StoryFn theme={theme} toggleTheme={toggleTheme} />
-        </div>
-    );
+    return ThemeCtxProvider(() => {
+        const themeCtx = React.useContext(ThemeContext);
+        const theme = context.parameters.theme ? context.parameters.theme : themeCtx.darkModeEnabled ? 'dark' : 'light';
+        return (
+            <div className={theme}>
+                <StoryFn />
+            </div>
+        );
+    }, context);
 };
 
 export const parameters = {

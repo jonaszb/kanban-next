@@ -1,6 +1,4 @@
-import { useRouter } from 'next/router';
-import { FC, MouseEventHandler, PropsWithChildren, useEffect, useState, useContext } from 'react';
-import { Board } from '../../types';
+import { FC, MouseEventHandler, PropsWithChildren, useState, useContext } from 'react';
 import { ShowSidebarIcon } from '../Icons/Icons';
 import Header from './Header/Header';
 import Logo from './Header/Logo';
@@ -20,11 +18,7 @@ const ShowSidebarButton: FC<{ onShowSidebar: MouseEventHandler }> = ({ onShowSid
 };
 
 const Layout: FC<PropsWithChildren> = ({ children }) => {
-    const router = useRouter();
-    // Set consistent initial state to avoid hydration mismatch. Actual value will be set in useEffect
     const [sidebarHidden, setSidebarHidden] = useState(false);
-    const [boards, setBoards] = useState<Board[]>([]);
-    const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
 
     const { darkModeEnabled } = useContext(ThemeContext);
 
@@ -36,16 +30,6 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
         setSidebarHidden(false);
     };
 
-    useEffect(() => {
-        fetch('/api/boards')
-            .then((res) => res.json())
-            .then((data) => setBoards(data));
-    }, []);
-
-    useEffect(() => {
-        setSelectedBoard(router.query.boardId as string);
-    }, [router.query.boardId]);
-
     return (
         <div
             className={`app-container grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
@@ -53,8 +37,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             }`}
         >
             <Logo />
-            <Header selectedBoard={boards.find((board) => board.uuid === selectedBoard)?.name} boards={boards} />
-            <Sidebar onHideSidebar={hideSidebarHandler} isHidden={sidebarHidden} boards={boards} />
+            <Header />
+            <Sidebar onHideSidebar={hideSidebarHandler} isHidden={sidebarHidden} />
             <section
                 className={`relative col-start-1 col-end-3 overflow-scroll border-t border-lines-light bg-light-grey dark:border-lines-dark dark:bg-v-dark-grey  ${
                     sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'

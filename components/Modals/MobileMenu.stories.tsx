@@ -1,6 +1,7 @@
 import MobileMenuElem from './MobileMenu';
 import type { Meta, StoryFn } from '@storybook/react';
 import { v4 as uuidv4 } from 'uuid';
+import BoardListContextProvider from '../../store/BoardListContext';
 
 const boards = [
     {
@@ -22,13 +23,22 @@ export default {
     component: MobileMenuElem,
 } as Meta<typeof MobileMenuElem>;
 
-export const MobileMenu: StoryFn<typeof MobileMenuElem> = (args, context) => {
-    return <MobileMenuElem setMenuIsOpen={() => {}} boards={args.boards} />;
+type CtxProps = {
+    boards: typeof boards;
+    selectedBoard: string | null;
 };
-MobileMenu.args = {
-    boards: boards,
+export const MobileMenu: StoryFn<typeof MobileMenuElem> = (args) => {
+    return (
+        <BoardListContextProvider value={{ boards: boards, selectedBoard: null }}>
+            <MobileMenuElem setMenuIsOpen={() => {}} />
+        </BoardListContextProvider>
+    );
 };
 MobileMenu.parameters = {
+    args: {
+        boards: boards,
+        selectedBoard: null,
+    },
     nextjs: {
         router: {
             query: { boardId: boards[1].uuid },
@@ -37,8 +47,16 @@ MobileMenu.parameters = {
 };
 
 export const MobileMenuEmpty: StoryFn<typeof MobileMenuElem> = (args, context) => {
-    return MobileMenu(args, context);
+    return (
+        <BoardListContextProvider value={{ boards: [], selectedBoard: null }}>
+            <MobileMenuElem setMenuIsOpen={() => {}} />
+        </BoardListContextProvider>
+    );
 };
-MobileMenuEmpty.args = {
-    boards: [],
+
+MobileMenuEmpty.parameters = {
+    ...MobileMenu.parameters,
+    args: {
+        boards: [],
+    },
 };

@@ -1,5 +1,4 @@
 import { FC, MouseEventHandler } from 'react';
-import type { Board } from '../../../types';
 import { HideSidebarIcon } from '../../Icons/Icons';
 import BoardList from './BoardList';
 import ThemeToggle from './ThemeToggle';
@@ -23,7 +22,6 @@ const HideSideBarButton: FC<React.ComponentProps<'button'>> = (props) => {
 const Sidebar: FC<{
     onHideSidebar: MouseEventHandler;
     isHidden: boolean;
-    boards: Board[];
 }> = (props) => {
     return (
         <>
@@ -32,7 +30,7 @@ const Sidebar: FC<{
                     id="sidebar"
                     className="hidden h-full flex-col bg-white py-8 dark:bg-dark-grey sm:flex sm:w-64 lg:w-72"
                 >
-                    <BoardList boards={props.boards} />
+                    <BoardList />
                     <ThemeToggle />
                     <HideSideBarButton className="my-3.5 py-3.5 pl-3 lg:pl-6" onClick={props.onHideSidebar} />
                 </div>

@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { BoardIcon } from '../../Icons/Icons';
 import type { Board } from '../../../types';
+import { BoardListContext } from '../../../store/BoardListContext';
 
 const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();
@@ -41,21 +42,24 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-const BoardList: FC<{ boards: Board[]; onBoardSelect?: Function }> = (props) => {
+const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
     const boardSelectHandler = () => {
         props.onBoardSelect && props.onBoardSelect();
     };
+
+    const { boards } = useContext(BoardListContext);
+
     return (
         <div className="flex flex-1 flex-col overflow-y-auto">
-            {props.boards && (
+            {boards && (
                 <span
                     id="board-count"
                     role="heading"
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
-                >{`All Boards (${props.boards.length})`}</span>
+                >{`All Boards (${boards.length})`}</span>
             )}{' '}
             <ul>
-                {props.boards?.map((board) => (
+                {boards?.map((board) => (
                     <li key={board.uuid} onClick={boardSelectHandler}>
                         <BoardLink board={board} />
                     </li>
