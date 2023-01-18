@@ -58,10 +58,13 @@ export const SidebarEmpty: StoryFn<typeof SidebarElem> = (args, context) => {
     );
 };
 
-Sidebar.parameters = SidebarLong.parameters = {
-    nextjs: {
-        router: {
-            query: { boardId: boards[1].uuid },
-        },
-    },
-};
+Sidebar.parameters =
+    SidebarLong.parameters =
+    SidebarEmpty.parameters =
+        {
+            nextjs: {
+                router: {
+                    query: { boardId: boards[1].uuid },
+                },
+            },
+        };
