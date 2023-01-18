@@ -52,7 +52,7 @@ export const SidebarLong: StoryFn<typeof SidebarElem> = (args, context) => {
 
 export const SidebarEmpty: StoryFn<typeof SidebarElem> = (args, context) => {
     return (
-        <BoardListContextProvider>
+        <BoardListContextProvider value={{ boards: [], selectedBoard: null }}>
             <div className="h-screen">{SidebarBase(args, context)}</div>
         </BoardListContextProvider>
     );
