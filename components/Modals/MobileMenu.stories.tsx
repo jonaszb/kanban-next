@@ -23,14 +23,7 @@ export default {
 } as Meta<typeof MobileMenuElem>;
 
 export const MobileMenu: StoryFn<typeof MobileMenuElem> = (args, context) => {
-    return (
-        <MobileMenuElem
-            setMenuIsOpen={() => {}}
-            darkModeEnabled={context.theme === 'dark'}
-            boards={args.boards}
-            onChangeTheme={context.toggleTheme}
-        />
-    );
+    return <MobileMenuElem setMenuIsOpen={() => {}} boards={args.boards} />;
 };
 MobileMenu.args = {
     boards: boards,

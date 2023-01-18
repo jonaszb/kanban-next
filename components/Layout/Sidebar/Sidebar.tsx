@@ -21,8 +21,6 @@ const HideSideBarButton: FC<React.ComponentProps<'button'>> = (props) => {
 };
 
 const Sidebar: FC<{
-    darkModeEnabled: boolean;
-    onChangeTheme: Function;
     onHideSidebar: MouseEventHandler;
     isHidden: boolean;
     boards: Board[];
@@ -35,7 +33,7 @@ const Sidebar: FC<{
                     className="hidden h-full flex-col bg-white py-8 dark:bg-dark-grey sm:flex sm:w-64 lg:w-72"
                 >
                     <BoardList boards={props.boards} />
-                    <ThemeToggle darkModeEnabled={props.darkModeEnabled} changeThemeHandler={props.onChangeTheme} />
+                    <ThemeToggle />
                     <HideSideBarButton className="my-3.5 py-3.5 pl-3 lg:pl-6" onClick={props.onHideSidebar} />
                 </div>
             )}{' '}

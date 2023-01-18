@@ -20,57 +20,51 @@ const boards = [
 
 describe('Header', () => {
     test('Board name is displayed if provided', async () => {
-        const result = render(
-            <Header boards={boards} selectedBoard={boards[1].name} darkModeEnabled={false} onChangeTheme={() => {}} />
-        );
+        const result = render(<Header boards={boards} selectedBoard={boards[1].name} />);
         const header = result.container.querySelector('#board-header');
         expect(header).toBeVisible();
         expect(header).toHaveTextContent('Marketing Plan');
     });
 
     test('Board name is not displayed if not provided', async () => {
-        const result = render(<Header boards={boards} darkModeEnabled={false} onChangeTheme={() => {}} />);
+        const result = render(<Header boards={boards} />);
         const header = result.container.querySelector('#board-header');
         expect(header).toBeEmptyDOMElement();
     });
 
     test('New Task button is displayed', async () => {
-        const result = render(<Header boards={boards} darkModeEnabled={false} onChangeTheme={() => {}} />);
+        const result = render(<Header boards={boards} />);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeVisible();
         expect(button).toHaveTextContent('+ Add New Task');
     });
 
     test('New Task button is disabled if no board is selected', async () => {
-        const result = render(<Header boards={boards} darkModeEnabled={false} onChangeTheme={() => {}} />);
+        const result = render(<Header boards={boards} />);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeDisabled();
     });
 
     test('New Task button is enabled if a board is selected', async () => {
-        const result = render(
-            <Header boards={boards} selectedBoard={boards[1].name} darkModeEnabled={false} onChangeTheme={() => {}} />
-        );
+        const result = render(<Header boards={boards} selectedBoard={boards[1].name} />);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeEnabled();
     });
 
     test('Board Options button is displayed', async () => {
-        const result = render(<Header boards={boards} darkModeEnabled={false} onChangeTheme={() => {}} />);
+        const result = render(<Header boards={boards} />);
         const button = result.container.querySelector('#board-options');
         expect(button).toBeVisible();
     });
 
     test('Board Options button is enabled if a board is selected', async () => {
-        const result = render(
-            <Header boards={boards} selectedBoard={boards[1].name} darkModeEnabled={false} onChangeTheme={() => {}} />
-        );
+        const result = render(<Header boards={boards} selectedBoard={boards[1].name} />);
         const button = result.container.querySelector('#board-options');
         expect(button).toBeEnabled();
     });
 
     test('Board Options button is disabled if no board is selected', async () => {
-        const result = render(<Header boards={boards} darkModeEnabled={false} onChangeTheme={() => {}} />);
+        const result = render(<Header boards={boards} />);
         const button = result.container.querySelector('#board-options');
         expect(button).toBeDisabled();
     });

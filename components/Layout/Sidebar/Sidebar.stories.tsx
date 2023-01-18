@@ -29,15 +29,7 @@ export const Sidebar: StoryFn<typeof SidebarElem> = (args, context) => {
         setIsHidden(true);
     };
 
-    return (
-        <SidebarElem
-            darkModeEnabled={context.theme === 'dark'}
-            onHideSidebar={onHideSidebar}
-            isHidden={isHidden}
-            boards={args.boards}
-            onChangeTheme={context.toggleTheme}
-        />
-    );
+    return <SidebarElem onHideSidebar={onHideSidebar} isHidden={isHidden} boards={args.boards} />;
 };
 Sidebar.args = {
     boards: boards,

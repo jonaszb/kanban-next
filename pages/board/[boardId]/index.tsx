@@ -1,6 +1,4 @@
 import Head from 'next/head';
-import { ReactElement } from 'react';
-import Layout from '../../../components/Layout/Layout';
 import Board from '../../../components/Board/Board';
 import { useRouter } from 'next/router';
 import type { Columns } from '../../../types';
@@ -70,7 +68,3 @@ export default function BoardPage() {
         </>
     );
 }
-
-BoardPage.getLayout = function getLayout(page: ReactElement) {
-    return <Layout>{page}</Layout>;
-};

@@ -1,10 +1,9 @@
-import { FC, useState } from 'react';
+import { FC, useContext } from 'react';
+import { ThemeContext } from '../../../store/ThemeContext';
 import { LightThemeIcon, DarkThemeIcon } from '../../Icons/Icons';
 
-const ThemeToggle: FC<{ darkModeEnabled: boolean; changeThemeHandler: Function; className?: string }> = (props) => {
-    const handleToggle = () => {
-        props.changeThemeHandler();
-    };
+const ThemeToggle: FC<{ className?: string }> = (props) => {
+    const { darkModeEnabled, toggleTheme } = useContext(ThemeContext);
 
     return (
         <div
@@ -18,8 +17,8 @@ const ThemeToggle: FC<{ darkModeEnabled: boolean; changeThemeHandler: Function; 
                     id="themeSwitch"
                     type="checkbox"
                     className="hidden"
-                    checked={props.darkModeEnabled}
-                    onChange={handleToggle}
+                    checked={darkModeEnabled}
+                    onChange={toggleTheme}
                 />
                 <label
                     className={`flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-primary transition-all group-hover:bg-primary-light  `}
@@ -28,7 +27,7 @@ const ThemeToggle: FC<{ darkModeEnabled: boolean; changeThemeHandler: Function; 
                 >
                     <span
                         className={`aspect-square w-4 cursor-pointer  rounded-full bg-white transition-all duration-300 ease-in-out ${
-                            props.darkModeEnabled ? 'translate-x-3/4' : '-translate-x-3/4'
+                            darkModeEnabled ? 'translate-x-3/4' : '-translate-x-3/4'
                         }`}
                     ></span>
                 </label>

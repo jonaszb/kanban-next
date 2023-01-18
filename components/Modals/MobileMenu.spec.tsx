@@ -28,8 +28,6 @@ jest.mock('next/router', () => ({
 
 const menuProps = {
     boards: boards,
-    onChangeTheme: jest.fn(),
-    darkModeEnabled: false,
     setMenuIsOpen: jest.fn(),
 };
 
@@ -114,13 +112,5 @@ describe('Mobile menu', () => {
         fireEvent.click(heading);
         fireEvent.click(themeToggle);
         expect(mockFn).toHaveBeenCalledTimes(0);
-    });
-
-    test('Clicking the theme toggle calls the onChangeTheme prop', async () => {
-        const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} onChangeTheme={mockFn} />);
-        const themeToggle = screen.getByRole('switch');
-        fireEvent.click(themeToggle);
-        expect(mockFn).toHaveBeenCalledTimes(1);
     });
 });

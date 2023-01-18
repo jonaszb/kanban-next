@@ -5,8 +5,6 @@ import ThemeToggle from '../Layout/Sidebar/ThemeToggle';
 import Modal from './Modal';
 
 const MobileMenu: FC<{
-    darkModeEnabled: boolean;
-    onChangeTheme: Function;
     boards: Board[];
     setMenuIsOpen: Dispatch<SetStateAction<boolean>>;
 }> = (props) => {
@@ -17,11 +15,7 @@ const MobileMenu: FC<{
     return (
         <Modal type="mobileMenu" onBackgroundClick={closeMenuHandler}>
             <BoardList boards={props.boards} onBoardSelect={closeMenuHandler} />
-            <ThemeToggle
-                darkModeEnabled={props.darkModeEnabled}
-                changeThemeHandler={props.onChangeTheme}
-                className="mt-4"
-            />
+            <ThemeToggle className="mt-4" />
         </Modal>
     );
 };
