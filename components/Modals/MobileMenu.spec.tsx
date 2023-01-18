@@ -1,7 +1,15 @@
+Object.defineProperty(window, 'matchMedia', {
+    value: jest.fn().mockImplementation((query) => ({
+        matches: false,
+    })),
+});
+
 import { fireEvent, render, screen } from '../../utils/test-utils';
 import MobileMenu from './MobileMenu';
 import '@testing-library/jest-dom';
 import { v4 as uuidv4 } from 'uuid';
+import React, { ReactElement } from 'react';
+import BoardListContextProvider, { BoardListContextProps } from '../../store/BoardListContext';
 
 const boards = [
     {
@@ -27,27 +35,35 @@ jest.mock('next/router', () => ({
 }));
 
 const menuProps = {
-    boards: boards,
-    onChangeTheme: jest.fn(),
-    darkModeEnabled: false,
     setMenuIsOpen: jest.fn(),
+};
+
+jest.spyOn(React, 'useEffect').mockImplementation((f) => {});
+
+const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) => {
+    return render(<BoardListContextProvider value={providerProps}>{ui}</BoardListContextProvider>);
+};
+
+const providerProps = {
+    boards: boards,
+    selectedBoard: boards[1].uuid,
 };
 
 describe('Mobile menu', () => {
     test('Renders each board', () => {
-        render(<MobileMenu {...menuProps} />);
+        renderWithCtx(<MobileMenu {...menuProps} />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links.length).toEqual(3);
     });
 
     test('Can be rendered with no boards', () => {
-        render(<MobileMenu {...menuProps} boards={[]} />);
+        renderWithCtx(<MobileMenu {...menuProps} />, { ...providerProps, boards: [] });
         const links = screen.queryAllByRole('link');
         expect(links.length).toEqual(0);
     });
 
     test('Renders each board name', () => {
-        render(<MobileMenu {...menuProps} />);
+        renderWithCtx(<MobileMenu {...menuProps} />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).toHaveTextContent('Platform Launch');
         expect(links[1]).toHaveTextContent('Marketing Plan');
@@ -55,7 +71,7 @@ describe('Mobile menu', () => {
     });
 
     test('Renders each board link', async () => {
-        render(<MobileMenu {...menuProps} />);
+        renderWithCtx(<MobileMenu {...menuProps} />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).toHaveAttribute('href', `/board/${boards[0].uuid}`);
         expect(links[1]).toHaveAttribute('href', `/board/${boards[1].uuid}`);
@@ -63,7 +79,7 @@ describe('Mobile menu', () => {
     });
 
     test('Link to current board is active', async () => {
-        render(<MobileMenu {...menuProps} />);
+        renderWithCtx(<MobileMenu {...menuProps} />, providerProps);
         const links = screen.getAllByRole('link');
         expect(links[0]).not.toHaveClass('bg-primary');
         expect(links[1]).toHaveClass('bg-primary');
@@ -71,20 +87,20 @@ describe('Mobile menu', () => {
     });
 
     test('Header contains the number of boards', async () => {
-        const result = render(<MobileMenu {...menuProps} />);
+        const result = renderWithCtx(<MobileMenu {...menuProps} />, providerProps);
         const header = result.container.querySelector('#board-count');
         expect(header).toHaveTextContent('All Boards (3)');
     });
 
     test('Header contains the number of boards when there are no boards', async () => {
-        const result = render(<MobileMenu {...menuProps} boards={[]} />);
+        const result = renderWithCtx(<MobileMenu {...menuProps} />, { ...providerProps, boards: [] });
         const header = result.container.querySelector('#board-count');
         expect(header).toHaveTextContent('All Boards (0)');
     });
 
     test('Clicking the backdrop closes the menu', async () => {
         const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} setMenuIsOpen={mockFn} />);
+        renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
         const backdrop = screen.getByTestId('modal-backdrop');
         fireEvent.click(backdrop);
         expect(mockFn).toHaveBeenCalledTimes(1);
@@ -92,7 +108,7 @@ describe('Mobile menu', () => {
 
     test('Selecting a board closes the modal', async () => {
         const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} setMenuIsOpen={mockFn} />);
+        renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
         const links = screen.getAllByRole('link');
         fireEvent.click(links[0]);
         expect(mockFn).toHaveBeenCalledTimes(1);
@@ -100,7 +116,7 @@ describe('Mobile menu', () => {
 
     test('Clicking the currently selected board closes the modal', async () => {
         const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} setMenuIsOpen={mockFn} />);
+        renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
         const links = screen.getAllByRole('link');
         fireEvent.click(links[1]);
         expect(mockFn).toHaveBeenCalledTimes(1);
@@ -108,19 +124,11 @@ describe('Mobile menu', () => {
 
     test('Modal stays open if other menu elements are clicked (not links or backdrop)', async () => {
         const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} setMenuIsOpen={mockFn} />);
+        renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
         const heading = screen.getByRole('heading');
         const themeToggle = screen.getByRole('switch');
         fireEvent.click(heading);
         fireEvent.click(themeToggle);
         expect(mockFn).toHaveBeenCalledTimes(0);
-    });
-
-    test('Clicking the theme toggle calls the onChangeTheme prop', async () => {
-        const mockFn = jest.fn();
-        render(<MobileMenu {...menuProps} onChangeTheme={mockFn} />);
-        const themeToggle = screen.getByRole('switch');
-        fireEvent.click(themeToggle);
-        expect(mockFn).toHaveBeenCalledTimes(1);
     });
 });

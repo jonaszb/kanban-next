@@ -1,6 +1,7 @@
 import BoardList from './BoardList';
 import type { Meta, StoryObj } from '@storybook/react';
 import { v4 as uuidv4 } from 'uuid';
+import BoardListContextProvider from '../../../store/BoardListContext';
 
 const boards = [
     {
@@ -20,13 +21,15 @@ const boards = [
 export default {
     title: 'Components/Layout/BoardList',
     component: BoardList,
+    argTypes: {},
 } as Meta<typeof BoardList>;
 
 export const List: StoryObj<typeof BoardList> = {
-    render: (args) => <BoardList {...args} />,
-    args: {
-        boards: boards,
-    },
+    render: (args) => (
+        <BoardListContextProvider value={{ boards: boards, selectedBoard: null }}>
+            <BoardList {...args} />
+        </BoardListContextProvider>
+    ),
     parameters: {
         nextjs: {
             router: {

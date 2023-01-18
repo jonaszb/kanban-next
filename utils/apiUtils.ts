@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'; // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 dotenv.config();
-import mysql from 'mysql2/promise';
+import mysql, { OkPacket } from 'mysql2/promise';
 
 class ApiUtils {
     databaseUrl: string;
@@ -12,22 +12,11 @@ class ApiUtils {
         this.databaseUrl = process.env.DATABASE_URL;
     }
 
-    async sendQuery(sql: string) {
+    async sendQuery(sql: string, params?: string[]) {
         const connection = await mysql.createConnection(this.databaseUrl);
-        const response = await connection.query(sql);
+        const response = await connection.execute(sql, params);
         connection.end();
         return response;
-    }
-
-    async sendQueries(sql: string[]) {
-        const connection = await mysql.createConnection(this.databaseUrl);
-        const responses = await Promise.all(
-            sql.map(async (query) => {
-                return await connection.query(query);
-            })
-        );
-        connection.end();
-        return responses;
     }
 }
 
