@@ -2,6 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
 import ApiUtils from '../../../utils/apiUtils';
+import mysql from 'mysql2/promise';
+
 const apiUtils = new ApiUtils();
 
 type Board = {
@@ -49,14 +51,14 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         validateBoard(board);
     } catch (error: any) {
-        res.status(400).json({ error: error.message });
+        return res.status(400).json({ error: error.message });
     }
-
     board.uuid = uuidv4();
-    const sql = `INSERT INTO Boards (uuid, name) VALUES ('${board.uuid}','${board.name}')`;
+    const sql = `INSERT INTO Boards (uuid, name) VALUES (?, ?)`;
+    const queryParams = [board.uuid, board.name];
 
     try {
-        await apiUtils.sendQuery(sql);
+        await apiUtils.sendQuery(sql, queryParams);
         res.status(201).json(board);
     } catch (error) {
         res.status(500).json({ error });

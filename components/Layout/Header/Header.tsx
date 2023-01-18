@@ -1,4 +1,4 @@
-import { FC, useEffect, useState, useContext } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
 import ReactDOM from 'react-dom';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
@@ -6,7 +6,7 @@ import { Board } from '../../../types';
 import MobileMenu from '../../Modals/MobileMenu';
 
 const Header: FC<{ selectedBoard?: string; boards: Board[] }> = (props) => {
-    const { selectedBoard, ...mobileMenuProps } = props;
+    const { selectedBoard } = props;
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [mobileMenuRoot, setMobileMenuRoot] = useState<HTMLElement | null>(null);
 

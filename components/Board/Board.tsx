@@ -16,6 +16,7 @@ import { Columns } from '../../types';
 
 const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
     const [items, setItems] = useState(props.columns);
+    const [clonedItems, setClonedItems] = useState<Columns | null>(null);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
     const mouseSensor = useSensor(MouseSensor, {
@@ -33,7 +34,7 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
 
     const sensors = useSensors(mouseSensor, touchSensor);
 
-    function findContainer(id: UniqueIdentifier) {
+    function findContainer(id: UniqueIdentifier, items: Columns) {
         if (id in items) {
             return id;
         }
@@ -46,6 +47,7 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
         const { id } = active;
 
         setActiveId(id);
+        setClonedItems(items);
     }
 
     function handleDragOver(event: DragOverEvent) {
@@ -55,8 +57,8 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
         if (!overId) return;
 
         // Find the containers
-        const activeContainer = findContainer(id);
-        const overContainer = findContainer(overId);
+        const activeContainer = findContainer(id, items);
+        const overContainer = findContainer(overId, items);
 
         if (!activeContainer || !overContainer || activeContainer === overContainer) {
             return;
@@ -103,15 +105,17 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
         const { active, over } = event;
         const { id } = active;
         const overId = over?.id;
-        if (!overId) return;
+        if (!overId || !clonedItems || !activeId) return;
 
-        const activeContainer = findContainer(id);
-        const overContainer = findContainer(overId);
+        const activeContainer = findContainer(id, items);
+        const overContainer = findContainer(overId, items);
+        const startingContainer = findContainer(activeId, clonedItems);
 
-        if (!activeContainer || !overContainer || activeContainer !== overContainer) {
+        if (!activeContainer || !overContainer || !startingContainer) {
             return;
         }
 
+        const startingIndex = clonedItems[startingContainer].tasks.map((task) => task.title).indexOf(activeId);
         const activeIndex = items[activeContainer].tasks.map((task) => task.title).indexOf(id);
         const overIndex = items[overContainer].tasks.map((task) => task.title).indexOf(overId);
 
@@ -124,7 +128,12 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
                 },
             }));
         }
-
+        if (activeId && clonedItems) {
+            console.log(
+                `Moved ${id} from ${startingIndex} in ${startingContainer} to ${overIndex} in ${overContainer}`
+            );
+        }
+        setClonedItems(null);
         setActiveId(null);
     }
 

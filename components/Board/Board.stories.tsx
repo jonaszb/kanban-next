@@ -66,10 +66,3 @@ export const LightTheme: StoryObj<typeof BoardElem> = {
     render: (args) => <BoardElem {...args} />,
     args: { columns: testColumns, boardUUID: uuidv4() },
 };
-
-// export const DarkTheme = Template.bind({});
-// DarkTheme.args = { columns: testColumns, boardUUID: uuidv4() };
-// DarkTheme.parameters = { theme: 'dark' };
-
-// export const LightTheme = Template.bind({});
-// LightTheme.args = DarkTheme.args;

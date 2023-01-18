@@ -20,6 +20,7 @@ const boards = [
 export default {
     title: 'Components/Layout/BoardList',
     component: BoardList,
+    argTypes: {},
 } as Meta<typeof BoardList>;
 
 export const List: StoryObj<typeof BoardList> = {
