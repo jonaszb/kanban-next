@@ -32,7 +32,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
 
     return (
         <div
-            className={`app-container grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
+            className={`app-container relative grid h-screen grid-cols-[max-content_1fr] grid-rows-[max-content_1fr] ${
                 darkModeEnabled ? 'dark' : ''
             }`}
         >
@@ -44,10 +44,10 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                     sidebarHidden ? '' : 'sm:col-start-2 sm:border-l'
                 }`}
             >
-                <div id="mobile-menu-root"></div>
+                <div id="mobile-menu-root" />
                 {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
-            <div></div>
+            <div id="modal-root" className="absolute" />
         </div>
     );
 };

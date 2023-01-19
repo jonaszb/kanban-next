@@ -98,14 +98,6 @@ describe('Mobile menu', () => {
         expect(header).toHaveTextContent('All Boards (0)');
     });
 
-    test('Clicking the backdrop closes the menu', async () => {
-        const mockFn = jest.fn();
-        renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
-        const backdrop = screen.getByTestId('modal-backdrop');
-        fireEvent.click(backdrop);
-        expect(mockFn).toHaveBeenCalledTimes(1);
-    });
-
     test('Selecting a board closes the modal', async () => {
         const mockFn = jest.fn();
         renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);

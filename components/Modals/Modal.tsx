@@ -1,22 +1,21 @@
-import { FC, MouseEventHandler, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
 type ModalProps = {
-    onBackgroundClick?: MouseEventHandler;
+    closeModal: () => void;
     className?: string;
     type?: 'mobileMenu';
 };
 
 const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
     const onClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!props.onBackgroundClick) return;
-        event.currentTarget !== event.target ? null : props.onBackgroundClick(event);
+        event.currentTarget !== event.target ? null : props.closeModal();
     };
     return (
         <div
             data-testid="modal-backdrop"
             onClick={onClickHandler}
-            className={`absolute h-full w-full bg-black bg-opacity-50 ${
-                props.type === 'mobileMenu' ? '' : 'flex items-center'
+            className={`absolute bg-black bg-opacity-50 ${
+                props.type === 'mobileMenu' ? 'h-full w-full' : 'flex h-screen w-screen items-center'
             }`}
         >
             <dialog
