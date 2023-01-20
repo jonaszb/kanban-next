@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import useInput from '../../hooks/useInput';
 import { MultiInput } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
@@ -19,11 +20,11 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
     return [true, ''];
 };
 
-const NewBoardForm = () => {
+const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
     const nameInput = useInput<string>(validateName);
     const columnsInput = useInput<MultiInput[]>(validateColumns);
 
-    const formIsValid = nameInput.isValid;
+    const formIsValid = nameInput.isValid && columnsInput.isValid;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -39,6 +40,9 @@ const NewBoardForm = () => {
         console.log(`columnsInput.isValid: ${columnsInput.isValid}`);
         console.log(`Board Name: ${nameInput.value}`);
         console.log('Board Columns: ', columnsInput.value);
+        if (formIsValid) {
+            props.closeModal();
+        }
     };
 
     return (

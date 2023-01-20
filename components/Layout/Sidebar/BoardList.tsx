@@ -51,7 +51,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
                 <span>+ Create New Board</span>
             </button>
             <NewBoardModal>
-                <NewBoardForm />
+                <NewBoardForm closeModal={newBoard.close} />
             </NewBoardModal>
         </React.Fragment>
     );
