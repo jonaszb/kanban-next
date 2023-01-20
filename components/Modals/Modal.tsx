@@ -19,10 +19,10 @@ const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
             }`}
         >
             <dialog
-                className={`flex flex-col rounded-lg bg-white px-0 py-4 dark:bg-dark-grey ${
+                className={`block max-h-[80vh] overflow-scroll bg-white dark:bg-dark-grey ${
                     props.type === 'mobileMenu'
-                        ? ' my-4 w-72 shadow-menu dark:shadow-menu-dark'
-                        : 'w-86 p-6 sm:w-120 sm:p-8'
+                        ? 'my-4 w-72 rounded-lg px-0 py-4 shadow-menu dark:shadow-menu-dark'
+                        : 'w-86 rounded-md p-6 sm:w-120 sm:p-8'
                 } ${props.className || ''}`}
             >
                 {props.children}

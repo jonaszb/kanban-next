@@ -9,6 +9,14 @@ export type Board = {
     uuid: string;
 };
 
+export type MultiInput = {
+    value: string;
+    id: string;
+    isValid?: boolean;
+    isTouched?: boolean;
+    errorMsg?: string;
+};
+
 export type Columns = Record<
     UniqueIdentifier,
     { color: string; tasks: { title: UniqueIdentifier; subtasksDone: number; subtasksTotal: number }[] }

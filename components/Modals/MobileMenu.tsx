@@ -10,10 +10,10 @@ const MobileMenu: FC<{
     };
 
     return (
-        <React.Fragment>
+        <div className="flex flex-col">
             <BoardList onBoardSelect={closeMenuHandler} />
             <ThemeToggle className="mt-4" />
-        </React.Fragment>
+        </div>
     );
 };
 
