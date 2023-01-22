@@ -105,6 +105,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
         const newValues = [...values, { value: '', id: `${id}`, isValid: false, isTouched: false }];
         setValues(newValues);
         setId((prev) => prev + 1);
+        setTimeout(() => setAnimateIn(false), 250);
     };
 
     const handleDeleteInput = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -149,6 +150,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                     },
                 }}
                 onDragEnd={handleDragEnd}
+                onDragStart={() => setAnimateIn(false)}
             >
                 <Droppable droppableId={uuidv4()}>
                     <fieldset className="flex flex-col overflow-x-visible">
@@ -156,7 +158,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                         <SortableContext items={values.map((val) => val.id)} strategy={verticalListSortingStrategy}>
                             {values.map((item) => (
                                 <MultiInputRow
-                                    key={props.id}
+                                    key={item.id}
                                     id={item.id}
                                     onChange={handleInputChange}
                                     value={item.value}
@@ -208,9 +210,6 @@ const MultiInputRow: FC<{
     const handleDelete = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         setIsDeleting(true);
         props.onDelete(e);
-        setTimeout(() => {
-            setIsDeleting(false);
-        }, 250);
     };
 
     return (
@@ -218,8 +217,8 @@ const MultiInputRow: FC<{
             ref={setNodeRef}
             style={style}
             {...restAttributes}
-            className={`mb-3 flex items-center ${props.animateIn ? 'last:animate-expand-input' : ''} ${
-                isDeleting ? 'animate-collapse-input' : ''
+            className={`mb-3 flex items-center ${
+                isDeleting ? 'animate-collapse-input' : props.animateIn ? 'last:animate-expand-input' : ''
             }`}
         >
             <InputField
