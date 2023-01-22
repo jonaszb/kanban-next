@@ -4,10 +4,13 @@ import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Ic
 import MobileMenu from '../../Modals/MobileMenu';
 import { BoardListContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
+import NewTaskForm from '../../Modals/NewTaskForm';
 
 const Header: FC = () => {
     const { selectedBoard, boards } = useContext(BoardListContext);
     const mobileMenu = useModal({ type: 'mobileMenu' });
+    const newTaskModal = useModal();
+    const NewTaskModal = newTaskModal.Component;
     const MenuModal = mobileMenu.Component;
 
     const selectedBoardName = boards.find((board) => board.uuid === selectedBoard)?.name;
@@ -18,6 +21,7 @@ const Header: FC = () => {
 
     const handleNewTaskClick = () => {
         mobileMenu.close();
+        newTaskModal.toggle();
     };
 
     return (
@@ -43,6 +47,9 @@ const Header: FC = () => {
                     <span className="hidden sm:block">+ Add New Task</span>
                     <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
+                <NewTaskModal>
+                    <NewTaskForm closeModal={newTaskModal.close} />
+                </NewTaskModal>
                 <button
                     aria-label="Board options"
                     id="board-options"

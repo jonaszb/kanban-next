@@ -1,14 +1,12 @@
-import React, { FC, MouseEventHandler, useState } from 'react';
-import { MultiInput } from '../../types';
+import React, { FC, useState } from 'react';
+import { MultiInput, MultiInputChangeEvent, MultiInputFocusEvent } from '../../types';
 import { ButtonSecondary } from '../Buttons/Buttons';
 import Droppable from '../Drag-and-drop/Droppable';
-import { Cross, DragIcon } from '../Icons/Icons';
+import { Chevron, Cross, DragIcon } from '../Icons/Icons';
 import { v4 as uuidv4 } from 'uuid';
 import {
-    closestCenter,
     DndContext,
     DragEndEvent,
-    DragStartEvent,
     MeasuringStrategy,
     MouseSensor,
     TouchSensor,
@@ -16,6 +14,7 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import usePopover from '../../hooks/usePopover';
 
 const FormFieldLabel: FC<React.ComponentProps<'label'>> = (props) => {
     const { className, ...labelProps } = props;
@@ -39,7 +38,32 @@ const InputField: FC<React.ComponentProps<'input'> & { haserror?: boolean; error
                     haserror
                         ? 'border-danger pr-36'
                         : 'border-mid-grey border-opacity-25 hover:border-primary focus:border-primary'
-                } h-10 w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25 ${
+                } h-10 min-h-fit w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25 ${
+                    className ?? ''
+                }`}
+            />
+            {haserror && errorMsg && (
+                <span className="absolute top-2 right-4 whitespace-nowrap text-danger">{errorMsg}</span>
+            )}
+        </div>
+    );
+};
+
+const TextareaField: FC<
+    React.ComponentProps<'textarea'> & { haserror?: boolean; errorMsg?: string; small?: boolean }
+> = (props) => {
+    const { className, haserror, errorMsg, ...inputProps } = props;
+    return (
+        <div className="relative w-full overflow-hidden">
+            <textarea
+                {...inputProps}
+                className={`${
+                    haserror
+                        ? 'border-danger pr-36'
+                        : 'border-mid-grey border-opacity-25 hover:border-primary focus:border-primary'
+                } ${
+                    props.small ? 'h-10' : 'h-28'
+                } w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25 ${
                     className ?? ''
                 }`}
             />
@@ -60,14 +84,63 @@ const Input: FC<React.ComponentProps<'input'> & { label: string; haserror?: bool
     );
 };
 
+const Textarea: FC<
+    React.ComponentProps<'textarea'> & { label: string; haserror?: boolean; errorMsg?: string; small?: boolean }
+> = (props) => {
+    const { label, className, ...restProps } = props;
+    return (
+        <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
+            <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
+            <TextareaField {...restProps} />
+        </fieldset>
+    );
+};
+
+const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: string[] }> = (props) => {
+    const popover = usePopover();
+    const PopoverEl = popover.Component;
+
+    const handleSelectClick = (e: any) => {
+        popover.toggle(e);
+    };
+    const { label, className, ...restProps } = props;
+    return (
+        <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
+            <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
+            <div className="relative">
+                <select
+                    onClick={handleSelectClick}
+                    {...restProps}
+                    className="h-10 w-full cursor-pointer appearance-none rounded border-2 border-mid-grey border-opacity-25 bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none hover:border-primary focus:border-primary focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25"
+                >
+                    {props.options.map((option) => (
+                        <option key={option} value={option} className="hidden">
+                            {option}
+                        </option>
+                    ))}
+                </select>
+                <Chevron
+                    className={`pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 scale-125 transition-all`}
+                />
+                <PopoverEl anchorWidth={true}>
+                    <div className="absolute top-10 h-48 w-full bg-yellow-700"></div>
+                </PopoverEl>
+            </div>
+        </fieldset>
+    );
+};
+
 type MultiValueInputProps = React.ComponentProps<'fieldset'> & {
     label: string;
     changeHandler: Function;
     values?: MultiInput[];
+    addBtnText: string;
+    fieldType?: 'input' | 'textarea';
     validationHandler: (val: string | undefined) => [boolean, string];
 };
 
 const MultiValueInput: FC<MultiValueInputProps> = (props) => {
+    const fieldType = props.fieldType ?? 'input';
     const values = props.values ?? [];
     const setValues = props.changeHandler;
     const [id, setId] = React.useState(1);
@@ -88,7 +161,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
 
     const sensors = useSensors(mouseSensor, touchSensor);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: MultiInputChangeEvent) => {
         const { value, id } = e.target;
         const newValues: MultiInput[] = values.map((item) => {
             if (item.id === id) {
@@ -117,7 +190,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
         }, 250);
     };
 
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const handleBlur = (e: MultiInputFocusEvent) => {
         const { value, id } = e.target;
         const newValues: MultiInput[] = values.map((item) => {
             if (item.id === id) {
@@ -169,13 +242,14 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                                     onDelete={handleDeleteInput}
                                     showHandle={values.length > 1}
                                     animateIn={animateIn}
+                                    fieldType={fieldType}
                                 />
                             ))}
                         </SortableContext>
                     </fieldset>
                 </Droppable>
                 <ButtonSecondary type="button" onClick={onNewColumn}>
-                    + Add New Column
+                    {props.addBtnText}
                 </ButtonSecondary>
             </DndContext>
         </div>
@@ -184,15 +258,16 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
 
 const MultiInputRow: FC<{
     id: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (e: MultiInputChangeEvent) => void;
     value: string;
     placeholder?: string;
     haserror?: boolean;
     errorMsg?: string;
-    onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onBlur: (e: MultiInputFocusEvent) => void;
     onDelete: (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => void;
     showHandle?: boolean;
     animateIn?: boolean;
+    fieldType: 'input' | 'textarea';
 }> = (props) => {
     const { attributes, listeners, setNodeRef, transform, transition, setActivatorNodeRef } = useSortable({
         id: props.id,
@@ -212,6 +287,17 @@ const MultiInputRow: FC<{
         props.onDelete(e);
     };
 
+    const inputProps = {
+        id: props.id,
+        onChange: props.onChange,
+        className: 'w-full',
+        value: props.value,
+        placeholder: props.placeholder,
+        haserror: props.haserror,
+        errorMsg: props.errorMsg,
+        onBlur: props.onBlur,
+    };
+
     return (
         <div
             ref={setNodeRef}
@@ -221,16 +307,11 @@ const MultiInputRow: FC<{
                 isDeleting ? 'animate-collapse-input' : props.animateIn ? 'last:animate-expand-input' : ''
             }`}
         >
-            <InputField
-                id={props.id}
-                onChange={props.onChange}
-                className="w-full"
-                value={props.value}
-                placeholder={props.placeholder}
-                haserror={props.haserror}
-                errorMsg={props.errorMsg}
-                onBlur={props.onBlur}
-            />
+            {props.fieldType === 'input' ? (
+                <InputField {...inputProps} />
+            ) : (
+                <TextareaField {...inputProps} small={true} />
+            )}
             <Cross
                 id={`delete-${props.id}`}
                 onClick={handleDelete}
@@ -245,4 +326,4 @@ const MultiInputRow: FC<{
     );
 };
 
-export { Input, MultiValueInput };
+export { Input, MultiValueInput, Textarea, Dropdown };

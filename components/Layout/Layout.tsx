@@ -48,6 +48,7 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
                 {sidebarHidden && <ShowSidebarButton onShowSidebar={showSidebarHandler} />} {children}
             </section>
             <div id="modal-root" className="absolute" />
+            <div id="popover-root" className="absolute" />
         </div>
     );
 };

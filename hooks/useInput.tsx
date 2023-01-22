@@ -1,24 +1,25 @@
 import { useState } from 'react';
+import type { MultiInputChangeEvent } from '../types';
 
 type InputHook<T> = {
     value: T | undefined;
-    isValid: boolean;
-    hasError: boolean;
-    errorMsg: string;
+    isValid?: boolean;
+    hasError?: boolean;
+    errorMsg?: string;
     setIsTouched: (val: boolean) => void;
-    valueChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    valueChangeHandler: (e: MultiInputChangeEvent) => void;
     customValueChangeHandler: (val: T) => void;
-    inputBlurHandler: (e: React.FocusEvent<HTMLInputElement>) => void;
+    inputBlurHandler: (e: MultiInputChangeEvent) => void;
 };
 
-function useInput<T>(validateFn: (value: T) => [boolean, string]): InputHook<T> {
+function useInput<T>(options?: { validateFn?: (value: T) => [boolean, string] }): InputHook<T> {
     const [value, setValue] = useState<T | undefined>(undefined);
     const [isTouched, setIsTouched] = useState(false);
 
-    const [isValid, errorMsg] = validateFn(value as T);
+    const [isValid, errorMsg] = options?.validateFn ? options.validateFn(value as T) : [true, ''];
     const hasError = !isValid && isTouched;
 
-    const valueChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valueChangeHandler = (e: MultiInputChangeEvent) => {
         setValue(e.target.value as T);
     };
 
@@ -26,9 +27,19 @@ function useInput<T>(validateFn: (value: T) => [boolean, string]): InputHook<T> 
         setValue(val);
     };
 
-    const inputBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    const inputBlurHandler = (e: MultiInputChangeEvent) => {
         setIsTouched(true);
     };
+
+    if (!options?.validateFn) {
+        return {
+            value,
+            valueChangeHandler,
+            customValueChangeHandler,
+            inputBlurHandler,
+            setIsTouched,
+        };
+    }
 
     return {
         value,

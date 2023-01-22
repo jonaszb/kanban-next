@@ -21,8 +21,8 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
 };
 
 const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
-    const nameInput = useInput<string>(validateName);
-    const columnsInput = useInput<MultiInput[]>(validateColumns);
+    const nameInput = useInput<string>({ validateFn: validateName });
+    const columnsInput = useInput<MultiInput[]>({ validateFn: validateColumns });
 
     const formIsValid = nameInput.isValid && columnsInput.isValid;
 
@@ -66,6 +66,7 @@ const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
                     values={columnsInput.value}
                     changeHandler={columnsInput.customValueChangeHandler}
                     validationHandler={validateName}
+                    addBtnText="+ Add New Column"
                 />
                 <ButtonPrimary>Create New Board</ButtonPrimary>
             </form>
