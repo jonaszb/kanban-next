@@ -38,7 +38,7 @@ const InputField: FC<React.ComponentProps<'input'> & { haserror?: boolean; error
                     haserror
                         ? 'border-danger pr-36'
                         : 'border-mid-grey border-opacity-25 hover:border-primary focus:border-primary'
-                } h-10 min-h-fit w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25 ${
+                } h-10 min-h-fit w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:placeholder-white dark:placeholder-opacity-25 ${
                     className ?? ''
                 }`}
             />
@@ -163,6 +163,7 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
             <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
             <div className="relative">
                 <select
+                    id={props.id}
                     ref={selectRef}
                     onClick={handleSelectClick}
                     onKeyDown={handleSelectKeyDown}
@@ -184,6 +185,7 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
                         <ul ref={ulRef} className="space-y-2">
                             {props.options.map((option) => (
                                 <li
+                                    role={'option'}
                                     key={option}
                                     onClick={handleOptionSelect}
                                     onKeyDown={handleOptionKeyDown}
@@ -379,18 +381,19 @@ const MultiInputRow: FC<{
             }`}
         >
             {props.fieldType === 'input' ? (
-                <InputField {...inputProps} />
+                <InputField {...inputProps} data-testid="multi-input-field" />
             ) : (
-                <TextareaField {...inputProps} small={true} />
+                <TextareaField {...inputProps} small={true} data-testid="multi-input-field" />
             )}
             <Cross
                 id={`delete-${props.id}`}
                 onClick={handleDelete}
                 className="ml-4 w-5 cursor-pointer fill-mid-grey transition-colors hover:fill-red-500"
+                data-testid="multi-input-delete"
             />
             {props.showHandle && (
                 <i ref={setActivatorNodeRef} {...listeners}>
-                    <DragIcon className="ml-4 w-5 cursor-grab active:cursor-grabbing" />
+                    <DragIcon className="ml-4 w-5 cursor-grab active:cursor-grabbing" data-testid="multi-input-drag" />
                 </i>
             )}
         </div>

@@ -46,8 +46,8 @@ const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
     };
 
     return (
-        <div className="flex flex-col dark:text-white">
-            <h2 className="mb-6 text-lg font-bold">Add New Board</h2>
+        <div className="flex flex-col">
+            <h2 className="mb-6 text-lg font-bold dark:text-white">Add New Board</h2>
             <form onSubmit={handleSubmit} action="submit" className="flex flex-col">
                 <Input
                     onChange={nameInput.valueChangeHandler}

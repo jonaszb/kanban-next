@@ -44,8 +44,8 @@ const NewTaskForm: FC<{ closeModal: Function }> = (props) => {
     };
 
     return (
-        <div className="flex flex-col dark:text-white">
-            <h2 className="mb-6 text-lg font-bold">Add New Task</h2>
+        <div className="flex flex-col">
+            <h2 className="mb-6 text-lg font-bold dark:text-white">Add New Task</h2>
             <form onSubmit={handleSubmit} action="submit" className="flex flex-col">
                 <Input
                     onChange={titleInput.valueChangeHandler}
@@ -77,7 +77,7 @@ const NewTaskForm: FC<{ closeModal: Function }> = (props) => {
                     addBtnText="+ Add New Subtask"
                     fieldType="textarea"
                 />
-                <Dropdown label="Status" className="mb-6" options={statusOptions} />
+                <Dropdown id="column-select" label="Status" className="mb-6" options={statusOptions} />
                 <ButtonPrimary>Create New Task</ButtonPrimary>
             </form>
         </div>
