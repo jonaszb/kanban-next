@@ -5,9 +5,9 @@ import React from 'react';
 type PopoverHook = {
     anchorEl: HTMLElement | null;
     isOpen: boolean;
-    open: (event: React.MouseEvent<HTMLElement>) => void;
+    open: (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void;
     close: () => void;
-    toggle: (event: React.MouseEvent<HTMLElement>) => void;
+    toggle: (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void;
     Component: React.FC<React.PropsWithChildren<{ anchorWidth?: boolean }>>;
 };
 
@@ -17,7 +17,7 @@ const usePopover = (): PopoverHook => {
     const [popoverRoot, setPopoverRoot] = useState<HTMLElement | null>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
 
-    const open = (event: React.MouseEvent<HTMLElement>) => {
+    const open = (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
         setIsOpen(true);
     };
@@ -27,7 +27,7 @@ const usePopover = (): PopoverHook => {
         setIsOpen(false);
     };
 
-    const toggle = (event: React.MouseEvent<HTMLElement>) => {
+    const toggle = (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
         if (isOpen) {
             close();
         } else {
@@ -59,7 +59,6 @@ const usePopover = (): PopoverHook => {
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            console.log('clicked');
             if (
                 isOpen &&
                 popoverRef.current &&

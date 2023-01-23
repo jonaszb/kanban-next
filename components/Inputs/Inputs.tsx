@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { MultiInput, MultiInputChangeEvent, MultiInputFocusEvent } from '../../types';
 import { ButtonSecondary } from '../Buttons/Buttons';
 import Droppable from '../Drag-and-drop/Droppable';
@@ -98,18 +98,75 @@ const Textarea: FC<
 
 const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: string[] }> = (props) => {
     const popover = usePopover();
+    const ulRef = useRef<HTMLUListElement>(null);
+    const selectRef = useRef<HTMLSelectElement>(null);
     const PopoverEl = popover.Component;
+    const [selectedValue, setSelectedValue] = useState<string | undefined>(
+        props.options.length > 0 ? props.options[0] : undefined
+    );
 
-    const handleSelectClick = (e: any) => {
+    const handleSelectClick = (e: React.MouseEvent<HTMLElement>) => {
         popover.toggle(e);
     };
+
+    const handleOptionSelect = (e: React.MouseEvent<HTMLElement>) => {
+        const input = e.target as HTMLElement;
+        setSelectedValue(input.innerText);
+        popover.close();
+    };
+
+    const handleSelectKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+        const input = e.target as HTMLElement;
+        console.log(e);
+        if (e.key === 'Enter') {
+            popover.toggle(e);
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            popover.open(e);
+            ulRef.current?.querySelector('li')?.focus();
+        }
+    };
+
+    const handleOptionKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+        const input = e.target as HTMLElement;
+        const next = input.nextElementSibling as HTMLElement;
+        const prev = input.previousElementSibling as HTMLElement;
+        const first = ulRef.current?.querySelector('li') as HTMLElement;
+        const last = ulRef.current?.querySelectorAll('li')?.[
+            ulRef.current?.querySelectorAll('li').length - 1
+        ] as HTMLElement;
+        if (e.key === 'Enter') {
+            setSelectedValue(input.innerText);
+            popover.close();
+            selectRef.current?.focus();
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            next?.focus();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            prev?.focus();
+        } else if (e.key === 'Tab' || e.key === 'Escape') {
+            e.preventDefault();
+            popover.close();
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            first?.focus();
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            last?.focus();
+        }
+    };
+
     const { label, className, ...restProps } = props;
     return (
         <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
             <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
             <div className="relative">
                 <select
+                    ref={selectRef}
                     onClick={handleSelectClick}
+                    onKeyDown={handleSelectKeyDown}
+                    value={selectedValue}
                     {...restProps}
                     className="h-10 w-full cursor-pointer appearance-none rounded border-2 border-mid-grey border-opacity-25 bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none hover:border-primary focus:border-primary focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25"
                 >
@@ -123,7 +180,21 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
                     className={`pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 scale-125 transition-all`}
                 />
                 <PopoverEl anchorWidth={true}>
-                    <div className="absolute top-10 h-48 w-full bg-yellow-700"></div>
+                    <div className="absolute top-12 w-full rounded-md bg-white p-4 dark:bg-v-dark-grey">
+                        <ul ref={ulRef} className="space-y-2">
+                            {props.options.map((option) => (
+                                <li
+                                    key={option}
+                                    onClick={handleOptionSelect}
+                                    onKeyDown={handleOptionKeyDown}
+                                    tabIndex={0}
+                                    className="cursor-pointer text-mid-grey hover:text-black focus:text-black focus:outline-none dark:hover:text-white dark:focus:text-white"
+                                >
+                                    {option}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </PopoverEl>
             </div>
         </fieldset>
