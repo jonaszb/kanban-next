@@ -9,7 +9,18 @@ export type Board = {
     uuid: string;
 };
 
+export type MultiInput = {
+    value: string;
+    id: string;
+    isValid?: boolean;
+    isTouched?: boolean;
+    errorMsg?: string;
+};
+
 export type Columns = Record<
     UniqueIdentifier,
     { color: string; tasks: { title: UniqueIdentifier; subtasksDone: number; subtasksTotal: number }[] }
 >;
+
+export type MultiInputChangeEvent = React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>;
+export type MultiInputFocusEvent = React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>;

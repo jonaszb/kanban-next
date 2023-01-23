@@ -106,7 +106,26 @@ const Chevron = (props: SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+const Cross = (props: SVGProps<SVGSVGElement>) => (
+    <svg width={15} height={15} xmlns="http://www.w3.org/2000/svg" {...props}>
+        <g fillRule="evenodd">
+            <path d="m12.728 0 2.122 2.122L2.122 14.85 0 12.728z" />
+            <path d="M0 2.122 2.122 0 14.85 12.728l-2.122 2.122z" />
+        </g>
+    </svg>
+);
+
+const DragIcon = (props: SVGProps<SVGSVGElement>) => (
+    <svg width={15} height={15} xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path
+            d="m 4.496094 0 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m 6 0 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m -6 6 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m 6 0 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m -6 6 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m 6 0 c -0.832032 0 -1.5 0.671875 -1.5 1.5 s 0.667968 1.5 1.5 1.5 c 0.828125 0 1.5 -0.671875 1.5 -1.5 s -0.671875 -1.5 -1.5 -1.5 z m 0 0"
+            fill="#828FA3"
+        />
+    </svg>
+);
+
 export {
+    DragIcon,
     BoardIcon,
     AddTaskIconMobile,
     VerticalEllipsisIcon,
@@ -118,4 +137,5 @@ export {
     HideSidebarIcon,
     ShowSidebarIcon,
     Chevron,
+    Cross,
 };

@@ -1,29 +1,28 @@
-import { FC, MouseEventHandler, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
 type ModalProps = {
-    onBackgroundClick?: MouseEventHandler;
+    closeModal: () => void;
     className?: string;
     type?: 'mobileMenu';
 };
 
 const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
     const onClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!props.onBackgroundClick) return;
-        event.currentTarget !== event.target ? null : props.onBackgroundClick(event);
+        event.currentTarget !== event.target ? null : props.closeModal();
     };
     return (
         <div
             data-testid="modal-backdrop"
             onClick={onClickHandler}
-            className={`absolute h-full w-full bg-black bg-opacity-50 ${
-                props.type === 'mobileMenu' ? '' : 'flex items-center'
+            className={`absolute bg-black bg-opacity-50 ${
+                props.type === 'mobileMenu' ? 'h-full w-full' : 'flex h-screen w-screen items-center'
             }`}
         >
             <dialog
-                className={`flex flex-col rounded-lg bg-white px-0 py-4 dark:bg-dark-grey ${
+                className={`block max-h-[80vh] overflow-auto bg-white dark:bg-dark-grey ${
                     props.type === 'mobileMenu'
-                        ? ' my-4 w-72 shadow-menu dark:shadow-menu-dark'
-                        : 'w-86 p-6 sm:w-120 sm:p-8'
+                        ? 'my-4 w-72 rounded-lg px-0 py-4 shadow-menu dark:shadow-menu-dark'
+                        : 'w-86 rounded-md p-6 sm:w-120 sm:p-8'
                 } ${props.className || ''}`}
             >
                 {props.children}

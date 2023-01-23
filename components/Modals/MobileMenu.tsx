@@ -1,7 +1,6 @@
-import { Dispatch, FC, SetStateAction } from 'react';
+import React, { Dispatch, FC, SetStateAction } from 'react';
 import BoardList from '../Layout/Sidebar/BoardList';
 import ThemeToggle from '../Layout/Sidebar/ThemeToggle';
-import Modal from './Modal';
 
 const MobileMenu: FC<{
     setMenuIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -11,10 +10,10 @@ const MobileMenu: FC<{
     };
 
     return (
-        <Modal type="mobileMenu" onBackgroundClick={closeMenuHandler}>
+        <div className="flex flex-col">
             <BoardList onBoardSelect={closeMenuHandler} />
             <ThemeToggle className="mt-4" />
-        </Modal>
+        </div>
     );
 };
 

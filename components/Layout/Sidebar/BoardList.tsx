@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { BoardIcon } from '../../Icons/Icons';
 import type { Board } from '../../../types';
 import { BoardListContext } from '../../../store/BoardListContext';
+import useModal from '../../../hooks/useModal';
+import NewBoardForm from '../../Modals/NewBoardForm';
 
 const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();
@@ -27,18 +29,31 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
 };
 
 const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
+    const newBoard = useModal();
+    const NewBoardModal = newBoard.Component;
+
+    const newBoardHandler = () => {
+        newBoard.toggle();
+    };
+
     const { className, ...restProps } = props;
     return (
-        <button
-            id="new-board-btn"
-            className={`group flex items-center py-3.5 pl-3 font-bold tracking-wide text-primary transition-all hover:text-primary-light lg:pl-6 ${
-                className ?? ''
-            }`}
-            {...restProps}
-        >
-            <BoardIcon className="mr-2 h-4 fill-primary group-hover:fill-primary-light" />
-            <span>+ Create New Board</span>
-        </button>
+        <React.Fragment>
+            <button
+                onClick={newBoardHandler}
+                id="new-board-btn"
+                className={`group flex items-center py-3.5 pl-3 font-bold tracking-wide text-primary transition-all hover:text-primary-light lg:pl-6 ${
+                    className ?? ''
+                }`}
+                {...restProps}
+            >
+                <BoardIcon className="mr-2 h-4 fill-primary group-hover:fill-primary-light" />
+                <span>+ Create New Board</span>
+            </button>
+            <NewBoardModal>
+                <NewBoardForm closeModal={newBoard.close} />
+            </NewBoardModal>
+        </React.Fragment>
     );
 };
 
