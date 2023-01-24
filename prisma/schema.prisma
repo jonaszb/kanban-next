@@ -14,11 +14,11 @@ model Board {
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
-  columns    Column[]
-  user_id    Int
-  user       User      @relation(fields: [user_id], references: [id])
+  columns    Column[]  @relation(name: "BoardColumn")
+  user_uuid  String
+  user       User      @relation(fields: [user_uuid], references: [uuid])
 
-  @@index([user_id])
+  @@index([user_uuid])
 }
 
 model Column {
@@ -27,26 +27,28 @@ model Column {
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
-  board_id   Int
-  position   Int       @unique
+  board_uuid String
+  position   Int
   color      String    @db.VarChar(255)
-  board      Board     @relation(fields: [board_id], references: [id])
-  tasks      Task[]
+  board      Board     @relation(name: "BoardColumn", fields: [board_uuid], references: [uuid], onDelete: Cascade)
+  tasks      Task[]    @relation(name: "ColumnTask")
+  user_uuid  String
 
-  @@index([board_id])
+  @@index([board_uuid])
 }
 
 model Task {
-  id         Int       @id @default(autoincrement())
-  uuid       String    @unique @db.Char(36)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  name       String    @db.VarChar(255)
-  column_id  Int
-  column     Column    @relation(fields: [column_id], references: [id])
-  subtasks   Subtask[]
+  id          Int       @id @default(autoincrement())
+  uuid        String    @unique @db.Char(36)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  name        String    @db.VarChar(255)
+  column_uuid String
+  column      Column    @relation(name: "ColumnTask", fields: [column_uuid], references: [uuid], onDelete: Cascade)
+  subtasks    Subtask[] @relation(name: "TaskSubtask")
+  user_uuid   String
 
-  @@index([column_id])
+  @@index([column_uuid])
 }
 
 model Subtask {
@@ -55,10 +57,10 @@ model Subtask {
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
-  task_id    Int
-  task       Task      @relation(fields: [task_id], references: [id])
+  task_uuid  String
+  task       Task      @relation(name: "TaskSubtask", fields: [task_uuid], references: [uuid], onDelete: Cascade)
 
-  @@index([task_id])
+  @@index([task_uuid])
 }
 
 model User {

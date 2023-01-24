@@ -35,13 +35,23 @@ const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
             return { ...item, isValid, errorMsg, isTouched: true };
         });
         if (newColumnsValue) columnsInput.customValueChangeHandler(newColumnsValue);
-        console.log(`formIsValid: ${formIsValid}`);
-        console.log(`nameInput.isValid: ${nameInput.isValid}`);
-        console.log(`columnsInput.isValid: ${columnsInput.isValid}`);
-        console.log(`Board Name: ${nameInput.value}`);
-        console.log('Board Columns: ', columnsInput.value);
         if (formIsValid) {
-            props.closeModal();
+            const columns = columnsInput.value?.map((item) => {
+                return { name: item.value, color: `#${Math.floor(Math.random() * 16777215).toString(16)}` };
+            });
+
+            fetch('/api/boards', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: nameInput.value,
+                    columns: columns,
+                }),
+            }).then(() => {
+                props.closeModal();
+            });
         }
     };
 

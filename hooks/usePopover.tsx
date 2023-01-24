@@ -5,10 +5,10 @@ import React from 'react';
 type PopoverHook = {
     anchorEl: HTMLElement | null;
     isOpen: boolean;
-    open: (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void;
+    open: (event: React.MouseEvent | React.KeyboardEvent) => void;
     close: () => void;
-    toggle: (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => void;
-    Component: React.FC<React.PropsWithChildren<{ anchorWidth?: boolean }>>;
+    toggle: (event: React.MouseEvent | React.KeyboardEvent) => void;
+    Component: React.FC<React.PropsWithChildren<{ anchorWidth?: boolean; className?: string }>>;
 };
 
 const usePopover = (): PopoverHook => {
@@ -17,8 +17,8 @@ const usePopover = (): PopoverHook => {
     const [popoverRoot, setPopoverRoot] = useState<HTMLElement | null>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
 
-    const open = (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
+    const open = (event: React.MouseEvent | React.KeyboardEvent) => {
+        setAnchorEl(event.currentTarget as HTMLElement);
         setIsOpen(true);
     };
 
@@ -27,7 +27,7 @@ const usePopover = (): PopoverHook => {
         setIsOpen(false);
     };
 
-    const toggle = (event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
+    const toggle = (event: React.MouseEvent | React.KeyboardEvent) => {
         if (isOpen) {
             close();
         } else {
@@ -35,7 +35,7 @@ const usePopover = (): PopoverHook => {
         }
     };
 
-    const Component = (props: React.PropsWithChildren<{ anchorWidth?: boolean }>) => {
+    const Component = (props: React.PropsWithChildren<{ anchorWidth?: boolean; className?: string }>) => {
         const pos = anchorEl?.getBoundingClientRect();
         const style = {
             top: pos?.top,
@@ -45,7 +45,7 @@ const usePopover = (): PopoverHook => {
 
         return isOpen && popoverRoot
             ? ReactDOM.createPortal(
-                  <div ref={popoverRef} className={`absolute`} style={style}>
+                  <div ref={popoverRef} className={`absolute ${props.className}`} style={style}>
                       {props.children}
                   </div>,
                   popoverRoot

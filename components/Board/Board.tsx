@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Column from './Column/Column';
 import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import {
@@ -15,8 +15,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { Columns } from '../../types';
 
 const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
-    const [items, setItems] = useState(props.columns);
-    const [clonedItems, setClonedItems] = useState<Columns | null>(null);
+    const [items, setItems] = useState<Columns>(props.columns);
+    const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
     const mouseSensor = useSensor(MouseSensor, {
@@ -34,7 +34,8 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
 
     const sensors = useSensors(mouseSensor, touchSensor);
 
-    function findContainer(id: UniqueIdentifier, items: Columns) {
+    function findContainer(id: UniqueIdentifier, items: Columns | null) {
+        if (!items) return null;
         if (id in items) {
             return id;
         }
@@ -151,9 +152,10 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                {Object.entries(items).map(([colName, colData]) => {
-                    return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
-                })}
+                {props.columns &&
+                    Object.entries(props.columns).map(([colName, colData]) => {
+                        return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
+                    })}
             </DndContext>
         </section>
     );

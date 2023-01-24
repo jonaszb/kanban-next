@@ -12,19 +12,32 @@ import { ReactElement } from 'react';
 import BoardListContextProvider from '../../../store/BoardListContext';
 import type { BoardListContextProps } from '../../../store/BoardListContext';
 import React from 'react';
+import { Board } from '../../../types';
 
-const boards = [
+const sharedProps = {
+    created_at: new Date(),
+    updated_at: new Date(),
+    user_uuid: uuidv4(),
+    columns: [],
+};
+const boards: Board[] = [
     {
         name: 'Platform Launch',
         uuid: uuidv4(),
+        id: 1,
+        ...sharedProps,
     },
     {
         name: 'Marketing Plan',
         uuid: uuidv4(),
+        id: 2,
+        ...sharedProps,
     },
     {
         name: 'Roadmap',
         uuid: uuidv4(),
+        id: 3,
+        ...sharedProps,
     },
 ];
 
@@ -75,8 +88,28 @@ describe('Header', () => {
         expect(button).toBeDisabled();
     });
 
-    test('New Task button is enabled if a board is selected', async () => {
+    test('New Task button is disabled if a board is selected but has no columns', async () => {
         const result = renderWithCtx(<Header />, providerProps);
+        const button = result.container.querySelector('#new-task');
+        expect(button).toBeDisabled();
+    });
+
+    test('New Task button is enabled if a board is selected and has at least one column', async () => {
+        const propsWithColumn = { ...providerProps };
+        propsWithColumn.boards[1].columns = [
+            {
+                id: 1,
+                uuid: uuidv4(),
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                name: 'Col',
+                position: 1,
+                color: '#000000',
+                board_uuid: uuidv4(),
+                user_uuid: uuidv4(),
+            },
+        ];
+        const result = renderWithCtx(<Header />, propsWithColumn);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeEnabled();
     });

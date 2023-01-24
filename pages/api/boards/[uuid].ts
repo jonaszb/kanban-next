@@ -20,6 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     where: {
                         uuid: req.query.uuid.toString(),
                     },
+                    include: {
+                        columns: {
+                            include: {
+                                tasks: true,
+                            },
+                        },
+                    },
                 });
                 if (!board) {
                     res.status(404).end('Board not found');

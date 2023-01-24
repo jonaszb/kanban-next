@@ -6,8 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 const prisma = new PrismaClient();
 
 type Board = {
-    id: number;
     name: string;
+    columns?: Column[];
+    uuid: string;
+    user: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -36,7 +38,11 @@ const validateBoard = (board: Board) => {
 
 const getBoards = async (res: NextApiResponse) => {
     try {
-        const boards = await prisma.board.findMany();
+        const boards = await prisma.board.findMany({
+            include: {
+                columns: true,
+            },
+        });
         res.status(200).json(boards);
     } catch (error) {
         res.status(500).json({ error });
@@ -44,29 +50,61 @@ const getBoards = async (res: NextApiResponse) => {
 };
 
 const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
-    const board = req.body;
-    board.name = board.name.trim();
+    const boardData: { name: string; columns: { name: string; color: string }[] } = req.body;
+    const board: Board = {
+        name: boardData.name,
+        uuid: uuidv4(),
+        user: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
+    };
+    if (boardData.columns) {
+        board.columns = boardData.columns.map((column, i) => {
+            return {
+                name: column.name,
+                color: column.color,
+                position: i + 1,
+                uuid: uuidv4(),
+                user_uuid: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
+            };
+        });
+    }
+
     try {
         validateBoard(board);
     } catch (error: any) {
         return res.status(400).json({ error: error.message });
     }
-    board.uuid = uuidv4();
-    try {
-        const newBoard = await prisma.board.create({
-            data: {
-                uuid: board.uuid,
-                name: board.name,
-                user: {
-                    connect: {
-                        id: 1,
-                    },
+    const payload = {
+        data: {
+            name: board.name,
+            uuid: board.uuid,
+            user: {
+                connect: {
+                    uuid: board.user,
                 },
             },
-        });
+            columns: {},
+        },
+    };
+    if (board.columns) {
+        payload.data.columns = {
+            createMany: {
+                data: board.columns,
+            },
+        };
+    }
+    try {
+        const newBoard = await prisma.board.create(payload);
         res.status(201).json(newBoard);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error });
     }
+};
+
+type Column = {
+    name: string;
+    color: string;
+    position: number;
+    uuid: string;
+    user_uuid: string;
 };

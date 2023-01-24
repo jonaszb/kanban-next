@@ -38,11 +38,6 @@ const testColumns: Columns = {
                 subtasksDone: 2,
                 subtasksTotal: 2,
             },
-            {
-                title: 'Placeholder 6',
-                subtasksDone: 0,
-                subtasksTotal: 10,
-            },
         ],
     },
     done: {

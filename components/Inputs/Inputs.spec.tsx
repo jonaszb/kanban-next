@@ -5,10 +5,6 @@ import React from 'react';
 import { MultiInput } from '../../types';
 import useInput from '../../hooks/useInput';
 
-const menuProps = {
-    setMenuIsOpen: jest.fn(),
-};
-
 type MultiInputProps = {
     placeholder?: string;
     errorMsg?: string;
