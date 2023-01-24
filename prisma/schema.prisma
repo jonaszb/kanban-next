@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Board {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @db.Char(36)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  name       String    @db.VarChar(255)
+  columns    Column[]
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+model Column {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @db.Char(36)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  name       String    @db.VarChar(255)
+  board_id   Int
+  position   Int       @unique
+  color      String    @db.VarChar(255)
+  board      Board     @relation(fields: [board_id], references: [id])
+  tasks      Task[]
+
+  @@index([board_id])
+}
+
+model Task {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @db.Char(36)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  name       String    @db.VarChar(255)
+  column_id  Int
+  column     Column    @relation(fields: [column_id], references: [id])
+  subtasks   Subtask[]
+
+  @@index([column_id])
+}
+
+model Subtask {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @db.Char(36)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  name       String    @db.VarChar(255)
+  task_id    Int
+  task       Task      @relation(fields: [task_id], references: [id])
+
+  @@index([task_id])
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @db.Char(36)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  email      String    @db.VarChar(255)
+  password   String    @db.VarChar(255)
+  boards     Board[]
+}

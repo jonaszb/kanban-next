@@ -1,7 +1,10 @@
 import Head from 'next/head';
 import { ButtonPrimaryLarge } from '../components/Buttons/Buttons';
+import { useSession, signIn, signOut } from 'next-auth/react';
 
 export default function Home() {
+    const { data: session } = useSession();
+    console.log(session);
     return (
         <>
             <Head>
