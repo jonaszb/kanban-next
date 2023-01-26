@@ -20,8 +20,6 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
     return [true, ''];
 };
 
-const statusOptions = ['Todo', 'Doing', 'Done'];
-
 const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
     const titleInput = useInput<string>({ validateFn: validateName });
     const descriptionInput = useInput<string>();

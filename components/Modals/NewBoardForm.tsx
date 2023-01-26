@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import useInput from '../../hooks/useInput';
+import { useBoardsContext } from '../../store/BoardListContext';
 import { MultiInput } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Input, MultiValueInput } from '../Inputs/Inputs';
@@ -20,7 +21,7 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
     return [true, ''];
 };
 
-const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
+const NewBoardForm: FC<{ onNewBoardCreated: Function }> = (props) => {
     const nameInput = useInput<string>({ validateFn: validateName });
     const columnsInput = useInput<MultiInput[]>({ validateFn: validateColumns });
 
@@ -49,9 +50,11 @@ const NewBoardForm: FC<{ closeModal: Function }> = (props) => {
                     name: nameInput.value,
                     columns: columns,
                 }),
-            }).then(() => {
-                props.closeModal();
-            });
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    props.onNewBoardCreated(data.uuid);
+                });
         }
     };
 

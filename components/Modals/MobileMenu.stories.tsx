@@ -36,13 +36,16 @@ export default {
     component: MobileMenuElem,
 } as Meta<typeof MobileMenuElem>;
 
-type CtxProps = {
-    boards: typeof boards;
-    selectedBoard: string | null;
+const ctxValue = {
+    boards: boards,
+    selectedBoard: null,
+    isLoading: false,
+    error: null,
+    mutateBoards: () => Promise.resolve([]),
 };
 export const MobileMenu: StoryFn<typeof MobileMenuElem> = (args) => {
     return (
-        <BoardListContextProvider value={{ boards: boards, selectedBoard: null }}>
+        <BoardListContextProvider value={ctxValue}>
             <MobileMenuElem setMenuIsOpen={() => {}} />
         </BoardListContextProvider>
     );
@@ -61,7 +64,7 @@ MobileMenu.parameters = {
 
 export const MobileMenuEmpty: StoryFn<typeof MobileMenuElem> = (args, context) => {
     return (
-        <BoardListContextProvider value={{ boards: [], selectedBoard: null }}>
+        <BoardListContextProvider value={ctxValue}>
             <MobileMenuElem setMenuIsOpen={() => {}} />
         </BoardListContextProvider>
     );

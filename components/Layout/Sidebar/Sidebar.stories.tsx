@@ -49,6 +49,9 @@ const SidebarBase: StoryFn<typeof SidebarElem> = (args, context) => {
 const ctxValue = {
     boards: boards,
     selectedBoard: null,
+    isLoading: false,
+    error: null,
+    mutateBoards: () => Promise.resolve([]),
 };
 
 export const Sidebar: StoryFn<typeof SidebarElem> = (args, context) => {
@@ -65,7 +68,7 @@ export const SidebarLong: StoryFn<typeof SidebarElem> = (args, context) => {
 
 export const SidebarEmpty: StoryFn<typeof SidebarElem> = (args, context) => {
     return (
-        <BoardListContextProvider value={{ boards: [], selectedBoard: null }}>
+        <BoardListContextProvider value={{ ...ctxValue, boards: [] }}>
             <div className="h-screen">{SidebarBase(args, context)}</div>
         </BoardListContextProvider>
     );

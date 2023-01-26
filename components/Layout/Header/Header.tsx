@@ -2,7 +2,7 @@ import React, { FC, SyntheticEvent, useContext } from 'react';
 import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
 import MobileMenu from '../../Modals/MobileMenu';
-import { BoardListContext } from '../../../store/BoardListContext';
+import { BoardListContext, useBoardsContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
 import NewTaskForm from '../../Modals/NewTaskForm';
 import usePopover from '../../../hooks/usePopover';
@@ -38,12 +38,13 @@ const PopoverLink = ({
 };
 
 const Header: FC = () => {
-    const { selectedBoard, boards } = useContext(BoardListContext);
+    // const { selectedBoard, boards } = useContext(BoardListContext);
     const mobileMenu = useModal({ type: 'mobileMenu' });
     const newTaskModal = useModal();
     const router = useRouter();
+    const { boards, selectedBoard, mutateBoards } = useBoardsContext();
 
-    const selectedBoardData = boards.find((board) => board.uuid === selectedBoard);
+    const selectedBoardData = boards?.find((board) => board.uuid === selectedBoard);
 
     // Strings for the delete modal
     const modalTitle = 'Delete this board?';
@@ -53,6 +54,7 @@ const Header: FC = () => {
         await fetch(`/api/boards/${selectedBoard}`, {
             method: 'DELETE',
         });
+        mutateBoards();
         deleteBoardModal.close();
         await router.push('/');
     };

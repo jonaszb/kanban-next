@@ -59,6 +59,9 @@ const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) =
 const providerProps = {
     boards: boards,
     selectedBoard: boards[1].uuid,
+    isLoading: false,
+    error: null,
+    mutateBoards: () => Promise.resolve([]),
 };
 
 describe('Header', () => {
