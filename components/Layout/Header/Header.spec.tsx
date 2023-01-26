@@ -126,9 +126,10 @@ describe('Header', () => {
         expect(button).toBeEnabled();
     });
 
-    test('Board Options button is disabled if no board is selected', async () => {
+    // Popover is used for logout as well
+    test('Board Options button is enabled if no board is selected', async () => {
         const result = renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
         const button = result.container.querySelector('#board-options');
-        expect(button).toBeDisabled();
+        expect(button).toBeEnabled();
     });
 });
