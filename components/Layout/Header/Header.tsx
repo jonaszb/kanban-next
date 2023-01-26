@@ -6,17 +6,20 @@ import { BoardListContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
 import NewTaskForm from '../../Modals/NewTaskForm';
 import usePopover from '../../../hooks/usePopover';
+import { useRouter } from 'next/router';
 
 const PopoverLink = ({
     children,
     onClick,
     danger,
     disabled,
+    id,
 }: {
     children: React.ReactNode;
     onClick: (e: SyntheticEvent) => void;
     danger?: boolean;
     disabled?: boolean;
+    id?: string;
 }) => {
     return (
         <li className="mb-4 last:mb-0">
@@ -26,6 +29,7 @@ const PopoverLink = ({
                 } disabled:cursor-default disabled:text-opacity-50`}
                 onClick={onClick}
                 disabled={disabled}
+                id={id}
             >
                 {children}
             </button>
@@ -37,14 +41,34 @@ const Header: FC = () => {
     const { selectedBoard, boards } = useContext(BoardListContext);
     const mobileMenu = useModal({ type: 'mobileMenu' });
     const newTaskModal = useModal();
+    const router = useRouter();
+
+    const selectedBoardData = boards.find((board) => board.uuid === selectedBoard);
+
+    // Strings for the delete modal
+    const modalTitle = 'Delete this board?';
+    const modalMessage = `Are you sure you want to delete the ‘${selectedBoardData?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`;
+
+    const confirmDeleteHandler = async () => {
+        await fetch(`/api/boards/${selectedBoard}`, {
+            method: 'DELETE',
+        });
+        deleteBoardModal.close();
+        await router.push('/');
+    };
+    const deleteBoardModal = useModal({
+        type: 'danger',
+        dangerHeader: modalTitle,
+        dangerMessage: modalMessage,
+        onConfirmDelete: confirmDeleteHandler,
+    });
+    const DeleteBoardModal = deleteBoardModal.Component;
 
     const optionsPopover = usePopover();
     const Popover = optionsPopover.Component;
 
     const NewTaskModal = newTaskModal.Component;
     const MenuModal = mobileMenu.Component;
-
-    const selectedBoardData = boards.find((board) => board.uuid === selectedBoard);
 
     const handleOptionsClick = (e: React.MouseEvent) => {
         mobileMenu.close();
@@ -58,7 +82,10 @@ const Header: FC = () => {
 
     const handleEditBoard = () => {};
 
-    const handleDeleteBoard = () => {};
+    const handleDeleteBoard = () => {
+        optionsPopover.close();
+        deleteBoardModal.toggle();
+    };
 
     return (
         <header className="flex items-center justify-between border-lines-light bg-white font-jakarta dark:border-lines-dark dark:bg-dark-grey dark:text-white sm:border-l">
@@ -96,14 +123,20 @@ const Header: FC = () => {
                 </button>
                 <Popover className="mt-8 -translate-x-full md:mt-12">
                     <ul className="right-0 w-48 rounded-lg bg-white p-4 font-jakarta text-sm shadow-lg dark:bg-v-dark-grey">
-                        <PopoverLink disabled={!selectedBoard} onClick={handleEditBoard}>
+                        <PopoverLink disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
                             Edit Board
                         </PopoverLink>
-                        <PopoverLink disabled={!selectedBoard} danger={true} onClick={handleDeleteBoard}>
+                        <PopoverLink
+                            disabled={!selectedBoard}
+                            danger={true}
+                            onClick={handleDeleteBoard}
+                            id="board-delete"
+                        >
                             Delete Board
                         </PopoverLink>
                     </ul>
                 </Popover>
+                <DeleteBoardModal />
             </div>
         </header>
     );

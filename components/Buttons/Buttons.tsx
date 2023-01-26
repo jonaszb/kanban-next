@@ -53,4 +53,13 @@ const ButtonSecondary: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-export { ButtonPrimaryLarge, ButtonSecondary, ButtonPrimary, Button };
+const ButtonDanger: FC<React.ComponentProps<'button'>> = (props) => {
+    const { className, ...restProps } = props;
+    return (
+        <Button fullWidth className={`bg-danger enabled:hover:bg-danger-light ${className || ''}`} {...restProps}>
+            {props.children}
+        </Button>
+    );
+};
+
+export { ButtonPrimaryLarge, ButtonSecondary, ButtonPrimary, ButtonDanger, Button };

@@ -22,6 +22,9 @@ export default function BoardPage() {
                         };
                     }
                     setColumns(newValue);
+                })
+                .catch((err) => {
+                    router.push('/');
                 });
         }
     }, [uuid]);

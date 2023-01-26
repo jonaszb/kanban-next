@@ -1,26 +1,31 @@
-import { FC, PropsWithChildren } from 'react';
+import { FC, MouseEventHandler, PropsWithChildren } from 'react';
+import { ButtonDanger, ButtonSecondary } from '../Buttons/Buttons';
 
 type ModalProps = {
     closeModal: () => void;
     className?: string;
-    type?: 'mobileMenu';
+    options?: {
+        type?: 'mobileMenu' | 'danger';
+        dangerHeader?: string;
+        dangerMessage?: string;
+        onConfirmDelete?: MouseEventHandler<HTMLButtonElement>;
+    };
 };
 
-const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
-    const onClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
-        event.currentTarget !== event.target ? null : props.closeModal();
-    };
+const ModalBase = (
+    props: PropsWithChildren<ModalProps> & { onClickHandler: (event: React.MouseEvent<HTMLDivElement>) => void }
+) => {
     return (
         <div
             data-testid="modal-backdrop"
-            onClick={onClickHandler}
+            onClick={props.onClickHandler}
             className={`absolute bg-black bg-opacity-50 ${
-                props.type === 'mobileMenu' ? 'h-full w-full' : 'flex h-screen w-screen items-center'
+                props.options?.type === 'mobileMenu' ? 'h-full w-full' : 'flex h-screen w-screen items-center'
             }`}
         >
             <dialog
                 className={`block max-h-[80vh] overflow-auto bg-white dark:bg-dark-grey ${
-                    props.type === 'mobileMenu'
+                    props.options?.type === 'mobileMenu'
                         ? 'my-4 w-72 rounded-lg px-0 py-4 shadow-menu dark:shadow-menu-dark'
                         : 'w-86 rounded-md p-6 sm:w-120 sm:p-8'
                 } ${props.className || ''}`}
@@ -29,5 +34,30 @@ const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
             </dialog>
         </div>
     );
+};
+
+const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
+    const onClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
+        event.currentTarget !== event.target ? null : props.closeModal();
+    };
+
+    const DangerModal = (props: PropsWithChildren<ModalProps>) => {
+        return (
+            <ModalBase {...props} onClickHandler={onClickHandler}>
+                <h2 className="mb-6 text-lg font-bold text-danger">{props.options?.dangerHeader}</h2>
+                <p className="mb-6 text-sm text-mid-grey">{props.options?.dangerMessage}</p>
+                {props.options?.onConfirmDelete && (
+                    <div className="flex justify-end gap-4">
+                        <ButtonDanger onClick={props.options?.onConfirmDelete}>Delete</ButtonDanger>
+                        <ButtonSecondary onClick={props.closeModal}>Cancel</ButtonSecondary>
+                    </div>
+                )}
+            </ModalBase>
+        );
+    };
+    if (props.options?.type === 'danger') {
+        return <DangerModal {...props}></DangerModal>;
+    }
+    return <ModalBase {...props} onClickHandler={onClickHandler}></ModalBase>;
 };
 export default Modal;
