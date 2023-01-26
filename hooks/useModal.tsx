@@ -1,4 +1,4 @@
-import { useState, useEffect, FC, PropsWithChildren } from 'react';
+import { useState, useEffect, FC, PropsWithChildren, MouseEventHandler } from 'react';
 import ReactDOM from 'react-dom';
 import ModalElem from '../components/Modals/Modal';
 
@@ -9,7 +9,12 @@ type ModalHook = {
     Component: FC<PropsWithChildren>;
 };
 
-const useModal = (options?: { type?: 'mobileMenu' }): ModalHook => {
+const useModal = (options?: {
+    type?: 'mobileMenu' | 'danger';
+    dangerHeader?: string;
+    dangerMessage?: string;
+    onConfirmDelete?: MouseEventHandler<HTMLButtonElement>;
+}): ModalHook => {
     const [isOpen, setIsOpen] = useState(false);
     const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
     const [mobileMenuRoot, setMobileMenuRoot] = useState<HTMLElement | null>(null);
@@ -30,7 +35,7 @@ const useModal = (options?: { type?: 'mobileMenu' }): ModalHook => {
     const Component = (props: PropsWithChildren<{}>) => {
         return isOpen && modalRoot && mobileMenuRoot
             ? ReactDOM.createPortal(
-                  <ModalElem closeModal={toggle} type={options?.type}>
+                  <ModalElem closeModal={toggle} options={options}>
                       {props.children}
                   </ModalElem>,
                   options?.type === 'mobileMenu' ? mobileMenuRoot : modalRoot

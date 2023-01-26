@@ -1,14 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import ApiUtils from '../../../utils/apiUtils';
-import mysql from 'mysql2/promise';
 
-const apiUtils = new ApiUtils();
+const prisma = new PrismaClient();
 
 type Board = {
-    id: number;
     name: string;
+    columns?: Column[];
+    uuid: string;
+    user: string;
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -36,31 +37,74 @@ const validateBoard = (board: Board) => {
 };
 
 const getBoards = async (res: NextApiResponse) => {
-    const sql = `SELECT uuid, name FROM Boards`;
     try {
-        const response = await apiUtils.sendQuery(sql);
-        res.status(200).json(response[0]);
+        const boards = await prisma.board.findMany({
+            include: {
+                columns: true,
+            },
+        });
+        res.status(200).json(boards);
     } catch (error) {
         res.status(500).json({ error });
     }
 };
 
 const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
-    const board = req.body;
-    board.name = board.name.trim();
+    const boardData: { name: string; columns: { name: string; color: string }[] } = req.body;
+    const board: Board = {
+        name: boardData.name,
+        uuid: uuidv4(),
+        user: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
+    };
+    if (boardData.columns) {
+        board.columns = boardData.columns.map((column, i) => {
+            return {
+                name: column.name,
+                color: column.color,
+                position: i + 1,
+                uuid: uuidv4(),
+                user_uuid: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
+            };
+        });
+    }
+
     try {
         validateBoard(board);
     } catch (error: any) {
         return res.status(400).json({ error: error.message });
     }
-    board.uuid = uuidv4();
-    const sql = `INSERT INTO Boards (uuid, name) VALUES (?, ?)`;
-    const queryParams = [board.uuid, board.name];
-
+    const payload = {
+        data: {
+            name: board.name,
+            uuid: board.uuid,
+            user: {
+                connect: {
+                    uuid: board.user,
+                },
+            },
+            columns: {},
+        },
+    };
+    if (board.columns) {
+        payload.data.columns = {
+            createMany: {
+                data: board.columns,
+            },
+        };
+    }
     try {
-        await apiUtils.sendQuery(sql, queryParams);
-        res.status(201).json(board);
+        const newBoard = await prisma.board.create(payload);
+        res.status(201).json(newBoard);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error });
     }
+};
+
+type Column = {
+    name: string;
+    color: string;
+    position: number;
+    uuid: string;
+    user_uuid: string;
 };

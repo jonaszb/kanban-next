@@ -2,27 +2,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import ApiUtils from '../../../utils/apiUtils';
 const apiUtils = new ApiUtils();
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!req.query.uuid) {
         return res.status(400).end('Board uuid is required');
     }
-    const queryParams = [req.query.uuid.toString()];
     switch (req.method) {
         case 'DELETE': {
             return await deleteBoard(req, res);
         }
         case 'GET': {
-            const sql = `SELECT uuid, name FROM Boards WHERE uuid = ?`;
             try {
-                const response: any = await apiUtils.sendQuery(sql, queryParams);
-                if (response[0].length === 0) {
+                const board = await prisma.board.findFirst({
+                    where: {
+                        uuid: req.query.uuid.toString(),
+                    },
+                    include: {
+                        columns: {
+                            include: {
+                                tasks: true,
+                            },
+                        },
+                    },
+                });
+                if (!board) {
                     res.status(404).end('Board not found');
-                } else if (response[0].length > 1) {
-                    console.error('Multiple boards found with the same uuid: ' + req.query.uuid);
-                    res.status(500).json({ error: 'Something went wrong' });
                 } else {
-                    res.status(200).json(response[0][0]);
+                    res.status(200).json(board);
                 }
             } catch (e) {
                 console.error(e);
@@ -37,19 +46,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const deleteBoard = async (req: NextApiRequest, res: NextApiResponse) => {
-    const sql = `DELETE FROM Boards WHERE uuid = '${req.query.uuid}'`;
-    if (!req.query.uuid) {
+    const boardUUID = req.query.uuid?.toString();
+    if (!boardUUID) {
         return res.status(400).end('Board uuid is required');
     }
-    const queryParams = [req.query.uuid.toString()];
     try {
-        const response: any = await apiUtils.sendQuery(sql, queryParams); // TODO - fix type
-        if (response[0].affectedRows === 0) {
-            res.status(404).end('Board not found');
+        await prisma.board.delete({
+            where: {
+                uuid: boardUUID,
+            },
+        });
+        res.status(200).end();
+    } catch (error: any) {
+        if (error.code === 'P2025') {
+            return res.status(404).end('Board not found');
         } else {
-            res.status(200).end();
+            console.error(error);
+            return res.status(500).end('Something went wrong');
         }
-    } catch (error) {
-        res.status(500).json({ error });
     }
 };

@@ -19,7 +19,11 @@ const Button: FC<{ fullWidth?: boolean; className?: string; large?: boolean } & 
 const ButtonPrimaryLarge: FC<React.ComponentProps<'button'>> = (props) => {
     const { className, ...restProps } = props;
     return (
-        <Button large className={`bg-primary enabled:hover:bg-primary-light ${className || ''}`} {...restProps}>
+        <Button
+            large
+            className={`bg-primary leading-4 enabled:hover:bg-primary-light ${className || ''}`}
+            {...restProps}
+        >
             {props.children}
         </Button>
     );
@@ -49,4 +53,13 @@ const ButtonSecondary: FC<React.ComponentProps<'button'>> = (props) => {
     );
 };
 
-export { ButtonPrimaryLarge, ButtonSecondary, ButtonPrimary, Button };
+const ButtonDanger: FC<React.ComponentProps<'button'>> = (props) => {
+    const { className, ...restProps } = props;
+    return (
+        <Button fullWidth className={`bg-danger enabled:hover:bg-danger-light ${className || ''}`} {...restProps}>
+            {props.children}
+        </Button>
+    );
+};
+
+export { ButtonPrimaryLarge, ButtonSecondary, ButtonPrimary, ButtonDanger, Button };

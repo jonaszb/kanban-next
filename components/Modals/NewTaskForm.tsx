@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import useInput from '../../hooks/useInput';
-import { MultiInput } from '../../types';
+import { Column, MultiInput } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
 
@@ -22,12 +22,13 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
 
 const statusOptions = ['Todo', 'Doing', 'Done'];
 
-const NewTaskForm: FC<{ closeModal: Function }> = (props) => {
+const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
     const titleInput = useInput<string>({ validateFn: validateName });
     const descriptionInput = useInput<string>();
     const subtasksInput = useInput<MultiInput[]>({ validateFn: validateColumns });
 
     const formIsValid = titleInput.isValid && subtasksInput.isValid;
+    const dropdownOptions = props.columns?.map((item) => item.name);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -77,7 +78,9 @@ const NewTaskForm: FC<{ closeModal: Function }> = (props) => {
                     addBtnText="+ Add New Subtask"
                     fieldType="textarea"
                 />
-                <Dropdown id="column-select" label="Status" className="mb-6" options={statusOptions} />
+                {dropdownOptions && (
+                    <Dropdown id="column-select" label="Status" className="mb-6" options={dropdownOptions} />
+                )}
                 <ButtonPrimary>Create New Task</ButtonPrimary>
             </form>
         </div>

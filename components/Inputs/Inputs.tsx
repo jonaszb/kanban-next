@@ -63,7 +63,7 @@ const TextareaField: FC<
                         : 'border-mid-grey border-opacity-25 hover:border-primary focus:border-primary'
                 } ${
                     props.small ? 'h-10' : 'h-28'
-                } w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25 ${
+                } w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:placeholder-white dark:placeholder-opacity-25 ${
                     className ?? ''
                 }`}
             />
