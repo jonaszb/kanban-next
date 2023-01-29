@@ -16,6 +16,8 @@ export default class BasePage {
     readonly showSidebarBtn: Locator;
     readonly newBoardBtn: Locator;
     readonly mobileMenuToggle: Locator;
+    readonly deleteBoardBtn: Locator;
+    readonly editBoardBtn: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -35,9 +37,11 @@ export default class BasePage {
         this.mobileMenuToggle = this.page.locator('#mobile-menu-toggle');
         this.newTaskBtn = this.page.locator('#new-task');
         this.boardOptionsBtn = this.page.locator('#board-options');
+        this.deleteBoardBtn = this.page.locator('#board-delete');
+        this.editBoardBtn = this.page.locator('#board-edit');
     }
 
     async goto() {
-        await this.page.goto('/');
+        await this.page.goto(this.url);
     }
 }
