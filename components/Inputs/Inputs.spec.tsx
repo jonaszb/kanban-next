@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Input, Textarea, Dropdown, MultiValueInput } from './Inputs';
 import React from 'react';
@@ -43,182 +43,182 @@ const MultiInputWrapper = (props: MultiInputProps) => {
 const dropdownOptions = ['Todo', 'Doing', 'Done'];
 
 describe('Custom Input', () => {
-    test('Is displayed with specified label', () => {
-        render(<Input label="Test label" />);
+    test('Is displayed with specified label', async () => {
+        await act(() => render(<Input label="Test label" />));
         const label = screen.getByText('Test label');
         expect(label).toBeInTheDocument();
     });
 
-    test('Has no placeholder by default', () => {
-        render(<Input id="test" label="Test" />);
+    test('Has no placeholder by default', async () => {
+        await act(() => render(<Input id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('placeholder');
     });
 
-    test('Has no value by default', () => {
-        render(<Input id="test" label="Test" />);
+    test('Has no value by default', async () => {
+        await act(() => render(<Input id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('value');
     });
 
-    test('Can have a placeholder if specified', () => {
-        render(<Input label="Test" placeholder="Test placeholder" />);
+    test('Can have a placeholder if specified', async () => {
+        await act(() => render(<Input label="Test" placeholder="Test placeholder" />));
         const input = screen.getByPlaceholderText('Test placeholder');
         expect(input).toBeInTheDocument();
     });
 
-    test('Can have a value if specified', () => {
-        render(<Input label="Test" value="Test value" />);
+    test('Can have a value if specified', async () => {
+        await act(() => render(<Input label="Test" value="Test value" />));
         const input = screen.getByDisplayValue('Test value');
         expect(input).toBeInTheDocument();
     });
 
-    test('Can have a type if specified', () => {
-        render(<Input id="test" label="Test" type="password" />);
+    test('Can have a type if specified', async () => {
+        await act(() => render(<Input id="test" label="Test" type="password" />));
         const input = screen.getByLabelText('Test');
         expect(input).toHaveAttribute('type', 'password');
     });
 
-    test('Has a label for attribute that matches the input id', () => {
-        render(<Input id="test" label="Test" />);
+    test('Has a label for attribute that matches the input id', async () => {
+        await act(() => render(<Input id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).toHaveAttribute('id', 'test');
     });
 
-    test('Can display an error message', () => {
-        render(<Input label="Test" errorMsg="Test error" haserror={true} />);
+    test('Can display an error message', async () => {
+        await act(() => render(<Input label="Test" errorMsg="Test error" haserror={true} />));
         const error = screen.getByText('Test error');
         expect(error).toBeInTheDocument();
     });
 
-    test('Error is not displayed if not specified', () => {
-        render(<Input label="Test" />);
+    test('Error is not displayed if not specified', async () => {
+        await act(() => render(<Input label="Test" />));
         const error = screen.queryByText('Test error');
         expect(error).not.toBeInTheDocument();
     });
 
-    test('Error is not displayed if errorMsg is specified but haserror is false', () => {
-        render(<Input label="Test" errorMsg="Test error" />);
+    test('Error is not displayed if errorMsg is specified but haserror is false', async () => {
+        await act(() => render(<Input label="Test" errorMsg="Test error" />));
         const error = screen.queryByText('Test error');
         expect(error).not.toBeInTheDocument();
     });
 
-    test('Can have a custom class applied to wrapping fieldset', () => {
-        render(<Input id="test" label="Test" className="custom-class" />);
+    test('Can have a custom class applied to wrapping fieldset', async () => {
+        await act(() => render(<Input id="test" label="Test" className="custom-class" />));
         const fieldset = screen.getByLabelText('Test').closest('fieldset');
         expect(fieldset).toHaveClass('custom-class');
     });
 });
 
 describe('Custom Textarea', () => {
-    test('Is displayed with specified label', () => {
-        render(<Textarea id="test" label="Test label" />);
+    test('Is displayed with specified label', async () => {
+        await act(() => render(<Textarea id="test" label="Test label" />));
         const label = screen.getByText('Test label');
         expect(label).toBeInTheDocument();
     });
 
-    test('Has no placeholder by default', () => {
-        render(<Textarea id="test" label="Test" />);
+    test('Has no placeholder by default', async () => {
+        await act(() => render(<Textarea id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('placeholder');
     });
 
-    test('Has no value by default', () => {
-        render(<Textarea id="test" label="Test" />);
+    test('Has no value by default', async () => {
+        await act(() => render(<Textarea id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('value');
     });
 
-    test('Can have a placeholder if specified', () => {
-        render(<Textarea label="Test" placeholder="Test placeholder" />);
+    test('Can have a placeholder if specified', async () => {
+        await act(() => render(<Textarea label="Test" placeholder="Test placeholder" />));
         const input = screen.getByPlaceholderText('Test placeholder');
         expect(input).toBeInTheDocument();
     });
 
-    test('Can have a value if specified', () => {
-        render(<Textarea label="Test" value="Test value" />);
+    test('Can have a value if specified', async () => {
+        await act(() => render(<Textarea label="Test" value="Test value" />));
         const input = screen.getByDisplayValue('Test value');
         expect(input).toBeInTheDocument();
     });
 
-    test('Has a label for attribute that matches the input id', () => {
-        render(<Textarea id="test" label="Test" />);
+    test('Has a label for attribute that matches the input id', async () => {
+        await act(() => render(<Textarea id="test" label="Test" />));
         const input = screen.getByLabelText('Test');
         expect(input).toHaveAttribute('id', 'test');
     });
 
-    test('Can display an error message', () => {
-        render(<Textarea label="Test" errorMsg="Test error" haserror={true} />);
+    test('Can display an error message', async () => {
+        await act(() => render(<Textarea label="Test" errorMsg="Test error" haserror={true} />));
         const error = screen.getByText('Test error');
         expect(error).toBeInTheDocument();
     });
 
-    test('Error is not displayed if not specified', () => {
-        render(<Textarea label="Test" />);
+    test('Error is not displayed if not specified', async () => {
+        await act(() => render(<Textarea label="Test" />));
         const error = screen.queryByText('Test error');
         expect(error).not.toBeInTheDocument();
     });
 
-    test('Error is not displayed if errorMsg is specified but haserror is false', () => {
-        render(<Textarea label="Test" errorMsg="Test error" />);
+    test('Error is not displayed if errorMsg is specified but haserror is false', async () => {
+        await act(() => render(<Textarea label="Test" errorMsg="Test error" />));
         const error = screen.queryByText('Test error');
         expect(error).not.toBeInTheDocument();
     });
 
-    test('Can have a custom class applied to wrapping fieldset', () => {
-        render(<Textarea id="test" label="Test" className="custom-class" />);
+    test('Can have a custom class applied to wrapping fieldset', async () => {
+        await act(() => render(<Textarea id="test" label="Test" className="custom-class" />));
         const fieldset = screen.getByLabelText('Test').closest('fieldset');
         expect(fieldset).toHaveClass('custom-class');
     });
 });
 
 describe('Custom Dropdown', () => {
-    test('Is displayed with specified label', () => {
-        render(<Dropdown id="test" label="Test label" options={dropdownOptions} />);
+    test('Is displayed with specified label', async () => {
+        await act(() => render(<Dropdown id="test" label="Test label" options={dropdownOptions} />));
         const label = screen.getByText('Test label');
         expect(label).toBeInTheDocument();
     });
 
-    test('First option is selected by default', () => {
-        render(<Dropdown id="test" label="Test" options={dropdownOptions} />);
+    test('First option is selected by default', async () => {
+        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('value');
     });
 
-    test('Can have a value if specified', () => {
-        render(<Dropdown id="test" label="Test" options={dropdownOptions} value="Done" />);
+    test('Can have a value if specified', async () => {
+        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} value="Done" />));
         const input = screen.getByDisplayValue('Done');
         expect(input).toBeInTheDocument();
     });
 
-    test('Has a label for attribute that matches the input id', () => {
-        render(<Dropdown id="test" label="Test" options={dropdownOptions} />);
+    test('Has a label for attribute that matches the input id', async () => {
+        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} />));
         const input = screen.getByLabelText('Test');
         expect(input).toHaveAttribute('id', 'test');
     });
 
-    test('Can have a custom class applied to wrapping fieldset', () => {
-        render(<Dropdown id="test" label="Test" options={dropdownOptions} className="custom-class" />);
+    test('Can have a custom class applied to wrapping fieldset', async () => {
+        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} className="custom-class" />));
         const fieldset = screen.getByLabelText('Test').closest('fieldset');
         expect(fieldset).toHaveClass('custom-class');
     });
 });
 
 describe('MultiValueInput', () => {
-    test('Is displayed with specified label', () => {
-        render(<MultiInputWrapper />);
+    test('Is displayed with specified label', async () => {
+        await act(() => render(<MultiInputWrapper />));
         const label = screen.getByText('Test label');
         expect(label).toBeInTheDocument();
     });
 
-    test('Renders the add button', () => {
-        render(<MultiInputWrapper />);
+    test('Renders the add button', async () => {
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         expect(button).toBeInTheDocument();
     });
 
     test('Add button creates a new input field', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         const input = await screen.findByTestId('multi-input-field');
@@ -226,7 +226,7 @@ describe('MultiValueInput', () => {
     });
 
     test('New input has no value by default', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         const input = await screen.findByTestId('multi-input-field');
@@ -234,7 +234,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Input has no error state when created', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         await screen.findByTestId('multi-input-field');
@@ -243,7 +243,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Input has error state when blurred', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         const input = await screen.findByTestId('multi-input-field');
@@ -253,7 +253,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Error state is removed when valid value is entered', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         const input = await screen.findByTestId('multi-input-field');
@@ -264,7 +264,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Drag handle is not displayed when a single input is present', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         await screen.findByTestId('multi-input-field');
@@ -273,7 +273,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Drag handle is not displayed when a single input is present', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         fireEvent.click(button);
@@ -282,7 +282,7 @@ describe('MultiValueInput', () => {
     });
 
     test('Delete icon removes the input when clicked', async () => {
-        render(<MultiInputWrapper />);
+        await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         const input = await screen.findByTestId('multi-input-field');

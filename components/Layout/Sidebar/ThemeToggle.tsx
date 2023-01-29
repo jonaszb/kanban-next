@@ -7,6 +7,7 @@ const ThemeToggle: FC<{ className?: string }> = (props) => {
 
     return (
         <div
+            id="theme-toggle"
             className={`mx-3 flex items-center justify-center rounded bg-light-grey py-3.5 dark:bg-v-dark-grey ${
                 props.className ?? ''
             }`}
@@ -24,6 +25,8 @@ const ThemeToggle: FC<{ className?: string }> = (props) => {
                     className={`flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-primary transition-all group-hover:bg-primary-light  `}
                     htmlFor="themeSwitch"
                     role="switch"
+                    aria-checked={darkModeEnabled}
+                    aria-label="Toggle dark mode"
                 >
                     <span
                         className={`aspect-square w-4 cursor-pointer  rounded-full bg-white transition-all duration-300 ease-in-out ${

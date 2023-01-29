@@ -28,7 +28,7 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
     );
 };
 
-const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
+const NewBoardButton: FC<React.ComponentProps<'button'> & { onBoardSelect?: Function }> = (props) => {
     const router = useRouter();
     const newBoard = useModal();
     const NewBoardModal = newBoard.Component;
@@ -43,6 +43,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
         mutateBoards();
         newBoard.close();
         router.push(`/board/${newBoardUUID}`);
+        props.onBoardSelect && props.onBoardSelect();
     };
 
     const { className, ...restProps } = props;
@@ -73,11 +74,11 @@ const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
 
     const { boards } = useBoardsContext();
     return (
-        <div className="flex flex-1 flex-col overflow-y-auto">
+        <div id="board-list" className="flex flex-1 flex-col overflow-y-auto">
             {boards && (
                 <span
                     id="board-count"
-                    role="heading"
+                    data-testid="board-count"
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${boards.length})`}</span>
             )}{' '}
@@ -88,7 +89,7 @@ const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
                     </li>
                 ))}
             </ul>
-            <NewBoardButton />
+            <NewBoardButton onBoardSelect={props.onBoardSelect} />
         </div>
     );
 };

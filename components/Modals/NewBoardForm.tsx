@@ -73,6 +73,7 @@ const NewBoardForm: FC<{ onNewBoardCreated: Function }> = (props) => {
                     className="mb-6"
                 />
                 <MultiValueInput
+                    id="board-columns"
                     placeholder="e.g. To Do"
                     label="Board Columns"
                     className="mb-6"

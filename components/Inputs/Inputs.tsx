@@ -204,6 +204,7 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
 };
 
 type MultiValueInputProps = React.ComponentProps<'fieldset'> & {
+    id?: string;
     label: string;
     changeHandler: Function;
     values?: MultiInput[];
@@ -299,7 +300,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                 onDragStart={() => setAnimateIn(false)}
             >
                 <Droppable droppableId={uuidv4()}>
-                    <fieldset className="flex flex-col overflow-x-visible">
+                    <fieldset className="flex flex-col overflow-x-visible" id={props.id}>
                         <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
                         <SortableContext items={values.map((val) => val.id)} strategy={verticalListSortingStrategy}>
                             {values.map((item) => (
@@ -321,7 +322,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                         </SortableContext>
                     </fieldset>
                 </Droppable>
-                <ButtonSecondary type="button" onClick={onNewColumn}>
+                <ButtonSecondary id={props.id ? `${props.id}-add` : undefined} type="button" onClick={onNewColumn}>
                     {props.addBtnText}
                 </ButtonSecondary>
             </DndContext>

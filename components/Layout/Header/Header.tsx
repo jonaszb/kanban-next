@@ -95,7 +95,11 @@ const Header: FC = () => {
                 <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
                     {selectedBoardData?.name}
                 </h1>
-                <button className="flex w-6 items-center justify-center sm:hidden" onClick={mobileMenu.toggle}>
+                <button
+                    id="mobile-menu-toggle"
+                    className="flex w-6 items-center justify-center sm:hidden"
+                    onClick={mobileMenu.toggle}
+                >
                     <Chevron className={`transition-all ${mobileMenu.isOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <MenuModal>
