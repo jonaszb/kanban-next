@@ -64,7 +64,7 @@ MobileMenu.parameters = {
 
 export const MobileMenuEmpty: StoryFn<typeof MobileMenuElem> = (args, context) => {
     return (
-        <BoardListContextProvider value={ctxValue}>
+        <BoardListContextProvider value={{ ...ctxValue, boards: [] }}>
             <MobileMenuElem setMenuIsOpen={() => {}} />
         </BoardListContextProvider>
     );
