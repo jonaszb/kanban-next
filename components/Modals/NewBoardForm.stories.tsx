@@ -10,7 +10,7 @@ export default {
 export const NewBoardFormLight: StoryFn<typeof NewBoardFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewBoardFormElem closeModal={() => {}} />
+            <NewBoardFormElem onNewBoardCreated={() => {}} />
         </Modal>
     );
 };
@@ -22,7 +22,7 @@ NewBoardFormLight.parameters = {
 export const NewBoardFormDark: StoryFn<typeof NewBoardFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewBoardFormElem closeModal={() => {}} />
+            <NewBoardFormElem onNewBoardCreated={() => {}} />
         </Modal>
     );
 };

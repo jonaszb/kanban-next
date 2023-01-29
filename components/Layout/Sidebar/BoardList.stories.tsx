@@ -37,9 +37,17 @@ export default {
     argTypes: {},
 } as Meta<typeof BoardList>;
 
+const ctxValue = {
+    boards: boards,
+    selectedBoard: null,
+    isLoading: false,
+    error: null,
+    mutateBoards: () => Promise.resolve([]),
+};
+
 export const List: StoryObj<typeof BoardList> = {
     render: (args) => (
-        <BoardListContextProvider value={{ boards: boards, selectedBoard: null }}>
+        <BoardListContextProvider value={ctxValue}>
             <BoardList {...args} />
         </BoardListContextProvider>
     ),

@@ -1,14 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import ApiUtils from '../../../utils/apiUtils';
-const apiUtils = new ApiUtils();
 import { PrismaClient } from '@prisma/client';
+import { validate } from 'uuid';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (!req.query.uuid) {
-        return res.status(400).end('Board uuid is required');
+    if (!req.query.uuid || !validate(req.query.uuid.toString())) {
+        return res.status(400).end('Invalid board UUID');
     }
     switch (req.method) {
         case 'DELETE': {

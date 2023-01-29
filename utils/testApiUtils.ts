@@ -42,6 +42,11 @@ export default class TestApiUtils {
     deleteBoard: AsyncDeleteFn = async (uuid, options?) => {
         return await this.delete(`/api/boards/${uuid}`, options);
     };
+
+    getBoardByName = async (name: string) => {
+        const boards = await this.getBoards();
+        return boards.find((board) => board.name === name);
+    };
 }
 
 type CrudRequest = (url: string, options?: RequestOptionsWithBody & { rawResponse?: boolean }) => Promise<APIResponse>;

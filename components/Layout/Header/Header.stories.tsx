@@ -24,6 +24,9 @@ const boards: Board[] = [
 const ctxValue = {
     boards: boards,
     selectedBoard: boards[0].uuid,
+    isLoading: false,
+    error: null,
+    mutateBoards: () => Promise.resolve([]),
 };
 
 export const HeaderDark: StoryObj<typeof Header> = {

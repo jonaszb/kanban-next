@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import { BoardIcon } from '../../Icons/Icons';
 import type { Board } from '../../../types';
-import { BoardListContext } from '../../../store/BoardListContext';
+import { useBoardsContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
 import NewBoardForm from '../../Modals/NewBoardForm';
 
@@ -28,12 +28,22 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
     );
 };
 
-const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
+const NewBoardButton: FC<React.ComponentProps<'button'> & { onBoardSelect?: Function }> = (props) => {
+    const router = useRouter();
     const newBoard = useModal();
     const NewBoardModal = newBoard.Component;
 
+    const { mutateBoards } = useBoardsContext();
+
     const newBoardHandler = () => {
         newBoard.toggle();
+    };
+
+    const handleNewBoardCreated = (newBoardUUID: string) => {
+        mutateBoards();
+        newBoard.close();
+        router.push(`/board/${newBoardUUID}`);
+        props.onBoardSelect && props.onBoardSelect();
     };
 
     const { className, ...restProps } = props;
@@ -51,7 +61,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'>> = (props) => {
                 <span>+ Create New Board</span>
             </button>
             <NewBoardModal>
-                <NewBoardForm closeModal={newBoard.close} />
+                <NewBoardForm onNewBoardCreated={handleNewBoardCreated} />
             </NewBoardModal>
         </React.Fragment>
     );
@@ -62,14 +72,13 @@ const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
         props.onBoardSelect && props.onBoardSelect();
     };
 
-    const { boards } = useContext(BoardListContext);
-
+    const { boards } = useBoardsContext();
     return (
-        <div className="flex flex-1 flex-col overflow-y-auto">
+        <div id="board-list" className="flex flex-1 flex-col overflow-y-auto">
             {boards && (
                 <span
                     id="board-count"
-                    role="heading"
+                    data-testid="board-count"
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${boards.length})`}</span>
             )}{' '}
@@ -80,7 +89,7 @@ const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
                     </li>
                 ))}
             </ul>
-            <NewBoardButton />
+            <NewBoardButton onBoardSelect={props.onBoardSelect} />
         </div>
     );
 };
