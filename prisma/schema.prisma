@@ -32,7 +32,6 @@ model Column {
   color      String    @db.VarChar(255)
   board      Board     @relation(name: "BoardColumn", fields: [board_uuid], references: [uuid], onDelete: Cascade)
   tasks      Task[]    @relation(name: "ColumnTask")
-  user_uuid  String
 
   @@index([board_uuid])
 }
@@ -44,10 +43,10 @@ model Task {
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   name        String    @db.VarChar(255)
   description String?   @db.VarChar(1023)
+  position    Int
   column_uuid String
   column      Column    @relation(name: "ColumnTask", fields: [column_uuid], references: [uuid], onDelete: Cascade)
   subtasks    Subtask[] @relation(name: "TaskSubtask")
-  user_uuid   String
 
   @@index([column_uuid])
 }
@@ -59,6 +58,7 @@ model Subtask {
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
   task_uuid  String
+  completed  Boolean   @default(false)
   task       Task      @relation(name: "TaskSubtask", fields: [task_uuid], references: [uuid], onDelete: Cascade)
 
   @@index([task_uuid])

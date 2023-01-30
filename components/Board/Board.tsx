@@ -12,12 +12,27 @@ import {
     UniqueIdentifier,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Columns } from '../../types';
+import { Board, Columns } from '../../types';
+import { fetcher } from '../../utils/utils';
+import useSWR from 'swr';
 
-const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
-    const [items, setItems] = useState<Columns>(props.columns);
+const Board: FC<{ boardUUID: string }> = (props) => {
+    const boardData = useSWR<Board>(`/api/boards/${props.boardUUID}`, fetcher);
+    const [items, setItems] = useState<Columns>({});
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+
+    useEffect(() => {
+        const newValue: Columns = {};
+        if (!boardData.data) return;
+        for (const column of boardData.data.columns) {
+            newValue[column.name] = {
+                color: column.color,
+                tasks: column.tasks ?? [],
+            };
+        }
+        setItems(newValue);
+    }, [boardData.data?.columns]);
 
     const mouseSensor = useSensor(MouseSensor, {
         // Require the mouse to move by 10 pixels before activating
@@ -40,7 +55,7 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
             return id;
         }
 
-        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.title === id));
+        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.name === id));
     }
 
     function handleDragStart(event: DragStartEvent) {
@@ -70,8 +85,8 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
             const overItems = prev[overContainer].tasks;
 
             // Find the indexes for the items
-            const activeIndex = activeItems.map((task) => task.title).indexOf(id);
-            const overIndex = overItems.map((task) => task.title).indexOf(overId);
+            const activeIndex = activeItems.map((task) => task.name).indexOf(id);
+            const overIndex = overItems.map((task) => task.name).indexOf(overId);
 
             let newIndex;
             if (overId in prev) {
@@ -88,7 +103,7 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
                 ...prev,
                 [activeContainer]: {
                     ...prev[activeContainer],
-                    tasks: [...prev[activeContainer].tasks.filter((task) => task.title !== active.id)],
+                    tasks: [...prev[activeContainer].tasks.filter((task) => task.name !== active.id)],
                 },
                 [overContainer]: {
                     ...prev[overContainer],
@@ -116,9 +131,9 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
             return;
         }
 
-        const startingIndex = clonedItems[startingContainer].tasks.map((task) => task.title).indexOf(activeId);
-        const activeIndex = items[activeContainer].tasks.map((task) => task.title).indexOf(id);
-        const overIndex = items[overContainer].tasks.map((task) => task.title).indexOf(overId);
+        const startingIndex = clonedItems[startingContainer].tasks.map((task) => task.name).indexOf(activeId);
+        const activeIndex = items[activeContainer].tasks.map((task) => task.name).indexOf(id);
+        const overIndex = items[overContainer].tasks.map((task) => task.name).indexOf(overId);
 
         if (activeIndex !== overIndex) {
             setItems((items) => ({
@@ -152,8 +167,8 @@ const Board: FC<{ boardUUID: string; columns: Columns }> = (props) => {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                {props.columns &&
-                    Object.entries(props.columns).map(([colName, colData]) => {
+                {items &&
+                    Object.entries(items).map(([colName, colData]) => {
                         return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
                     })}
             </DndContext>

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef } from 'react';
 import useInput from '../../hooks/useInput';
 import { Column, MultiInput } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
@@ -7,7 +7,7 @@ import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
 // Validate input length - must be between 1 and 20 characters. Return tuple of boolean and error message.
 const validateName = (val: string | undefined): [boolean, string] => {
     if (!val || val?.trim().length < 1) return [false, "Can't be empty"];
-    if (val?.trim().length > 20) return [false, 'Name too long'];
+    if (val?.trim().length > 100) return [false, 'Name too long'];
     return [true, ''];
 };
 
@@ -21,12 +21,13 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
 };
 
 const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
+    const dropdownOptions = props.columns?.map((item) => item.name);
     const titleInput = useInput<string>({ validateFn: validateName });
     const descriptionInput = useInput<string>();
     const subtasksInput = useInput<MultiInput[]>({ validateFn: validateColumns });
+    const columnDropdown = useInput<string>({ initialValue: dropdownOptions && dropdownOptions[0] });
 
     const formIsValid = titleInput.isValid && subtasksInput.isValid;
-    const dropdownOptions = props.columns?.map((item) => item.name);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,7 +39,24 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
         });
         if (newColumnsValue) subtasksInput.customValueChangeHandler(newColumnsValue);
         if (formIsValid) {
-            props.closeModal();
+            const formData = {
+                title: titleInput.value,
+                description: descriptionInput.value,
+                subtasks: subtasksInput.value,
+                column: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
+            };
+            console.log(formData);
+            fetch('/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+                .then((res) => res.json())
+                .then(() => {
+                    props.closeModal();
+                });
         }
     };
 
@@ -77,7 +95,14 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                     fieldType="textarea"
                 />
                 {dropdownOptions && (
-                    <Dropdown id="column-select" label="Status" className="mb-6" options={dropdownOptions} />
+                    <Dropdown
+                        setValue={columnDropdown.setValue}
+                        value={columnDropdown.value}
+                        id="column-select"
+                        label="Status"
+                        className="mb-6"
+                        options={dropdownOptions}
+                    />
                 )}
                 <ButtonPrimary>Create New Task</ButtonPrimary>
             </form>

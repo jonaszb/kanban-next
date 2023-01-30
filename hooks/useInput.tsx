@@ -6,14 +6,15 @@ type InputHook<T> = {
     isValid?: boolean;
     hasError?: boolean;
     errorMsg?: string;
+    setValue: (val: T) => void;
     setIsTouched: (val: boolean) => void;
     valueChangeHandler: (e: MultiInputChangeEvent) => void;
     customValueChangeHandler: (val: T) => void;
     inputBlurHandler: (e: MultiInputChangeEvent) => void;
 };
 
-function useInput<T>(options?: { validateFn?: (value: T) => [boolean, string] }): InputHook<T> {
-    const [value, setValue] = useState<T | undefined>(undefined);
+function useInput<T>(options?: { validateFn?: (value: T) => [boolean, string]; initialValue?: T }): InputHook<T> {
+    const [value, setValue] = useState<T | undefined>(options?.initialValue ?? undefined);
     const [isTouched, setIsTouched] = useState(false);
 
     const [isValid, errorMsg] = options?.validateFn ? options.validateFn(value as T) : [true, ''];
@@ -34,6 +35,7 @@ function useInput<T>(options?: { validateFn?: (value: T) => [boolean, string] })
     if (!options?.validateFn) {
         return {
             value,
+            setValue,
             valueChangeHandler,
             customValueChangeHandler,
             inputBlurHandler,
@@ -50,6 +52,7 @@ function useInput<T>(options?: { validateFn?: (value: T) => [boolean, string] })
         customValueChangeHandler,
         inputBlurHandler,
         setIsTouched,
+        setValue,
     };
 }
 

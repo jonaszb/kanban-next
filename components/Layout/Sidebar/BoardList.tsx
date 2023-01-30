@@ -28,7 +28,8 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
     );
 };
 
-const NewBoardButton: FC<React.ComponentProps<'button'> & { onBoardSelect?: Function }> = (props) => {
+const NewBoardButton: FC<React.ComponentProps<'button'> & { handleBoardSelect?: Function }> = (props) => {
+    const { className, handleBoardSelect, ...restProps } = props;
     const router = useRouter();
     const newBoard = useModal();
     const NewBoardModal = newBoard.Component;
@@ -43,10 +44,9 @@ const NewBoardButton: FC<React.ComponentProps<'button'> & { onBoardSelect?: Func
         mutateBoards();
         newBoard.close();
         router.push(`/board/${newBoardUUID}`);
-        props.onBoardSelect && props.onBoardSelect();
+        handleBoardSelect && handleBoardSelect();
     };
 
-    const { className, ...restProps } = props;
     return (
         <React.Fragment>
             <button
@@ -67,9 +67,9 @@ const NewBoardButton: FC<React.ComponentProps<'button'> & { onBoardSelect?: Func
     );
 };
 
-const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
+const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) => {
     const boardSelectHandler = () => {
-        props.onBoardSelect && props.onBoardSelect();
+        handleBoardSelect && handleBoardSelect();
     };
 
     const { boards } = useBoardsContext();
@@ -89,7 +89,7 @@ const BoardList: FC<{ onBoardSelect?: Function }> = (props) => {
                     </li>
                 ))}
             </ul>
-            <NewBoardButton onBoardSelect={props.onBoardSelect} />
+            <NewBoardButton handleBoardSelect={handleBoardSelect} />
         </div>
     );
 };

@@ -96,7 +96,7 @@ describe('Board List', () => {
 
     test('onBoardSelect is called when a board is clicked', async () => {
         let i = 0;
-        renderWithCtx(<BoardList onBoardSelect={() => i++} />, providerProps);
+        renderWithCtx(<BoardList handleBoardSelect={() => i++} />, providerProps);
         const links = screen.getAllByRole('link');
         fireEvent.click(links[0]);
         expect(i).toEqual(1);
