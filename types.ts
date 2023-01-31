@@ -26,6 +26,7 @@ export type MultiInput = {
 export type Columns = Record<
     UniqueIdentifier,
     {
+        uuid: string;
         color: string;
         tasks: Task[];
     }

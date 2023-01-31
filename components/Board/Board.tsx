@@ -28,6 +28,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         for (const column of boardData.data.columns) {
             column.tasks?.sort((a: Task, b: Task) => a.position - b.position);
             newValue[column.name] = {
+                uuid: column.uuid,
                 color: column.color,
                 tasks: column.tasks ?? [],
             };
@@ -151,18 +152,24 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 },
             }));
         }
-        if (activeId && clonedItems) {
+        if (activeId && clonedItems && draggedTask) {
             const dragData = {
-                id,
-                startingIndex,
-                startingContainer,
                 overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
-                overContainer,
+                overContainer: items[overContainer].uuid,
             };
-            console.log(draggedTask);
-            console.log(
-                `Moved ${dragData.id} from ${dragData.startingIndex} in ${dragData.startingContainer} to ${dragData.overIndex} in ${dragData.overContainer}`
-            );
+
+            fetch(`/api/tasks/${draggedTask.uuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    column_uuid: dragData.overContainer,
+                    position: dragData.overIndex,
+                }),
+            }).then(() => {
+                boardData.mutate();
+            });
         }
         setClonedItems(null);
         setActiveId(null);
