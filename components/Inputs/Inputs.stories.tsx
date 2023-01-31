@@ -42,7 +42,7 @@ TextareaSmall.args = {
 export const Dropdown: StoryFn<typeof DropdownElem> = (args) => {
     return (
         <div id="popover-root">
-            <DropdownElem label="Test dropdown" options={['Todo', 'Doing', 'Done']} />
+            <DropdownElem setValue={() => {}} label="Test dropdown" options={['Todo', 'Doing', 'Done']} />
         </div>
     );
 };

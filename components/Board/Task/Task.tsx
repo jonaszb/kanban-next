@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
-import { Task } from '../../../types';
+import { Task as TaskT } from '../../../types';
 
-const Task: FC<{ taskData: Task }> = ({ taskData }) => {
+const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.name });
 
     const style = transform

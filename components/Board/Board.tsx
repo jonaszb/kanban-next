@@ -12,12 +12,12 @@ import {
     UniqueIdentifier,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Board, Columns } from '../../types';
+import { Board as BoardT, Columns } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
 
 const Board: FC<{ boardUUID: string }> = (props) => {
-    const boardData = useSWR<Board>(`/api/boards/${props.boardUUID}`, fetcher);
+    const boardData = useSWR<BoardT>(`/api/boards/${props.boardUUID}`, fetcher);
     const [items, setItems] = useState<Columns>({});
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
