@@ -51,6 +51,16 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
         uuid: uuidv4(),
     };
 
+    const existingColumnTasks = await prisma.task.findMany({
+        where: {
+            column_uuid: task.column,
+        },
+        orderBy: {
+            position: 'desc',
+        },
+    });
+    const nextPosition = existingColumnTasks.length ? existingColumnTasks[0].position + 1 : 0;
+
     try {
         // validateTask(task);
     } catch (error: any) {
@@ -62,7 +72,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
             uuid: task.uuid,
             subtasks: {},
             description: task.description,
-            position: 1,
+            position: nextPosition,
             column: {
                 connect: {
                     uuid: task.column,

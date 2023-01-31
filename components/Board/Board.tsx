@@ -1,9 +1,8 @@
 import { FC, useEffect, useState } from 'react';
 import Column from './Column/Column';
-import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
+import { DragStartEvent, DragEndEvent, DragOverEvent, closestCorners } from '@dnd-kit/core';
 import {
     DndContext,
-    closestCenter,
     useSensor,
     useSensors,
     MouseSensor,
@@ -12,7 +11,7 @@ import {
     UniqueIdentifier,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Board as BoardT, Columns } from '../../types';
+import { Board as BoardT, Columns, Task } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
 
@@ -21,11 +20,13 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     const [items, setItems] = useState<Columns>({});
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+    const [draggedTask, setDraggedTask] = useState<Task | null>(null);
 
     useEffect(() => {
         const newValue: Columns = {};
         if (!boardData.data) return;
         for (const column of boardData.data.columns) {
+            column.tasks?.sort((a: Task, b: Task) => a.position - b.position);
             newValue[column.name] = {
                 color: column.color,
                 tasks: column.tasks ?? [],
@@ -61,9 +62,15 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const { id } = active;
-
-        setActiveId(id);
-        setClonedItems(items);
+        const startingContainer = findContainer(id, items);
+        const taskObject = startingContainer && items[startingContainer].tasks.find((task) => task.name === id);
+        if (taskObject) {
+            setDraggedTask(taskObject);
+            setActiveId(id);
+            setClonedItems(items);
+        } else {
+            return;
+        }
     }
 
     function handleDragOver(event: DragOverEvent) {
@@ -145,8 +152,16 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             }));
         }
         if (activeId && clonedItems) {
+            const dragData = {
+                id,
+                startingIndex,
+                startingContainer,
+                overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
+                overContainer,
+            };
+            console.log(draggedTask);
             console.log(
-                `Moved ${id} from ${startingIndex} in ${startingContainer} to ${overIndex} in ${overContainer}`
+                `Moved ${dragData.id} from ${dragData.startingIndex} in ${dragData.startingContainer} to ${dragData.overIndex} in ${dragData.overContainer}`
             );
         }
         setClonedItems(null);
@@ -154,7 +169,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     }
 
     return (
-        <section className="grid h-full w-full auto-cols-min grid-flow-col gap-6">
+        <section className="grid w-full auto-cols-min grid-flow-col gap-6">
             <DndContext
                 sensors={sensors}
                 measuring={{
@@ -162,7 +177,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                         strategy: MeasuringStrategy.Always,
                     },
                 }}
-                collisionDetection={closestCenter}
+                collisionDetection={closestCorners}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}

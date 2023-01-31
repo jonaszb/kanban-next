@@ -31,7 +31,14 @@ export type Columns = Record<
     }
 >;
 
-export type Task = { name: UniqueIdentifier; subtasks: Subtask[]; position: number; description: string; uuid: string };
+export type Task = {
+    name: UniqueIdentifier;
+    subtasks: Subtask[];
+    position: number;
+    description: string;
+    uuid: string;
+    column_uuid: string;
+};
 
 export type Subtask = {
     name: string;

@@ -14,7 +14,7 @@ export default function BoardPage() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.png" />
             </Head>
-            <main className="text-bold flex h-full flex-col items-center justify-center overflow-scroll p-6 text-center font-jakarta text-lg text-mid-grey dark:text-white">
+            <main className="text-bold h-full flex-col overflow-scroll p-6 text-center font-jakarta text-lg text-mid-grey dark:text-white">
                 {uuid && <Board boardUUID={uuid} />}
             </main>
         </>

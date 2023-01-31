@@ -1,8 +1,9 @@
-import { FC, useRef } from 'react';
+import { FC } from 'react';
 import useInput from '../../hooks/useInput';
 import { Column, MultiInput } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
+import { mutate } from 'swr';
 
 // Validate input length - must be between 1 and 20 characters. Return tuple of boolean and error message.
 const validateName = (val: string | undefined): [boolean, string] => {
@@ -55,6 +56,7 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
             })
                 .then((res) => res.json())
                 .then(() => {
+                    mutate(`/api/boards/${props.columns?.[0].board_uuid}`);
                     props.closeModal();
                 });
         }
