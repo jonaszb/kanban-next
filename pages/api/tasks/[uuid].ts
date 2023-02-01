@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { validate } from 'uuid';
 
 const prisma = new PrismaClient();
@@ -25,21 +25,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-const decrementHigherPositions = (columnUUID: string, position: any) => {
-    return prisma.task.updateMany({
+const decrementHigherPositions = (columnUUID: string, position: number) => {
+    const payload: {
+        where: Prisma.TaskWhereInput;
+        data: Prisma.TaskUpdateManyMutationInput;
+    } = {
         where: {
-            column_uuid: columnUUID,
-            position: {
-                gt: position,
-            },
+            AND: [
+                {
+                    column_uuid: columnUUID,
+                },
+                {
+                    position: {
+                        gt: position,
+                    },
+                },
+            ],
         },
         data: {
             position: { decrement: 1 },
         },
-    });
+    };
+    return prisma.task.updateMany(payload);
 };
 
-const incrementFromPosition = (columnUUID: string, position: any) => {
+const incrementFromPosition = (columnUUID: string, position: number) => {
     return prisma.task.updateMany({
         where: {
             column_uuid: columnUUID,
