@@ -11,12 +11,20 @@ import {
     UniqueIdentifier,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Board as BoardT, Column as ColumnType, Columns, Task } from '../../types';
+import { Board as BoardT, Columns, Task } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
+import { useRouter } from 'next/router';
 
 const Board: FC<{ boardUUID: string }> = (props) => {
-    const boardData = useSWR<BoardT>(`/api/boards/${props.boardUUID}`, fetcher);
+    const router = useRouter();
+    const boardData = useSWR<BoardT>(`/api/boards/${props.boardUUID}`, fetcher, {
+        onErrorRetry: (error) => {
+            if (error.status === 404 || error.status === 400) {
+                router.push('/');
+            }
+        },
+    });
     const [items, setItems] = useState<Columns>({});
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -25,9 +33,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     useEffect(() => {
         const newValue: Columns = {};
         if (!boardData.data) return;
-        boardData.data.columns.sort((a: ColumnType, b: ColumnType) => a.position - b.position);
         for (const column of boardData.data.columns) {
-            column.tasks?.sort((a: Task, b: Task) => a.position - b.position);
             newValue[column.name] = {
                 uuid: column.uuid,
                 color: column.color,
@@ -35,7 +41,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             };
         }
         setItems(newValue);
-    }, [boardData.data?.columns]);
+    }, [boardData.data?.columns, boardData.error]);
 
     const mouseSensor = useSensor(MouseSensor, {
         // Require the mouse to move by 10 pixels before activating

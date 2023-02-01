@@ -61,7 +61,13 @@ const getBoard = async (req: NextApiRequest, res: NextApiResponse) => {
                             include: {
                                 subtasks: true,
                             },
+                            orderBy: {
+                                position: 'asc',
+                            },
                         },
+                    },
+                    orderBy: {
+                        position: 'asc',
                     },
                 },
             },

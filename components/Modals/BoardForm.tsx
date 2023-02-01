@@ -109,7 +109,7 @@ const BoardForm: FC<{
             </h2>
             <form onSubmit={handleSubmit} action="submit" className="flex flex-col">
                 <Input
-                    value={nameInput.value}
+                    value={nameInput.value ?? ''}
                     onChange={nameInput.valueChangeHandler}
                     onBlur={nameInput.inputBlurHandler}
                     haserror={nameInput.hasError}
