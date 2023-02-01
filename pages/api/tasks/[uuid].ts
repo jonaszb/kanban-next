@@ -26,27 +26,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 const decrementHigherPositions = (columnUUID: string, position: number) => {
-    const payload: {
-        where: Prisma.TaskWhereInput;
-        data: Prisma.TaskUpdateManyMutationInput;
-    } = {
+    return prisma.task.updateMany({
         where: {
-            AND: [
-                {
-                    column_uuid: columnUUID,
-                },
-                {
-                    position: {
-                        gt: position,
-                    },
-                },
-            ],
+            column_uuid: columnUUID,
+            position: {
+                gt: position,
+            },
         },
         data: {
             position: { decrement: 1 },
         },
-    };
-    return prisma.task.updateMany(payload);
+    });
 };
 
 const incrementFromPosition = (columnUUID: string, position: number) => {
