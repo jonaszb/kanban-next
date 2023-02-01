@@ -11,7 +11,7 @@ const MobileMenu: FC<{
 
     return (
         <div className="flex flex-col">
-            <BoardList onBoardSelect={closeMenuHandler} />
+            <BoardList handleBoardSelect={closeMenuHandler} />
             <ThemeToggle className="mt-4" />
         </div>
     );

@@ -49,8 +49,8 @@ test.describe('Add new board', () => {
         const modal = new pageObjects.NewBoardModal(basePage.page);
         await modal.boardName.fill(boardName);
         await modal.addColumnBtn.click();
-        await modal.addColumnBtn.click();
         await modal.nthColInput(0).fill('Column 1');
+        await modal.addColumnBtn.click();
         await modal.nthColInput(1).fill('Column 2');
         await modal.submitBtn.click();
         await expect(basePage.boards).toContainText([boardName]);
@@ -84,8 +84,9 @@ test.describe('Add new board', () => {
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
         const modal = new pageObjects.NewBoardModal(basePage.page);
-        await modal.addColumnBtn.click();
         await modal.boardName.fill('test board');
+        await modal.addColumnBtn.click();
+        await expect(modal.columnRows).toHaveCount(1);
         await modal.submitBtn.click();
         await expect(modal.fieldError('Board Columns', 0)).toHaveText("Can't be empty");
         await expect(modal.fieldError('Board Name')).not.toBeVisible();

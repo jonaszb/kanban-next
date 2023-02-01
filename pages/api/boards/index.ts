@@ -63,7 +63,6 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
                 color: column.color,
                 position: i + 1,
                 uuid: uuidv4(),
-                user_uuid: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
             };
         });
     }
@@ -106,5 +105,4 @@ type Column = {
     color: string;
     position: number;
     uuid: string;
-    user_uuid: string;
 };

@@ -9,7 +9,7 @@ type CustomFixtures = {
     testBoard: Board;
     apiUtils: ApiUtils;
     basePage: BasePage;
-    boardPage: BoardPage;
+    boardPage: [BoardPage, Board];
     pageObjects: typeof pageObjects;
 };
 
@@ -31,10 +31,10 @@ export const test = base.extend<CustomFixtures>({
         await use(basePage);
     },
 
-    boardPage: async ({ page, testBoard }, use) => {
+    boardPage: async ({ testBoard, page }, use) => {
         const boardPage = new pageObjects.BoardPage(page, testBoard.uuid);
         await boardPage.goto();
-        await use(boardPage);
+        await use([boardPage, testBoard]);
     },
 
     pageObjects: async ({}, use) => {

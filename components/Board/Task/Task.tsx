@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
+import { Task as TaskT } from '../../../types';
 
-const Task: FC<{ title: string; subtasksDone: number; subtasksTotal: number }> = (props) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.title });
+const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.name });
 
     const style = transform
         ? {
@@ -11,19 +12,21 @@ const Task: FC<{ title: string; subtasksDone: number; subtasksTotal: number }> =
           }
         : undefined;
 
+    const completedTasks = taskData.subtasks.filter((subtask) => subtask.completed).length;
+
     return (
         <li
             ref={setNodeRef}
             style={style}
             {...attributes}
             {...listeners}
-            onClick={() => console.log(`Clicked task ${props.title}`)}
+            onClick={() => console.log(`Clicked task ${taskData.name}`)}
             data-testid="task"
             className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"
         >
-            <h4 className="text-sm text-black group-hover:text-primary dark:text-white">{props.title}</h4>
-            {props.subtasksTotal > 0 && (
-                <span className="mt-2 text-xs text-mid-grey">{`${props.subtasksDone} of ${props.subtasksTotal} subtasks done`}</span>
+            <h4 className="text-sm text-black group-hover:text-primary dark:text-white">{taskData.name}</h4>
+            {taskData.subtasks.length > 0 && (
+                <span className="mt-2 text-xs text-mid-grey">{`${completedTasks} of ${taskData.subtasks.length} subtasks done`}</span>
             )}
         </li>
     );

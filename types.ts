@@ -25,8 +25,27 @@ export type MultiInput = {
 
 export type Columns = Record<
     UniqueIdentifier,
-    { color: string; tasks: { title: UniqueIdentifier; subtasksDone: number; subtasksTotal: number }[] }
+    {
+        uuid: string;
+        color: string;
+        tasks: Task[];
+    }
 >;
+
+export type Task = {
+    name: UniqueIdentifier;
+    subtasks: Subtask[];
+    position: number;
+    description: string;
+    uuid: string;
+    column_uuid: string;
+};
+
+export type Subtask = {
+    name: string;
+    uuid: string;
+    completed: boolean;
+};
 
 export type Column = {
     id: number;
@@ -41,5 +60,11 @@ export type Column = {
     tasks?: any[]; // TODO: add type
 };
 
-export type MultiInputChangeEvent = React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>;
-export type MultiInputFocusEvent = React.FocusEvent<HTMLInputElement> | React.FocusEvent<HTMLTextAreaElement>;
+export type MultiInputChangeEvent =
+    | React.ChangeEvent<HTMLInputElement>
+    | React.ChangeEvent<HTMLTextAreaElement>
+    | React.ChangeEvent<HTMLSelectElement>;
+export type MultiInputFocusEvent =
+    | React.FocusEvent<HTMLInputElement>
+    | React.FocusEvent<HTMLTextAreaElement>
+    | React.FocusEvent<HTMLSelectElement>;

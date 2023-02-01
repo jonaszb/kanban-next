@@ -1,49 +1,95 @@
 import BoardElem from './Board';
 import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-import { Columns } from '../../types';
+import type { Meta, StoryFn, StoryObj } from '@storybook/react';
 import { v4 as uuidv4 } from 'uuid';
+import fetchMock from 'fetch-mock';
 
-const testColumns: Columns = {
-    todo: {
-        color: '#49C4E5',
-        tasks: [
-            {
-                title: 'Placeholder 1',
-                subtasksDone: 1,
-                subtasksTotal: 3,
-            },
-            {
-                title: 'Placeholder 2',
-                subtasksDone: 2,
-                subtasksTotal: 2,
-            },
-            {
-                title: 'Placeholder 3',
-                subtasksDone: 0,
-                subtasksTotal: 10,
-            },
-        ],
-    },
-    doing: {
-        color: '#8471F2',
-        tasks: [
-            {
-                title: 'Placeholder 4',
-                subtasksDone: 1,
-                subtasksTotal: 3,
-            },
-            {
-                title: 'Placeholder 5',
-                subtasksDone: 2,
-                subtasksTotal: 2,
-            },
-        ],
-    },
-    done: {
-        color: '#67E2AE',
-        tasks: [],
-    },
+const boardUUID = uuidv4();
+
+const payload = {
+    uuid: boardUUID,
+    name: 'Test two',
+    columns: [
+        {
+            name: 'todo',
+            position: 1,
+            color: '#49C4E5',
+            tasks: [
+                {
+                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc4',
+                    name: 'Placeholder 1',
+                    description: null,
+                    position: 1,
+                    subtasks: [
+                        {
+                            uuid: '68f4754c-fde6-4596-a46c-b137b31b3f31',
+                            name: 'a',
+                            completed: true,
+                        },
+                        {
+                            uuid: 'b3064841-10ad-4b65-a823-f06922c6e449',
+                            name: 'b',
+                            completed: false,
+                        },
+                        {
+                            uuid: '7ba031f4-b561-4d80-813a-7c3b0bdc69aa',
+                            name: 'c',
+                            completed: false,
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            name: 'doing',
+            position: 2,
+            color: '#8471F2',
+            tasks: [
+                {
+                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc4',
+                    name: 'Placeholder 2',
+                    description: null,
+                    position: 1,
+                    subtasks: [
+                        {
+                            uuid: '68f4754c-fde6-4596-a46c-b137b31b3f31',
+                            name: 'a',
+                            completed: true,
+                        },
+                        {
+                            uuid: 'b3064841-10ad-4b65-a823-f06922c6e449',
+                            name: 'b',
+                            completed: false,
+                        },
+                        {
+                            uuid: '7ba031f4-b561-4d80-813a-7c3b0bdc69aa',
+                            name: 'c',
+                            completed: false,
+                        },
+                    ],
+                },
+                {
+                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc5',
+                    name: 'Placeholder 3',
+                    description: null,
+                    position: 2,
+                    subtasks: [
+                        {
+                            uuid: '68f4754c-fde6-4596-a46c-b137b31b3f32',
+                            name: 'a',
+                            completed: false,
+                        },
+                        {
+                            uuid: 'b3064841-10ad-4b65-a823-f06922c6e448',
+                            name: 'b',
+                            completed: false,
+                        },
+                    ],
+                },
+            ],
+        },
+        { name: 'finished', position: 3, color: '#67E2AE', tasks: [] },
+    ],
 };
 
 export default {
@@ -51,13 +97,24 @@ export default {
     component: BoardElem,
 } as Meta<typeof BoardElem>;
 
-export const DarkTheme: StoryObj<typeof BoardElem> = {
-    render: (args) => <BoardElem {...args} />,
-    args: { columns: testColumns, boardUUID: uuidv4() },
-    parameters: { theme: 'dark' },
+export const DarkTheme: StoryFn<typeof BoardElem> = (args) => {
+    fetchMock.restore().mock(`/api/boards/${boardUUID}`, payload);
+    return <BoardElem {...args} />;
+};
+export const LightTheme = DarkTheme.bind({});
+
+DarkTheme.args = {
+    boardUUID: boardUUID,
 };
 
-export const LightTheme: StoryObj<typeof BoardElem> = {
-    render: (args) => <BoardElem {...args} />,
-    args: { columns: testColumns, boardUUID: uuidv4() },
+DarkTheme.parameters = {
+    theme: 'dark',
+};
+
+LightTheme.args = {
+    boardUUID: boardUUID,
+};
+
+LightTheme.parameters = {
+    theme: 'light',
 };

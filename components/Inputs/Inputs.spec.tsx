@@ -174,31 +174,45 @@ describe('Custom Textarea', () => {
 
 describe('Custom Dropdown', () => {
     test('Is displayed with specified label', async () => {
-        await act(() => render(<Dropdown id="test" label="Test label" options={dropdownOptions} />));
+        await act(() =>
+            render(<Dropdown setValue={() => {}} id="test" label="Test label" options={dropdownOptions} />)
+        );
         const label = screen.getByText('Test label');
         expect(label).toBeInTheDocument();
     });
 
     test('First option is selected by default', async () => {
-        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} />));
+        await act(() => render(<Dropdown setValue={() => {}} id="test" label="Test" options={dropdownOptions} />));
         const input = screen.getByLabelText('Test');
         expect(input).not.toHaveAttribute('value');
     });
 
     test('Can have a value if specified', async () => {
-        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} value="Done" />));
+        await act(() =>
+            render(<Dropdown setValue={() => {}} id="test" label="Test" options={dropdownOptions} value="Done" />)
+        );
         const input = screen.getByDisplayValue('Done');
         expect(input).toBeInTheDocument();
     });
 
     test('Has a label for attribute that matches the input id', async () => {
-        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} />));
+        await act(() => render(<Dropdown setValue={() => {}} id="test" label="Test" options={dropdownOptions} />));
         const input = screen.getByLabelText('Test');
         expect(input).toHaveAttribute('id', 'test');
     });
 
     test('Can have a custom class applied to wrapping fieldset', async () => {
-        await act(() => render(<Dropdown id="test" label="Test" options={dropdownOptions} className="custom-class" />));
+        await act(() =>
+            render(
+                <Dropdown
+                    setValue={() => {}}
+                    id="test"
+                    label="Test"
+                    options={dropdownOptions}
+                    className="custom-class"
+                />
+            )
+        );
         const fieldset = screen.getByLabelText('Test').closest('fieldset');
         expect(fieldset).toHaveClass('custom-class');
     });

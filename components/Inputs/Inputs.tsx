@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, RefObject, useRef, useState } from 'react';
 import { MultiInput, MultiInputChangeEvent, MultiInputFocusEvent } from '../../types';
 import { ButtonSecondary } from '../Buttons/Buttons';
 import Droppable from '../Drag-and-drop/Droppable';
@@ -52,7 +52,7 @@ const InputField: FC<React.ComponentProps<'input'> & { haserror?: boolean; error
 const TextareaField: FC<
     React.ComponentProps<'textarea'> & { haserror?: boolean; errorMsg?: string; small?: boolean }
 > = (props) => {
-    const { className, haserror, errorMsg, ...inputProps } = props;
+    const { className, haserror, errorMsg, small, ...inputProps } = props;
     return (
         <div className="relative w-full overflow-hidden">
             <textarea
@@ -62,7 +62,7 @@ const TextareaField: FC<
                         ? 'border-danger pr-36'
                         : 'border-mid-grey border-opacity-25 hover:border-primary focus:border-primary'
                 } ${
-                    props.small ? 'h-10' : 'h-28'
+                    small ? 'h-10' : 'h-28'
                 } w-full cursor-pointer rounded border-2   bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none focus:placeholder-opacity-0 dark:text-white dark:placeholder-white dark:placeholder-opacity-25 ${
                     className ?? ''
                 }`}
@@ -96,14 +96,13 @@ const Textarea: FC<
     );
 };
 
-const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: string[] }> = (props) => {
+const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: string[]; setValue: Function }> = (
+    props
+) => {
     const popover = usePopover();
     const ulRef = useRef<HTMLUListElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const PopoverEl = popover.Component;
-    const [selectedValue, setSelectedValue] = useState<string | undefined>(
-        props.options.length > 0 ? props.options[0] : undefined
-    );
 
     const handleSelectClick = (e: React.MouseEvent<HTMLElement>) => {
         popover.toggle(e);
@@ -111,13 +110,11 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
 
     const handleOptionSelect = (e: React.MouseEvent<HTMLElement>) => {
         const input = e.target as HTMLElement;
-        setSelectedValue(input.innerText);
+        props.setValue(input.innerText);
         popover.close();
     };
 
     const handleSelectKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
-        const input = e.target as HTMLElement;
-        console.log(e);
         if (e.key === 'Enter') {
             popover.toggle(e);
         } else if (e.key === 'ArrowDown') {
@@ -136,7 +133,7 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
             ulRef.current?.querySelectorAll('li').length - 1
         ] as HTMLElement;
         if (e.key === 'Enter') {
-            setSelectedValue(input.innerText);
+            props.setValue(input.innerText);
             popover.close();
             selectRef.current?.focus();
         } else if (e.key === 'ArrowDown') {
@@ -157,17 +154,17 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
         }
     };
 
-    const { label, className, ...restProps } = props;
+    const { label, value, className, setValue, ...restProps } = props;
     return (
         <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
             <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
             <div className="relative">
                 <select
                     id={props.id}
-                    ref={selectRef}
+                    onChange={(e) => setValue(e.target.value)}
                     onClick={handleSelectClick}
                     onKeyDown={handleSelectKeyDown}
-                    value={selectedValue}
+                    value={value}
                     {...restProps}
                     className="h-10 w-full cursor-pointer appearance-none rounded border-2 border-mid-grey border-opacity-25 bg-transparent py-2 px-4 text-sm font-medium text-black placeholder-black placeholder-opacity-25 outline-none hover:border-primary focus:border-primary focus:placeholder-opacity-0 dark:text-white dark:text-inherit dark:placeholder-white dark:placeholder-opacity-25"
                 >
