@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-const decrementHigherPositions = (columnUUID: string, position: number) => {
+const decrementHigherPositions = (columnUUID: string, position: any) => {
     return prisma.task.updateMany({
         where: {
             column_uuid: columnUUID,
@@ -39,7 +39,7 @@ const decrementHigherPositions = (columnUUID: string, position: number) => {
     });
 };
 
-const incrementFromPosition = (columnUUID: string, position: number) => {
+const incrementFromPosition = (columnUUID: string, position: any) => {
     return prisma.task.updateMany({
         where: {
             column_uuid: columnUUID,
