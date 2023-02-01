@@ -1,16 +1,16 @@
-import NewBoardFormElem from './NewBoardForm';
+import BoardFormElem from './BoardForm';
 import Modal from './Modal';
 import type { Meta, StoryFn } from '@storybook/react';
 
 export default {
     title: 'Components/Modals',
-    component: NewBoardFormElem,
-} as Meta<typeof NewBoardFormElem>;
+    component: BoardFormElem,
+} as Meta<typeof BoardFormElem>;
 
-export const NewBoardFormLight: StoryFn<typeof NewBoardFormElem> = (args) => {
+export const NewBoardFormLight: StoryFn<typeof BoardFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewBoardFormElem onNewBoardCreated={() => {}} />
+            <BoardFormElem formType="new" onNewBoardCreated={() => {}} />
         </Modal>
     );
 };
@@ -19,10 +19,10 @@ NewBoardFormLight.parameters = {
     theme: 'light',
 };
 
-export const NewBoardFormDark: StoryFn<typeof NewBoardFormElem> = (args) => {
+export const NewBoardFormDark: StoryFn<typeof BoardFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewBoardFormElem onNewBoardCreated={() => {}} />
+            <BoardFormElem formType="new" onNewBoardCreated={() => {}} />
         </Modal>
     );
 };

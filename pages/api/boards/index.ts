@@ -12,6 +12,13 @@ type Board = {
     user: string;
 };
 
+type Column = {
+    name: string;
+    color: string;
+    position: number;
+    uuid: string;
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'POST': {
@@ -21,8 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return await getBoards(res);
         }
         default:
-            res.status(405).end('Method not allowed');
-            break;
+            return res.status(405).end('Method not allowed');
     }
 }
 
@@ -61,7 +67,7 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
             return {
                 name: column.name,
                 color: column.color,
-                position: i + 1,
+                position: i,
                 uuid: uuidv4(),
             };
         });
@@ -98,11 +104,4 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
         console.log(error);
         res.status(500).json({ error });
     }
-};
-
-type Column = {
-    name: string;
-    color: string;
-    position: number;
-    uuid: string;
 };

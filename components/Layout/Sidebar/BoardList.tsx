@@ -5,7 +5,7 @@ import { BoardIcon } from '../../Icons/Icons';
 import type { Board } from '../../../types';
 import { useBoardsContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
-import NewBoardForm from '../../Modals/NewBoardForm';
+import BoardForm from '../../Modals/BoardForm';
 
 const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();
@@ -61,7 +61,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'> & { handleBoardSelect?: 
                 <span>+ Create New Board</span>
             </button>
             <NewBoardModal>
-                <NewBoardForm onNewBoardCreated={handleNewBoardCreated} />
+                <BoardForm formType="new" onNewBoardCreated={handleNewBoardCreated} />
             </NewBoardModal>
         </React.Fragment>
     );

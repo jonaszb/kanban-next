@@ -11,7 +11,7 @@ import {
     UniqueIdentifier,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Board as BoardT, Columns, Task } from '../../types';
+import { Board as BoardT, Column as ColumnType, Columns, Task } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
 
@@ -25,6 +25,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     useEffect(() => {
         const newValue: Columns = {};
         if (!boardData.data) return;
+        boardData.data.columns.sort((a: ColumnType, b: ColumnType) => a.position - b.position);
         for (const column of boardData.data.columns) {
             column.tasks?.sort((a: Task, b: Task) => a.position - b.position);
             newValue[column.name] = {
