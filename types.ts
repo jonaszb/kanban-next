@@ -31,6 +31,13 @@ export type Columns = Record<
         tasks: Task[];
     }
 >;
+/** Payload to create a new column */
+export type NewColumn = {
+    board_uuid?: string;
+    name: string;
+    color: string;
+    position?: number;
+};
 
 export type Task = {
     name: UniqueIdentifier;
@@ -39,6 +46,13 @@ export type Task = {
     description: string;
     uuid: string;
     column_uuid: string;
+};
+
+export type NewTask = {
+    name: string;
+    description?: string;
+    column_uuid: string;
+    subtasks?: string[];
 };
 
 export type Subtask = {
@@ -57,7 +71,7 @@ export type Column = {
     color: string;
     board_uuid: string;
     user_uuid: string;
-    tasks?: any[]; // TODO: add type
+    tasks: Task[];
 };
 
 export type MultiInputChangeEvent =

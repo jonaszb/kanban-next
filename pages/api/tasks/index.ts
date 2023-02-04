@@ -1,17 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
+import { NewTask } from '../../../types';
 
 const prisma = new PrismaClient();
-
-type Task = {
-    title: string;
-    description: string;
-    uuid: string;
-    column: string;
-    subtasks?: string[];
-};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
@@ -27,9 +20,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-// const validateTask = (task: Task) => {
-// TODO: validate task
-// };
+const isNewTask = (data: unknown): data is NewTask => {
+    return (
+        typeof data === 'object' &&
+        data !== null &&
+        'column_uuid' in data &&
+        typeof data.column_uuid === 'string' &&
+        'name' in data &&
+        typeof data.name === 'string' &&
+        (!('description' in data) || typeof data.description === 'string') &&
+        (!('subtasks' in data) || data.subtasks instanceof Array)
+    );
+};
 
 const getTasks = async (res: NextApiResponse) => {
     try {
@@ -41,41 +43,58 @@ const getTasks = async (res: NextApiResponse) => {
 };
 
 const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
-    const taskData: { title: string; description: string; subtasks?: { value: string; id: number }[]; column: string } =
-        req.body;
-    const task: Task = {
-        title: taskData.title,
+    const taskData: unknown = req.body;
+    if (!isNewTask(taskData)) {
+        return res.status(400).json({ error: 'Invalid task data' });
+    }
+    if (taskData.name.length < 1 || taskData.name.length > 60) {
+        return res.status(400).json({ error: 'Task name must be between 1 and 60 characters' });
+    }
+    if (!validate(taskData.column_uuid)) {
+        return res.status(400).json({ error: 'Invalid column UUID' });
+    }
+    for (const subtask of taskData.subtasks ?? []) {
+        if (typeof subtask !== 'string') {
+            return res.status(400).json({ error: 'Invalid subtask data' });
+        }
+    }
+    const task: NewTask & { uuid: string } = {
+        name: taskData.name,
         description: taskData.description,
-        column: taskData.column,
-        subtasks: taskData.subtasks?.map((subtask) => subtask.value),
+        column_uuid: taskData.column_uuid,
+        subtasks: taskData.subtasks ?? [],
         uuid: uuidv4(),
     };
+    const columnData = await prisma.column.findUnique({
+        where: {
+            uuid: task.column_uuid,
+        },
+    });
+    if (!columnData) {
+        return res.status(404).json({ error: 'Column not found' });
+    }
 
     const existingColumnTasks = await prisma.task.findMany({
         where: {
-            column_uuid: task.column,
+            column_uuid: task.column_uuid,
         },
         orderBy: {
             position: 'desc',
         },
     });
+
     const nextPosition = existingColumnTasks.length ? existingColumnTasks[0].position + 1 : 0;
 
-    try {
-        // validateTask(task);
-    } catch (error: any) {
-        return res.status(400).json({ error: error.message });
-    }
     const payload = {
         data: {
-            name: task.title,
+            name: task.name,
             uuid: task.uuid,
             subtasks: {},
             description: task.description,
             position: nextPosition,
             column: {
                 connect: {
-                    uuid: task.column,
+                    uuid: task.column_uuid,
                 },
             },
         },

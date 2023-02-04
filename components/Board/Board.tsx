@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Column from './Column/Column';
 import { DragStartEvent, DragEndEvent, DragOverEvent, closestCorners } from '@dnd-kit/core';
 import {
@@ -15,6 +15,66 @@ import { Board as BoardT, Columns, Task } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import { useBoardsContext } from '../../store/BoardListContext';
+
+const NewColumnBar: FC<{
+    mutateBoard: Function;
+    boardUUID: string;
+}> = ({ mutateBoard, boardUUID }) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const { mutateBoards } = useBoardsContext();
+
+    const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const inputRefValue = inputRef.current?.value;
+        if (!inputRefValue || inputRefValue.trim().length < 1 || inputRefValue.trim().length > 20) {
+            // TODO: add error state to input
+            return;
+        }
+        const columnData = {
+            board_uuid: boardUUID,
+            name: inputRefValue,
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+        };
+        fetch('/api/columns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(columnData),
+        }).then(() => {
+            mutateBoard();
+            mutateBoards();
+        });
+        inputRef.current?.blur();
+        e.currentTarget.reset();
+    };
+
+    return (
+        <div className="relative mt-10 w-72">
+            <form
+                onSubmit={submitHandler}
+                className={`sticky top-10 flex h-[80vh] max-h-[calc(100vh-160px)] w-72 items-center justify-center rounded-md bg-gradient-to-b from-[#E9EFFA] to-[#e9effa80] text-center text-2xl font-bold text-mid-grey transition-all dark:from-[#2b2c3740] dark:to-[#2b2c3720]`}
+            >
+                <fieldset className="relative">
+                    <input
+                        ref={inputRef}
+                        id="new-column"
+                        type="text"
+                        className="peer absolute w-56 -translate-x-1/2 bg-transparent py-1 text-center text-lg text-black caret-primary-light opacity-0 transition-all hover:outline-none focus:opacity-100 focus:outline-none dark:text-white"
+                    />
+                    <div className="absolute h-[3px] w-56 -translate-x-1/2 translate-y-10 scale-x-0 rounded bg-primary transition-all peer-focus:scale-x-100" />
+                    <label
+                        htmlFor="new-column"
+                        className="absolute z-10 w-56 -translate-x-1/2 cursor-pointer transition-all hover:text-primary peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:text-primary"
+                    >
+                        + New Column
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+    );
+};
 
 const Board: FC<{ boardUUID: string }> = (props) => {
     const router = useRouter();
@@ -31,6 +91,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     const [draggedTask, setDraggedTask] = useState<Task | null>(null);
 
     useEffect(() => {
+        console.log(boardData.data);
         const newValue: Columns = {};
         if (!boardData.data) return;
         for (const column of boardData.data.columns) {
@@ -183,7 +244,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     }
 
     return (
-        <section className="grid w-full auto-cols-min grid-flow-col gap-6">
+        <section className="grid h-full w-fit auto-cols-min grid-flow-col gap-6">
             <DndContext
                 sensors={sensors}
                 measuring={{
@@ -200,6 +261,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                     Object.entries(items).map(([colName, colData]) => {
                         return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
                     })}
+                {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
             </DndContext>
         </section>
     );
