@@ -125,14 +125,14 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             return id;
         }
 
-        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.name === id));
+        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.uuid === id));
     }
 
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const { id } = active;
         const startingContainer = findContainer(id, items);
-        const taskObject = startingContainer && items[startingContainer].tasks.find((task) => task.name === id);
+        const taskObject = startingContainer && items[startingContainer].tasks.find((task) => task.uuid === id);
         if (taskObject) {
             setDraggedTask(taskObject);
             setActiveId(id);
@@ -161,8 +161,8 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             const overItems = prev[overContainer].tasks;
 
             // Find the indexes for the items
-            const activeIndex = activeItems.map((task) => task.name).indexOf(id);
-            const overIndex = overItems.map((task) => task.name).indexOf(overId);
+            const activeIndex = activeItems.map((task) => task.uuid as UniqueIdentifier).indexOf(id);
+            const overIndex = overItems.map((task) => task.uuid as UniqueIdentifier).indexOf(overId);
 
             let newIndex;
             if (overId in prev) {
@@ -179,7 +179,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 ...prev,
                 [activeContainer]: {
                     ...prev[activeContainer],
-                    tasks: [...prev[activeContainer].tasks.filter((task) => task.name !== active.id)],
+                    tasks: [...prev[activeContainer].tasks.filter((task) => task.uuid !== active.id)],
                 },
                 [overContainer]: {
                     ...prev[overContainer],
@@ -207,9 +207,11 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             return;
         }
 
-        const startingIndex = clonedItems[startingContainer].tasks.map((task) => task.name).indexOf(activeId);
-        const activeIndex = items[activeContainer].tasks.map((task) => task.name).indexOf(id);
-        const overIndex = items[overContainer].tasks.map((task) => task.name).indexOf(overId);
+        const startingIndex = clonedItems[startingContainer].tasks
+            .map((task) => task.uuid as UniqueIdentifier)
+            .indexOf(activeId);
+        const activeIndex = items[activeContainer].tasks.map((task) => task.uuid as UniqueIdentifier).indexOf(id);
+        const overIndex = items[overContainer].tasks.map((task) => task.uuid as UniqueIdentifier).indexOf(overId);
 
         if (activeIndex !== overIndex) {
             setItems((items) => ({

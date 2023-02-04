@@ -3,8 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { Task as TaskT } from '../../../types';
 
 const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.name });
-
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.uuid });
     const style = transform
         ? {
               transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -13,7 +12,6 @@ const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
         : undefined;
 
     const completedTasks = taskData.subtasks.filter((subtask) => subtask.completed).length;
-
     return (
         <li
             ref={setNodeRef}
