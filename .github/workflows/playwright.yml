@@ -33,7 +33,7 @@ jobs:
     test_e2e:
         needs: test_setup
         name: Playwright tests
-        timeout-minutes: 5
+        timeout-minutes: 15
         runs-on: ubuntu-latest
         steps:
             - name: Prepare testing env
