@@ -7,6 +7,8 @@ import useModal from '../../../hooks/useModal';
 import NewTaskForm from '../../Modals/NewTaskForm';
 import usePopover from '../../../hooks/usePopover';
 import { useRouter } from 'next/router';
+import BoardForm from '../../Modals/BoardForm';
+import { mutate } from 'swr';
 
 const PopoverLink = ({
     children,
@@ -72,6 +74,9 @@ const Header: FC = () => {
     const NewTaskModal = newTaskModal.Component;
     const MenuModal = mobileMenu.Component;
 
+    const editBoardModal = useModal();
+    const EditBoardModal = editBoardModal.Component;
+
     const handleOptionsClick = (e: React.MouseEvent) => {
         mobileMenu.close();
         optionsPopover.toggle(e);
@@ -82,12 +87,24 @@ const Header: FC = () => {
         newTaskModal.toggle();
     };
 
-    const handleEditBoard = () => {};
+    const handleEditBoard = () => {
+        optionsPopover.close();
+        editBoardModal.toggle();
+        mutate(`/api/boards/${selectedBoard}`);
+    };
+
+    const handleBoardUpdate = () => {
+        editBoardModal.close();
+        mutateBoards();
+        mutate(`/api/boards/${selectedBoard}`);
+    };
 
     const handleDeleteBoard = () => {
         optionsPopover.close();
         deleteBoardModal.toggle();
     };
+
+    const sortedColumns = selectedBoardData?.columns.sort((a, b) => a.position - b.position);
 
     return (
         <header className="flex items-center justify-between border-lines-light bg-white font-jakarta dark:border-lines-dark dark:bg-dark-grey dark:text-white sm:border-l">
@@ -111,13 +128,13 @@ const Header: FC = () => {
                     onClick={handleNewTaskClick}
                     id="new-task"
                     className="mr-2 md:mr-4"
-                    disabled={!selectedBoardData?.columns.length}
+                    disabled={!sortedColumns?.length}
                 >
                     <span className="hidden sm:block">+ Add New Task</span>
                     <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
                 <NewTaskModal>
-                    <NewTaskForm closeModal={newTaskModal.close} columns={selectedBoardData?.columns} />
+                    <NewTaskForm closeModal={newTaskModal.close} columns={sortedColumns} />
                 </NewTaskModal>
                 <button
                     aria-label="Board options"
@@ -143,6 +160,9 @@ const Header: FC = () => {
                     </ul>
                 </Popover>
                 <DeleteBoardModal />
+                <EditBoardModal>
+                    <BoardForm formType="edit" boardData={selectedBoardData} onBoardUpdated={handleBoardUpdate} />
+                </EditBoardModal>
             </div>
         </header>
     );

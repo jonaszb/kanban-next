@@ -1,4 +1,4 @@
-import { Page, test as base } from '@playwright/test';
+import { test as base } from '@playwright/test';
 import pageObjects from './tests/pageObjects/';
 import ApiUtils from './utils/testApiUtils';
 import type { Board } from './types';
@@ -7,6 +7,8 @@ import BoardPage from './tests/pageObjects/BoardPage';
 
 type CustomFixtures = {
     testBoard: Board;
+    testBoardWithColumn: Board;
+    testBoardWithData: Board;
     apiUtils: ApiUtils;
     basePage: BasePage;
     boardPage: [BoardPage, Board];
@@ -21,6 +23,42 @@ export const test = base.extend<CustomFixtures>({
     /** Create a Board to be used in the test */
     testBoard: async ({ apiUtils }, use) => {
         const board = await apiUtils.createBoard({ name: 'Board-' + Math.floor(Math.random() * 1000000) });
+        await use(board);
+        await apiUtils.deleteBoard(board.uuid, { failOnStatusCode: false });
+    },
+
+    testBoardWithColumn: async ({ apiUtils }, use) => {
+        const response = await apiUtils.createBoard({
+            name: 'Board-' + Math.floor(Math.random() * 1000000),
+            columns: [{ name: 'Column 1', color: '#FFFAAA', position: 0 }],
+        });
+        const board = await apiUtils.getBoard(response.uuid);
+        await use(board);
+        await apiUtils.deleteBoard(board.uuid, { failOnStatusCode: false });
+    },
+
+    /** Create a test board with 2 columns and 2 tasks (1 per column) */
+    testBoardWithData: async ({ apiUtils }, use) => {
+        const response = await apiUtils.createBoard({
+            name: 'Board-' + Math.floor(Math.random() * 1000000),
+            columns: [
+                { name: 'Column 1', color: '#FFFAAA', position: 0 },
+                { name: 'Column 2', color: '#AAAFFF', position: 1 },
+            ],
+        });
+        const board = await apiUtils.getBoard(response.uuid);
+        const task1 = await apiUtils.createTask({
+            name: 'Task 1',
+            description: 'Task 1 description',
+            column_uuid: board.columns[0].uuid,
+        });
+        const task2 = await apiUtils.createTask({
+            name: 'Task 2',
+            description: 'Task 2 description',
+            column_uuid: board.columns[1].uuid,
+        });
+        board.columns[0].tasks = [task1];
+        board.columns[1].tasks = [task2];
         await use(board);
         await apiUtils.deleteBoard(board.uuid, { failOnStatusCode: false });
     },

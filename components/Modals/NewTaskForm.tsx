@@ -23,16 +23,16 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
 
 const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
     const dropdownOptions = props.columns?.map((item) => item.name);
-    const titleInput = useInput<string>({ validateFn: validateName });
+    const nameInput = useInput<string>({ validateFn: validateName });
     const descriptionInput = useInput<string>();
     const subtasksInput = useInput<MultiInput[]>({ validateFn: validateColumns });
     const columnDropdown = useInput<string>({ initialValue: dropdownOptions && dropdownOptions[0] });
 
-    const formIsValid = titleInput.isValid && subtasksInput.isValid;
+    const formIsValid = nameInput.isValid && subtasksInput.isValid;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        titleInput.setIsTouched(true);
+        nameInput.setIsTouched(true);
         subtasksInput.setIsTouched(true);
         const newColumnsValue = subtasksInput.value?.map((item) => {
             const [isValid, errorMsg] = validateName(item.value);
@@ -41,10 +41,10 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
         if (newColumnsValue) subtasksInput.customValueChangeHandler(newColumnsValue);
         if (formIsValid) {
             const formData = {
-                title: titleInput.value,
+                name: nameInput.value,
                 description: descriptionInput.value,
-                subtasks: subtasksInput.value,
-                column: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
+                subtasks: subtasksInput.value?.map((item) => item.value),
+                column_uuid: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
             };
             console.log(formData);
             fetch('/api/tasks', {
@@ -67,10 +67,10 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
             <h2 className="mb-6 text-lg font-bold dark:text-white">Add New Task</h2>
             <form onSubmit={handleSubmit} action="submit" className="flex flex-col">
                 <Input
-                    onChange={titleInput.valueChangeHandler}
-                    onBlur={titleInput.inputBlurHandler}
-                    haserror={titleInput.hasError}
-                    errorMsg={titleInput.errorMsg}
+                    onChange={nameInput.valueChangeHandler}
+                    onBlur={nameInput.inputBlurHandler}
+                    haserror={nameInput.hasError}
+                    errorMsg={nameInput.errorMsg}
                     label="Title"
                     id="task-title"
                     placeholder="e.g. Take a coffee break"

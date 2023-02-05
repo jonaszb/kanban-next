@@ -6,8 +6,10 @@ import { enableFetchMocks } from 'jest-fetch-mock';
 import fetchMock from 'jest-fetch-mock';
 enableFetchMocks();
 
+const boardUUID = uuidv4();
+
 const payload = {
-    uuid: 'd8b237a3-f778-4a29-b6a8-9ab2d01d3dce',
+    uuid: boardUUID,
     name: 'Test two',
     columns: [
         {
@@ -93,6 +95,15 @@ const payload = {
 };
 
 fetchMock.mockResponse(JSON.stringify(payload));
+
+jest.mock('next/router', () => ({
+    useRouter() {
+        return {
+            query: { boardId: boardUUID },
+            asPath: '/boards',
+        };
+    },
+}));
 
 const testUUID = uuidv4();
 

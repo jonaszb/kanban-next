@@ -33,8 +33,10 @@ jobs:
     test_e2e:
         needs: test_setup
         name: Playwright tests
-        timeout-minutes: 5
+        timeout-minutes: 15
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.30.0-focal
         steps:
             - name: Prepare testing env
               uses: actions/checkout@v2
@@ -42,7 +44,6 @@ jobs:
               with:
                   node-version: '18'
             - run: npm ci
-            - run: npx playwright install --with-deps
             - name: Run e2e tests
               run: npm run test:e2e
               env:

@@ -9,6 +9,7 @@ type ColumnProps = {
     name: UniqueIdentifier;
     color: string;
     tasks: TaskType[];
+    validating: boolean;
 };
 
 type ColumnHeaderProps = {
@@ -35,10 +36,10 @@ const Column: FC<ColumnProps> = (props) => {
     return (
         <Droppable droppableId={props.name} className="h-min w-72" data-testid="board-column">
             <ColumnHeader color={props.color} name={props.name.toString()} taskCount={props.tasks.length} />
-            <SortableContext items={props.tasks.map((task) => task.name)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={props.tasks.map((task) => task.uuid)} strategy={verticalListSortingStrategy}>
                 <ul>
                     {props.tasks.map((task, i) => (
-                        <Task key={i} taskData={task} />
+                        <Task key={i} taskData={task} dragDisabled={props.validating} />
                     ))}
                 </ul>
             </SortableContext>

@@ -2,9 +2,8 @@ import { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { Task as TaskT } from '../../../types';
 
-const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.name });
-
+const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDisabled }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.uuid });
     const style = transform
         ? {
               transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -13,13 +12,12 @@ const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
         : undefined;
 
     const completedTasks = taskData.subtasks.filter((subtask) => subtask.completed).length;
-
     return (
         <li
             ref={setNodeRef}
             style={style}
             {...attributes}
-            {...listeners}
+            {...(dragDisabled ? {} : listeners)}
             onClick={() => console.log(`Clicked task ${taskData.name}`)}
             data-testid="task"
             className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"

@@ -158,8 +158,6 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
     let { name, description, column_uuid, subtasks, position } = req.body;
     const columnChanged = !!(column_uuid && column_uuid !== currentTaskData.column_uuid);
     const positionChanged = !!(position !== undefined && (position !== currentTaskData.position || columnChanged));
-    console.log(`Column UUID: ${column_uuid}`);
-    console.log(currentTaskData);
     const column =
         columnChanged || positionChanged
             ? await prisma.column.findFirst({
@@ -170,8 +168,8 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
     let movingToEndOfColumn = false; // No need to shift the position of other tasks if true;
 
     if (position) {
-        if (!(typeof position === 'number' && !isNaN(position))) {
-            return res.status(400).end('Position must be a number');
+        if (!(typeof position === 'number' && Number.isInteger(position) && !isNaN(position))) {
+            return res.status(400).end('Position must be an integer');
         }
         // Check if position is valid and within accepted range
         if (!column) {
@@ -180,7 +178,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
         if (position < 0) {
             return res.status(400).end('Position cannot be less than 0');
         }
-        if (position > column.tasks.length) {
+        if (position > column.tasks.length || (!columnChanged && position > column.tasks.length - 1)) {
             position = columnChanged ? column.tasks.length : column.tasks.length - 1;
             movingToEndOfColumn = true;
         }
@@ -189,7 +187,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
         name: name || currentTaskData.name,
         description: description || currentTaskData.description,
         column_uuid: column_uuid || currentTaskData.column_uuid,
-        position: typeof position === 'number' ? position : currentTaskData.position,
+        position: position !== undefined ? position : currentTaskData.position,
     };
 
     if (columnChanged) {
@@ -227,7 +225,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
         } else {
             console.log(4);
             // Handle no column or position change
-            updateTaskData(taskUUID, newTaskData);
+            await updateTaskData(taskUUID, newTaskData);
             res.status(200).end('Task updated');
         }
     }

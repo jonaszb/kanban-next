@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import Column from './Column/Column';
 import { DragStartEvent, DragEndEvent, DragOverEvent, closestCorners } from '@dnd-kit/core';
 import {
@@ -14,19 +14,87 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { Board as BoardT, Columns, Task } from '../../types';
 import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
+import { useRouter } from 'next/router';
+import { useBoardsContext } from '../../store/BoardListContext';
+
+const NewColumnBar: FC<{
+    mutateBoard: Function;
+    boardUUID: string;
+}> = ({ mutateBoard, boardUUID }) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const { mutateBoards } = useBoardsContext();
+
+    const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const inputRefValue = inputRef.current?.value;
+        if (!inputRefValue || inputRefValue.trim().length < 1 || inputRefValue.trim().length > 20) {
+            // TODO: add error state to input
+            return;
+        }
+        const columnData = {
+            board_uuid: boardUUID,
+            name: inputRefValue,
+            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+        };
+        fetch('/api/columns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(columnData),
+        }).then(() => {
+            mutateBoard();
+            mutateBoards();
+        });
+        inputRef.current?.blur();
+        e.currentTarget.reset();
+    };
+
+    return (
+        <div className="relative mt-10 w-72">
+            <form
+                onSubmit={submitHandler}
+                className={`sticky top-10 flex h-[80vh] max-h-[calc(100vh-160px)] w-72 items-center justify-center rounded-md bg-gradient-to-b from-[#E9EFFA] to-[#e9effa80] text-center text-2xl font-bold text-mid-grey transition-all dark:from-[#2b2c3740] dark:to-[#2b2c3720]`}
+            >
+                <fieldset className="relative">
+                    <input
+                        ref={inputRef}
+                        id="new-column"
+                        type="text"
+                        className="peer absolute w-56 -translate-x-1/2 bg-transparent py-1 text-center text-lg text-black caret-primary-light opacity-0 transition-all hover:outline-none focus:opacity-100 focus:outline-none dark:text-white"
+                    />
+                    <div className="absolute h-[3px] w-56 -translate-x-1/2 translate-y-10 scale-x-0 rounded bg-primary transition-all peer-focus:scale-x-100" />
+                    <label
+                        htmlFor="new-column"
+                        className="absolute z-10 w-56 -translate-x-1/2 cursor-pointer transition-all hover:text-primary peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:text-primary"
+                    >
+                        + New Column
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+    );
+};
 
 const Board: FC<{ boardUUID: string }> = (props) => {
-    const boardData = useSWR<BoardT>(`/api/boards/${props.boardUUID}`, fetcher);
+    const router = useRouter();
+    const boardData = useSWR<BoardT>(`/api/boards/${props.boardUUID}`, fetcher, {
+        onErrorRetry: (error) => {
+            if (error.status === 404 || error.status === 400) {
+                router.push('/');
+            }
+        },
+    });
     const [items, setItems] = useState<Columns>({});
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+    const [draggingDisabled, setDraggingDisabled] = useState(false); // Disable dragging when loading or validating data
 
     useEffect(() => {
         const newValue: Columns = {};
         if (!boardData.data) return;
         for (const column of boardData.data.columns) {
-            column.tasks?.sort((a: Task, b: Task) => a.position - b.position);
             newValue[column.name] = {
                 uuid: column.uuid,
                 color: column.color,
@@ -34,7 +102,11 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             };
         }
         setItems(newValue);
-    }, [boardData.data?.columns]);
+    }, [boardData.data?.columns, boardData.error]);
+
+    useEffect(() => {
+        setDraggingDisabled(boardData.isLoading || boardData.isValidating);
+    }, [boardData.isLoading, boardData.isValidating]);
 
     const mouseSensor = useSensor(MouseSensor, {
         // Require the mouse to move by 10 pixels before activating
@@ -57,14 +129,14 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             return id;
         }
 
-        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.name === id));
+        return Object.keys(items).find((key) => items[key].tasks.some((task) => task.uuid === id));
     }
 
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const { id } = active;
         const startingContainer = findContainer(id, items);
-        const taskObject = startingContainer && items[startingContainer].tasks.find((task) => task.name === id);
+        const taskObject = startingContainer && items[startingContainer].tasks.find((task) => task.uuid === id);
         if (taskObject) {
             setDraggedTask(taskObject);
             setActiveId(id);
@@ -93,8 +165,8 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             const overItems = prev[overContainer].tasks;
 
             // Find the indexes for the items
-            const activeIndex = activeItems.map((task) => task.name).indexOf(id);
-            const overIndex = overItems.map((task) => task.name).indexOf(overId);
+            const activeIndex = activeItems.map((task) => task.uuid as UniqueIdentifier).indexOf(id);
+            const overIndex = overItems.map((task) => task.uuid as UniqueIdentifier).indexOf(overId);
 
             let newIndex;
             if (overId in prev) {
@@ -111,7 +183,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 ...prev,
                 [activeContainer]: {
                     ...prev[activeContainer],
-                    tasks: [...prev[activeContainer].tasks.filter((task) => task.name !== active.id)],
+                    tasks: [...prev[activeContainer].tasks.filter((task) => task.uuid !== active.id)],
                 },
                 [overContainer]: {
                     ...prev[overContainer],
@@ -139,9 +211,11 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             return;
         }
 
-        const startingIndex = clonedItems[startingContainer].tasks.map((task) => task.name).indexOf(activeId);
-        const activeIndex = items[activeContainer].tasks.map((task) => task.name).indexOf(id);
-        const overIndex = items[overContainer].tasks.map((task) => task.name).indexOf(overId);
+        const startingIndex = clonedItems[startingContainer].tasks
+            .map((task) => task.uuid as UniqueIdentifier)
+            .indexOf(activeId);
+        const activeIndex = items[activeContainer].tasks.map((task) => task.uuid as UniqueIdentifier).indexOf(id);
+        const overIndex = items[overContainer].tasks.map((task) => task.uuid as UniqueIdentifier).indexOf(overId);
 
         if (activeIndex !== overIndex) {
             setItems((items) => ({
@@ -157,7 +231,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
                 overContainer: items[overContainer].uuid,
             };
-
+            setDraggingDisabled(true);
             fetch(`/api/tasks/${draggedTask.uuid}`, {
                 method: 'PUT',
                 headers: {
@@ -176,7 +250,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     }
 
     return (
-        <section className="grid w-full auto-cols-min grid-flow-col gap-6">
+        <section className="grid h-full w-fit auto-cols-min grid-flow-col gap-6">
             <DndContext
                 sensors={sensors}
                 measuring={{
@@ -191,8 +265,17 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             >
                 {items &&
                     Object.entries(items).map(([colName, colData]) => {
-                        return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
+                        return (
+                            <Column
+                                key={colName}
+                                name={colName}
+                                color={colData.color}
+                                tasks={colData.tasks}
+                                validating={draggingDisabled}
+                            />
+                        );
                     })}
+                {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
             </DndContext>
         </section>
     );
