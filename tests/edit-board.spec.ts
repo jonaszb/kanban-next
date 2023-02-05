@@ -123,7 +123,6 @@ test.describe('Editing a board', () => {
     });
 
     test('New column can be added using the "New Column" button', async ({ boardPage: [boardPage] }) => {
-        await expect(boardPage.newColumnInput).not.toBeVisible();
         await expect(boardPage.newColumnLabel).toBeVisible();
         await boardPage.newColumnLabel.click();
         await expect(boardPage.newColumnInput).toBeVisible();

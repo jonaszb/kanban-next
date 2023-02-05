@@ -90,6 +90,11 @@ const Header: FC = () => {
     const handleEditBoard = () => {
         optionsPopover.close();
         editBoardModal.toggle();
+        mutate(`/api/boards/${selectedBoard}`);
+    };
+
+    const handleBoardUpdate = () => {
+        editBoardModal.close();
         mutateBoards();
         mutate(`/api/boards/${selectedBoard}`);
     };
@@ -156,7 +161,7 @@ const Header: FC = () => {
                 </Popover>
                 <DeleteBoardModal />
                 <EditBoardModal>
-                    <BoardForm formType="edit" boardData={selectedBoardData} onBoardUpdated={handleEditBoard} />
+                    <BoardForm formType="edit" boardData={selectedBoardData} onBoardUpdated={handleBoardUpdate} />
                 </EditBoardModal>
             </div>
         </header>

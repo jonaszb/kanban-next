@@ -20,9 +20,7 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
                     : ' text-mid-grey hover:bg-grey-highlight hover:text-primary dark:hover:bg-white'
             }`}
         >
-            <BoardIcon
-                className={`mr-2 h-4 w-fit  ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`}
-            />
+            <BoardIcon className={`mr-2 h-4 ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`} />
             <span>{board.name}</span>
         </Link>
     );
@@ -72,7 +70,7 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
         handleBoardSelect && handleBoardSelect();
     };
 
-    const { boards } = useBoardsContext();
+    const { boards, isLoading } = useBoardsContext();
     return (
         <div id="board-list" className="flex flex-1 flex-col overflow-y-auto">
             {boards && (
@@ -81,7 +79,7 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
                     data-testid="board-count"
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${boards.length})`}</span>
-            )}{' '}
+            )}
             <ul>
                 {boards?.map((board) => (
                     <li key={board.uuid} onClick={boardSelectHandler}>
@@ -89,7 +87,7 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
                     </li>
                 ))}
             </ul>
-            <NewBoardButton handleBoardSelect={handleBoardSelect} />
+            {!isLoading && <NewBoardButton handleBoardSelect={handleBoardSelect} />}
         </div>
     );
 };
