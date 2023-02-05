@@ -1,12 +1,12 @@
 import BasePage from './BasePage';
 import BoardPage from './BoardPage';
 import DeleteModal from './DeleteModal';
-import NewBoardModal from './NewBoardModal';
+import BoardModal from './BoardModal';
 
 const pageObjects = {
     BasePage: BasePage,
     BoardPage: BoardPage,
-    NewBoardModal: NewBoardModal,
+    BoardModal: BoardModal,
     DeleteModal: DeleteModal,
 };
 

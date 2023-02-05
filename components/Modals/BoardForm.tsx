@@ -129,7 +129,9 @@ const BoardForm: FC<{
                     validationHandler={validateName}
                     addBtnText="+ Add New Column"
                 />
-                <ButtonPrimary>{props.formType === 'new' ? 'Create New Board' : 'Save Changes'}</ButtonPrimary>
+                <ButtonPrimary data-testid="board-submit">
+                    {props.formType === 'new' ? 'Create New Board' : 'Save Changes'}
+                </ButtonPrimary>
             </form>
         </div>
     );

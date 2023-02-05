@@ -22,7 +22,7 @@ test.describe('Add new board', () => {
         await expect(basePage.newBoardBtn).toBeVisible();
         await expect(basePage.newBoardBtn).toHaveText('+ Create New Board');
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await expect(modal.rootElement).toBeVisible();
         await expect(modal.header).toHaveText('Add New Board');
         await expect(modal.boardName).toBeVisible();
@@ -36,7 +36,7 @@ test.describe('Add new board', () => {
         boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await modal.boardName.fill(boardName);
         await modal.submitBtn.click();
         await expect(basePage.boards).toContainText([boardName]);
@@ -46,7 +46,7 @@ test.describe('Add new board', () => {
         boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await modal.boardName.fill(boardName);
         await modal.addColumnBtn.click();
         await modal.nthColInput(0).fill('Column 1');
@@ -64,7 +64,7 @@ test.describe('Add new board', () => {
         boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await modal.boardName.fill(boardName);
         await modal.submitBtn.click();
         await expect(modal.rootElement).not.toBeVisible();
@@ -75,7 +75,7 @@ test.describe('Add new board', () => {
     test('Board cannot be created without a name', async ({ basePage, pageObjects }) => {
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await modal.submitBtn.click();
         await expect(modal.fieldError('Board Name')).toHaveText("Can't be empty");
     });
@@ -83,7 +83,7 @@ test.describe('Add new board', () => {
     test('Board cannot be created with blank column names', async ({ basePage, pageObjects }) => {
         if (mobile) await basePage.mobileMenuToggle.click();
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await modal.boardName.fill('test board');
         await modal.addColumnBtn.click();
         await expect(modal.columnRows).toHaveCount(1);

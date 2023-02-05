@@ -106,6 +106,7 @@ describe('Header', () => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 name: 'Col',
+                tasks: [],
                 position: 1,
                 color: '#000000',
                 board_uuid: uuidv4(),

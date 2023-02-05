@@ -12,7 +12,7 @@ export default class NewBoardModal extends BaseModal {
         this.boardName = this.rootElement.locator('#board-name');
         this.columnRows = this.rootElement.locator('#board-columns > div');
         this.addColumnBtn = this.rootElement.locator('#board-columns-add');
-        this.submitBtn = this.rootElement.getByText('Create New Board');
+        this.submitBtn = this.rootElement.getByTestId('board-submit');
     }
 
     nthColInput(n: number) {
@@ -20,11 +20,11 @@ export default class NewBoardModal extends BaseModal {
     }
 
     nthColDeleteBtn(n: number) {
-        return this.columnRows.nth(n).locator('#multi-input-delete');
+        return this.columnRows.nth(n).getByTestId('multi-input-delete');
     }
 
     nthColDragBtn(n: number) {
-        return this.columnRows.nth(n).locator('#multi-input-drag');
+        return this.columnRows.nth(n).getByTestId('multi-input-drag');
     }
 
     /**

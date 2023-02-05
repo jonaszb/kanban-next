@@ -34,7 +34,7 @@ test.describe('Sidebar', () => {
         await expect(basePage.newBoardBtn).toBeVisible();
         await expect(basePage.newBoardBtn).toHaveText('+ Create New Board');
         await basePage.newBoardBtn.click();
-        const modal = new pageObjects.NewBoardModal(basePage.page);
+        const modal = new pageObjects.BoardModal(basePage.page);
         await expect(modal.rootElement).toBeVisible();
         await expect(modal.header).toHaveText('Add New Board');
     });
