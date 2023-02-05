@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { Task as TaskT } from '../../../types';
 
-const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
+const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDisabled }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.uuid });
     const style = transform
         ? {
@@ -17,7 +17,7 @@ const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
             ref={setNodeRef}
             style={style}
             {...attributes}
-            {...listeners}
+            {...(dragDisabled ? {} : listeners)}
             onClick={() => console.log(`Clicked task ${taskData.name}`)}
             data-testid="task"
             className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"

@@ -9,6 +9,7 @@ type ColumnProps = {
     name: UniqueIdentifier;
     color: string;
     tasks: TaskType[];
+    validating: boolean;
 };
 
 type ColumnHeaderProps = {
@@ -38,7 +39,7 @@ const Column: FC<ColumnProps> = (props) => {
             <SortableContext items={props.tasks.map((task) => task.uuid)} strategy={verticalListSortingStrategy}>
                 <ul>
                     {props.tasks.map((task, i) => (
-                        <Task key={i} taskData={task} />
+                        <Task key={i} taskData={task} dragDisabled={props.validating} />
                     ))}
                 </ul>
             </SortableContext>

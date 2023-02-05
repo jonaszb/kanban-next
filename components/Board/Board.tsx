@@ -89,9 +89,9 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+    const [draggingDisabled, setDraggingDisabled] = useState(false); // Disable dragging when loading or validating data
 
     useEffect(() => {
-        console.log(boardData.data);
         const newValue: Columns = {};
         if (!boardData.data) return;
         for (const column of boardData.data.columns) {
@@ -103,6 +103,10 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         }
         setItems(newValue);
     }, [boardData.data?.columns, boardData.error]);
+
+    useEffect(() => {
+        setDraggingDisabled(boardData.isLoading || boardData.isValidating);
+    }, [boardData.isLoading, boardData.isValidating]);
 
     const mouseSensor = useSensor(MouseSensor, {
         // Require the mouse to move by 10 pixels before activating
@@ -227,7 +231,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
                 overContainer: items[overContainer].uuid,
             };
-
+            setDraggingDisabled(true);
             fetch(`/api/tasks/${draggedTask.uuid}`, {
                 method: 'PUT',
                 headers: {
@@ -261,7 +265,15 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             >
                 {items &&
                     Object.entries(items).map(([colName, colData]) => {
-                        return <Column key={colName} name={colName} color={colData.color} tasks={colData.tasks} />;
+                        return (
+                            <Column
+                                key={colName}
+                                name={colName}
+                                color={colData.color}
+                                tasks={colData.tasks}
+                                validating={draggingDisabled}
+                            />
+                        );
                     })}
                 {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
             </DndContext>
