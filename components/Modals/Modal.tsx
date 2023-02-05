@@ -15,16 +15,20 @@ type ModalProps = {
 const ModalBase = (
     props: PropsWithChildren<ModalProps> & { onClickHandler: (event: React.MouseEvent<HTMLDivElement>) => void }
 ) => {
+    const testId = props.options?.type
+        ? { mobileMenu: 'mobile-menu', danger: 'danger-modal' }[props.options.type]
+        : 'modal';
     return (
         <div
             data-testid="modal-backdrop"
             onClick={props.onClickHandler}
-            className={`absolute bg-black bg-opacity-50 ${
-                props.options?.type === 'mobileMenu' ? 'h-full w-full' : 'flex h-screen w-screen items-center'
+            className={`absolute z-50 bg-black bg-opacity-50 ${
+                props.options?.type === 'mobileMenu' ? ' h-full w-full' : 'flex h-screen w-screen items-center'
             }`}
         >
             <dialog
-                className={`block max-h-[80vh] overflow-auto bg-white dark:bg-dark-grey ${
+                data-testid={testId}
+                className={`z-50 block max-h-[80vh] overflow-auto bg-white dark:bg-dark-grey ${
                     props.options?.type === 'mobileMenu'
                         ? 'my-4 w-72 rounded-lg px-0 py-4 shadow-menu dark:shadow-menu-dark'
                         : 'w-86 rounded-md p-6 sm:w-120 sm:p-8'
