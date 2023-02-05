@@ -9,6 +9,7 @@ export default class DeleteModal extends BaseModal {
 
     constructor(page: Page) {
         super(page);
+        this.rootElement = this.page.getByTestId('danger-modal');
         this.header = this.rootElement.locator('h2');
         this.message = this.rootElement.locator('p');
         this.cancelBtn = this.rootElement.getByText('Cancel', { exact: true });
