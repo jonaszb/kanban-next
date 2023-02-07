@@ -417,14 +417,19 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'
                     id={id}
                     checked={checked}
                     type="checkbox"
-                    className="peer hidden"
+                    className="hidden"
                     onChange={changeHandler}
                 />
                 <label
                     htmlFor={id}
-                    className={`flex h-4 w-4 items-center justify-center rounded border bg-white transition-all peer-checked:bg-primary ${props.className}`}
+                    className={`relative flex h-4 w-4 items-center justify-center overflow-hidden rounded border border-mid-grey border-opacity-25 bg-white transition-all dark:bg-v-dark-grey ${props.className}`}
                 >
-                    <Check />
+                    <div
+                        className={`absolute z-0 h-full w-full -translate-x-2 translate-y-2 rounded-full bg-primary transition-all ${
+                            checked ? 'scale-[3]' : 'scale-0'
+                        }`}
+                    />
+                    <Check className={`z-10 transition-opacity ${checked ? 'opacity-100' : 'opacity-0'}`} />
                 </label>
             </>
         );

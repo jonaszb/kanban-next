@@ -59,6 +59,8 @@ const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) =
 const providerProps = {
     boards: boards,
     selectedBoard: boards[1],
+    selectedTask: null,
+    setSelectedTask: () => null,
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),

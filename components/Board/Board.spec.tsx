@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { enableFetchMocks } from 'jest-fetch-mock';
 import fetchMock from 'jest-fetch-mock';
+import React from 'react';
 enableFetchMocks();
 
 const boardUUID = uuidv4();
