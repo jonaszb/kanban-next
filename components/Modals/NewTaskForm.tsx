@@ -46,7 +46,6 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                 subtasks: subtasksInput.value?.map((item) => item.value),
                 column_uuid: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
             };
-            console.log(formData);
             fetch('/api/tasks', {
                 method: 'POST',
                 headers: {

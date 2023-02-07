@@ -1,8 +1,8 @@
-import React, { FC, SyntheticEvent, useContext } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
 import MobileMenu from '../../Modals/MobileMenu';
-import { BoardListContext, useBoardsContext } from '../../../store/BoardListContext';
+import { useBoardsContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
 import NewTaskForm from '../../Modals/NewTaskForm';
 import usePopover from '../../../hooks/usePopover';
@@ -10,50 +10,19 @@ import { useRouter } from 'next/router';
 import BoardForm from '../../Modals/BoardForm';
 import { mutate } from 'swr';
 
-const PopoverLink = ({
-    children,
-    onClick,
-    danger,
-    disabled,
-    id,
-}: {
-    children: React.ReactNode;
-    onClick: (e: SyntheticEvent) => void;
-    danger?: boolean;
-    disabled?: boolean;
-    id?: string;
-}) => {
-    return (
-        <li className="mb-4 last:mb-0">
-            <button
-                className={`cursor-pointer  ${
-                    danger ? 'text-danger' : 'text-mid-grey'
-                } disabled:cursor-default disabled:text-opacity-50`}
-                onClick={onClick}
-                disabled={disabled}
-                id={id}
-            >
-                {children}
-            </button>
-        </li>
-    );
-};
-
 const Header: FC = () => {
-    // const { selectedBoard, boards } = useContext(BoardListContext);
+    const [isMobile, setIsMobile] = useState(false);
     const mobileMenu = useModal({ type: 'mobileMenu' });
     const newTaskModal = useModal();
     const router = useRouter();
-    const { boards, selectedBoard, mutateBoards } = useBoardsContext();
-
-    const selectedBoardData = boards?.find((board) => board.uuid === selectedBoard);
+    const { selectedBoard, mutateBoards } = useBoardsContext();
 
     // Strings for the delete modal
     const modalTitle = 'Delete this board?';
-    const modalMessage = `Are you sure you want to delete the ‘${selectedBoardData?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`;
+    const modalMessage = `Are you sure you want to delete the ‘${selectedBoard?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`;
 
     const confirmDeleteHandler = async () => {
-        await fetch(`/api/boards/${selectedBoard}`, {
+        await fetch(`/api/boards/${selectedBoard?.uuid}`, {
             method: 'DELETE',
         });
         mutateBoards();
@@ -68,8 +37,7 @@ const Header: FC = () => {
     });
     const DeleteBoardModal = deleteBoardModal.Component;
 
-    const optionsPopover = usePopover();
-    const Popover = optionsPopover.Component;
+    const { Component: Popover, Link, LinkContainer, ...optionsPopover } = usePopover();
 
     const NewTaskModal = newTaskModal.Component;
     const MenuModal = mobileMenu.Component;
@@ -90,13 +58,13 @@ const Header: FC = () => {
     const handleEditBoard = () => {
         optionsPopover.close();
         editBoardModal.toggle();
-        mutate(`/api/boards/${selectedBoard}`);
+        mutate(`/api/boards/${selectedBoard?.uuid}`);
     };
 
     const handleBoardUpdate = () => {
         editBoardModal.close();
         mutateBoards();
-        mutate(`/api/boards/${selectedBoard}`);
+        mutate(`/api/boards/${selectedBoard?.uuid}`);
     };
 
     const handleDeleteBoard = () => {
@@ -104,21 +72,36 @@ const Header: FC = () => {
         deleteBoardModal.toggle();
     };
 
-    const sortedColumns = selectedBoardData?.columns.sort((a, b) => a.position - b.position);
+    const sortedColumns = selectedBoard?.columns.sort((a, b) => a.position - b.position);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     return (
         <header className="flex items-center justify-between border-lines-light bg-white font-jakarta dark:border-lines-dark dark:bg-dark-grey dark:text-white sm:border-l">
             <div className="relative flex">
-                <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
-                    {selectedBoardData?.name}
-                </h1>
-                <button
-                    id="mobile-menu-toggle"
-                    className="flex w-6 items-center justify-center sm:hidden"
-                    onClick={mobileMenu.toggle}
-                >
-                    <Chevron className={`transition-all ${mobileMenu.isOpen ? 'rotate-180' : ''}`} />
-                </button>
+                {isMobile ? (
+                    <button
+                        id="mobile-menu-toggle"
+                        className="flex items-center justify-center sm:hidden"
+                        onClick={mobileMenu.toggle}
+                    >
+                        <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
+                            {selectedBoard?.name || 'Select board'}
+                        </h1>
+                        <Chevron className={`ml-2 transition-all ${mobileMenu.isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                ) : (
+                    <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
+                        {selectedBoard?.name}
+                    </h1>
+                )}
                 <MenuModal>
                     <MobileMenu setMenuIsOpen={mobileMenu.close} />
                 </MenuModal>
@@ -145,23 +128,18 @@ const Header: FC = () => {
                     <VerticalEllipsisIcon className="pointer-events-none" />
                 </button>
                 <Popover className="mt-8 -translate-x-full md:mt-12">
-                    <ul className="right-0 w-48 rounded-lg bg-white p-4 font-jakarta text-sm shadow-lg dark:bg-v-dark-grey">
-                        <PopoverLink disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
+                    <LinkContainer>
+                        <Link disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
                             Edit Board
-                        </PopoverLink>
-                        <PopoverLink
-                            disabled={!selectedBoard}
-                            danger={true}
-                            onClick={handleDeleteBoard}
-                            id="board-delete"
-                        >
+                        </Link>
+                        <Link disabled={!selectedBoard} danger={true} onClick={handleDeleteBoard} id="board-delete">
                             Delete Board
-                        </PopoverLink>
-                    </ul>
+                        </Link>
+                    </LinkContainer>
                 </Popover>
                 <DeleteBoardModal />
                 <EditBoardModal>
-                    <BoardForm formType="edit" boardData={selectedBoardData} onBoardUpdated={handleBoardUpdate} />
+                    <BoardForm formType="edit" boardData={selectedBoard!} onBoardUpdated={handleBoardUpdate} />
                 </EditBoardModal>
             </div>
         </header>

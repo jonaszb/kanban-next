@@ -2,7 +2,7 @@ import React, { FC, RefObject, useRef, useState } from 'react';
 import { MultiInput, MultiInputChangeEvent, MultiInputFocusEvent } from '../../types';
 import { ButtonSecondary } from '../Buttons/Buttons';
 import Droppable from '../Drag-and-drop/Droppable';
-import { Chevron, Cross, DragIcon } from '../Icons/Icons';
+import { Check, Chevron, Cross, DragIcon } from '../Icons/Icons';
 import { v4 as uuidv4 } from 'uuid';
 import {
     DndContext,
@@ -96,13 +96,20 @@ const Textarea: FC<
     );
 };
 
-const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: string[]; setValue: Function }> = (
-    props
-) => {
+const Dropdown: FC<
+    React.ComponentProps<'select'> & {
+        label?: string;
+        options: string[];
+        setValue: Function;
+        onValueSelected?: Function;
+    }
+> = (props) => {
     const popover = usePopover();
     const ulRef = useRef<HTMLUListElement>(null);
     const selectRef = useRef<HTMLSelectElement>(null);
     const PopoverEl = popover.Component;
+
+    const { label, value, className, setValue, onValueSelected, ...restProps } = props;
 
     const handleSelectClick = (e: React.MouseEvent<HTMLElement>) => {
         popover.toggle(e);
@@ -110,7 +117,8 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
 
     const handleOptionSelect = (e: React.MouseEvent<HTMLElement>) => {
         const input = e.target as HTMLElement;
-        props.setValue(input.innerText);
+        setValue(input.innerText);
+        onValueSelected && onValueSelected(input.innerText);
         popover.close();
     };
 
@@ -133,7 +141,7 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
             ulRef.current?.querySelectorAll('li').length - 1
         ] as HTMLElement;
         if (e.key === 'Enter') {
-            props.setValue(input.innerText);
+            setValue(input.innerText);
             popover.close();
             selectRef.current?.focus();
         } else if (e.key === 'ArrowDown') {
@@ -154,10 +162,9 @@ const Dropdown: FC<React.ComponentProps<'select'> & { label: string; options: st
         }
     };
 
-    const { label, value, className, setValue, ...restProps } = props;
     return (
         <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
-            <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
+            {label && <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>}
             <div className="relative">
                 <select
                     id={props.id}
@@ -398,4 +405,30 @@ const MultiInputRow: FC<{
     );
 };
 
-export { Input, MultiValueInput, Textarea, Dropdown };
+const Checkbox = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'> & { checked?: boolean }>(
+    ({ checked, id, ...props }, ref) => {
+        const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+            props.onChange && props.onChange(e);
+        };
+        return (
+            <>
+                <input
+                    ref={ref}
+                    id={id}
+                    checked={checked}
+                    type="checkbox"
+                    className="peer hidden"
+                    onChange={changeHandler}
+                />
+                <label
+                    htmlFor={id}
+                    className={`flex h-4 w-4 items-center justify-center rounded border bg-white transition-all peer-checked:bg-primary ${props.className}`}
+                >
+                    <Check />
+                </label>
+            </>
+        );
+    }
+);
+
+export { Input, MultiValueInput, Textarea, Dropdown, Checkbox };

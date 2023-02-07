@@ -1,9 +1,15 @@
 import { FC } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { Task as TaskT } from '../../../types';
+import useModal from '../../../hooks/useModal';
+import TaskDetails from '../../Modals/TaskDetails';
+import { useBoardsContext } from '../../../store/BoardListContext';
 
 const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDisabled }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.uuid });
+    const { selectedBoard } = useBoardsContext();
+    const taskDetailsModal = useModal();
+    const Modal = taskDetailsModal.Component;
     const style = transform
         ? {
               transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -12,21 +18,37 @@ const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDi
         : undefined;
 
     const completedTasks = taskData.subtasks.filter((subtask) => subtask.completed).length;
+
+    const handleTaskClick = () => {
+        taskDetailsModal.toggle();
+    };
+
     return (
-        <li
-            ref={setNodeRef}
-            style={style}
-            {...attributes}
-            {...(dragDisabled ? {} : listeners)}
-            onClick={() => console.log(`Clicked task ${taskData.name}`)}
-            data-testid="task"
-            className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"
-        >
-            <h4 className="text-sm text-black group-hover:text-primary dark:text-white">{taskData.name}</h4>
-            {taskData.subtasks.length > 0 && (
-                <span className="mt-2 text-xs text-mid-grey">{`${completedTasks} of ${taskData.subtasks.length} subtasks done`}</span>
-            )}
-        </li>
+        <>
+            <li
+                ref={setNodeRef}
+                style={style}
+                {...attributes}
+                {...(dragDisabled ? {} : listeners)}
+                onClick={handleTaskClick}
+                data-testid="task"
+                className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"
+            >
+                <h4 className="text-sm text-black group-hover:text-primary dark:text-white">{taskData.name}</h4>
+                {taskData.subtasks.length > 0 && (
+                    <span className="mt-2 text-xs text-mid-grey">{`${completedTasks} of ${taskData.subtasks.length} subtasks done`}</span>
+                )}
+            </li>
+            <Modal>
+                {selectedBoard && (
+                    <TaskDetails
+                        closeModal={taskDetailsModal.close}
+                        taskData={taskData}
+                        columns={selectedBoard.columns}
+                    />
+                )}
+            </Modal>
+        </>
     );
 };
 

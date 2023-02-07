@@ -7,7 +7,7 @@ import { fetcher } from '../utils/utils';
 
 export type BoardListContextProps = {
     boards?: Board[];
-    selectedBoard: string | null;
+    selectedBoard: Board | null;
     mutateBoards: KeyedMutator<Board[]>;
     isLoading: boolean;
     error: any;
@@ -24,12 +24,12 @@ export const BoardListContext = React.createContext<BoardListContextProps>({
 const BoardListContextProvider: React.FC<PropsWithChildren<{ value?: BoardListContextProps }>> = (props) => {
     const router = useRouter();
 
-    const [selectedBoard, setSelectedBoard] = React.useState<string | null>(null);
+    const [selectedBoard, setSelectedBoard] = React.useState<Board | null>(null);
     const { data: boards, mutate: mutateBoards, isLoading, error } = useSWR<Board[]>(`/api/boards`, fetcher);
 
     useEffect(() => {
-        setSelectedBoard(router.query.boardId as string);
-    }, [router.query.boardId]);
+        setSelectedBoard(boards?.find((board) => board.uuid === router.query.boardId) ?? null);
+    }, [boards, router.query.boardId]);
 
     const contextValue = {
         boards,

@@ -47,8 +47,8 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!isNewTask(taskData)) {
         return res.status(400).json({ error: 'Invalid task data' });
     }
-    if (taskData.name.length < 1 || taskData.name.length > 60) {
-        return res.status(400).json({ error: 'Task name must be between 1 and 60 characters' });
+    if (taskData.name.length < 1 || taskData.name.length > 120) {
+        return res.status(400).json({ error: 'Task name must be between 1 and 120 characters' });
     }
     if (!validate(taskData.column_uuid)) {
         return res.status(400).json({ error: 'Invalid column UUID' });

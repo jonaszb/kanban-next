@@ -1,6 +1,31 @@
-import { useEffect, useRef, useState } from 'react';
+import { FC, PropsWithChildren, SyntheticEvent, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import React from 'react';
+
+const LinkContainer: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
+    return (
+        <ul className={`w-48 rounded-md bg-white p-4 shadow-md dark:bg-v-dark-grey ${className ?? ''}`}>{children}</ul>
+    );
+};
+
+const PopoverLink: FC<
+    PropsWithChildren<{ onClick: (e: SyntheticEvent) => void; danger?: boolean; disabled?: boolean; id?: string }>
+> = ({ danger, onClick, disabled, id, children }) => {
+    return (
+        <li className="mb-4 last:mb-0">
+            <button
+                className={`cursor-pointer  ${
+                    danger ? 'text-danger' : 'text-mid-grey'
+                } disabled:cursor-default disabled:text-opacity-50`}
+                onClick={onClick}
+                disabled={disabled}
+                id={id}
+            >
+                {children}
+            </button>
+        </li>
+    );
+};
 
 type PopoverHook = {
     anchorEl: HTMLElement | null;
@@ -9,6 +34,8 @@ type PopoverHook = {
     close: () => void;
     toggle: (event: React.MouseEvent | React.KeyboardEvent) => void;
     Component: React.FC<React.PropsWithChildren<{ anchorWidth?: boolean; className?: string }>>;
+    Link: typeof PopoverLink;
+    LinkContainer: typeof LinkContainer;
 };
 
 const usePopover = (): PopoverHook => {
@@ -45,7 +72,7 @@ const usePopover = (): PopoverHook => {
 
         return isOpen && popoverRoot
             ? ReactDOM.createPortal(
-                  <div ref={popoverRef} className={`absolute ${props.className}`} style={style}>
+                  <div ref={popoverRef} className={`absolute z-50 ${props.className}`} style={style}>
                       {props.children}
                   </div>,
                   popoverRoot
@@ -74,7 +101,7 @@ const usePopover = (): PopoverHook => {
         };
     }, [popoverRef, anchorEl]);
 
-    return { anchorEl, isOpen, open, close, toggle, Component };
+    return { anchorEl, isOpen, open, close, toggle, Component, Link: PopoverLink, LinkContainer };
 };
 
 export default usePopover;
