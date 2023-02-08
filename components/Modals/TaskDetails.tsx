@@ -9,6 +9,7 @@ import { VerticalEllipsisIcon } from '../Icons/Icons';
 import { Checkbox, Dropdown } from '../Inputs/Inputs';
 import useSWR from 'swr';
 import { fetcher } from '../../utils/utils';
+import { LinkContainer, PopoverLink } from '../Popover/Popover';
 
 const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: Subtask) => void }> = ({
     subtask,
@@ -63,7 +64,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
         initialValue: columns.find((col) => col.uuid === taskData?.column_uuid)?.name,
     });
 
-    const { Link, LinkContainer, Component: OptionsPopover, ...optionsPopover } = usePopover();
+    const { Component: OptionsPopover, ...optionsPopover } = usePopover();
 
     const handleOptionsClick: MouseEventHandler<HTMLButtonElement> = (e) => {
         optionsPopover.toggle(e);
@@ -147,13 +148,13 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                             <VerticalEllipsisIcon className="pointer-events-none" />
                         </button>
                         <OptionsPopover className="mt-8 -translate-x-16">
-                            <LinkContainer className="w-48">
-                                <Link id="task-edit" onClick={() => {}}>
+                            <LinkContainer>
+                                <PopoverLink id="task-edit" onClick={() => {}}>
                                     Edit Task
-                                </Link>
-                                <Link id="task-delete" onClick={taskDeleteHandler} danger>
+                                </PopoverLink>
+                                <PopoverLink id="task-delete" onClick={taskDeleteHandler} danger>
                                     Delete Task
-                                </Link>
+                                </PopoverLink>
                             </LinkContainer>
                         </OptionsPopover>
                         <DeleteTaskModal />
