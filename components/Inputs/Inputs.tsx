@@ -440,5 +440,6 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'
         );
     }
 );
+Checkbox.displayName = 'Checkbox';
 
 export { Input, MultiValueInput, Textarea, Dropdown, Checkbox };

@@ -71,7 +71,7 @@ export type Column = {
     color: string;
     board_uuid: string;
     user_uuid: string;
-    tasks?: Task[];
+    tasks: Task[];
 };
 
 export type MultiInputChangeEvent =

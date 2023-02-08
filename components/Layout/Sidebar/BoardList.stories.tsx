@@ -40,6 +40,8 @@ export default {
 const ctxValue = {
     boards: boards,
     selectedBoard: null,
+    selectedTask: null,
+    setSelectedTask: () => {},
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),
