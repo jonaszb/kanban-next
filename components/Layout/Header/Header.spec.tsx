@@ -58,7 +58,9 @@ const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) =
 
 const providerProps = {
     boards: boards,
-    selectedBoard: boards[1].uuid,
+    selectedBoard: boards[1],
+    selectedTask: null,
+    setSelectedTask: () => null,
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),
@@ -103,8 +105,8 @@ describe('Header', () => {
             {
                 id: 1,
                 uuid: uuidv4(),
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                created_at: new Date(),
+                updated_at: new Date(),
                 name: 'Col',
                 tasks: [],
                 position: 1,

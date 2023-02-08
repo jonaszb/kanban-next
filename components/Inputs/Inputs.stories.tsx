@@ -3,6 +3,7 @@ import {
     Textarea as TextareaElem,
     Dropdown as DropdownElem,
     MultiValueInput as MultiValueInputElem,
+    Checkbox as CheckboxElem,
 } from './Inputs';
 import type { Meta, StoryFn } from '@storybook/react';
 
@@ -97,4 +98,14 @@ MultiValueInputTextarea.args = {
 };
 MultiValueInputTextarea.parameters = {
     theme: 'light',
+};
+
+export const Checkbox: StoryFn<typeof CheckboxElem> = (args) => {
+    return <CheckboxElem {...args} />;
+};
+Checkbox.argTypes = {
+    checked: { control: 'boolean' },
+};
+Checkbox.args = {
+    checked: true,
 };

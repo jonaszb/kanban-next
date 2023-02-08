@@ -61,7 +61,9 @@ const renderWithCtx = async (ui: ReactElement, providerProps: BoardListContextPr
 
 const providerProps = {
     boards: boards,
-    selectedBoard: boards[1].uuid,
+    selectedBoard: boards[1],
+    selectedTask: null,
+    setSelectedTask: () => null,
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),

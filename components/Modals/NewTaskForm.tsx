@@ -5,17 +5,17 @@ import { ButtonPrimary } from '../Buttons/Buttons';
 import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
 import { mutate } from 'swr';
 
-// Validate input length - must be between 1 and 20 characters. Return tuple of boolean and error message.
-const validateName = (val: string | undefined): [boolean, string] => {
+// Validate input length - must be between 1 and 100 characters. Return tuple of boolean and error message.
+const validateTitle = (val: string | undefined): [boolean, string] => {
     if (!val || val?.trim().length < 1) return [false, "Can't be empty"];
-    if (val?.trim().length > 100) return [false, 'Name too long'];
+    if (val?.trim().length > 100) return [false, `${val?.trim().length}/100`];
     return [true, ''];
 };
 
-const validateColumns = (val: MultiInput[]): [boolean, string] => {
+const validateSubtasks = (val: MultiInput[]): [boolean, string] => {
     if (val?.length === 0 || !val) return [true, ''];
     for (const item of val) {
-        const [isValid, errorMessage] = validateName(item.value);
+        const [isValid, errorMessage] = validateTitle(item.value);
         if (!isValid) return [isValid, errorMessage];
     }
     return [true, ''];
@@ -23,9 +23,9 @@ const validateColumns = (val: MultiInput[]): [boolean, string] => {
 
 const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
     const dropdownOptions = props.columns?.map((item) => item.name);
-    const nameInput = useInput<string>({ validateFn: validateName });
+    const nameInput = useInput<string>({ validateFn: validateTitle });
     const descriptionInput = useInput<string>();
-    const subtasksInput = useInput<MultiInput[]>({ validateFn: validateColumns });
+    const subtasksInput = useInput<MultiInput[]>({ validateFn: validateSubtasks });
     const columnDropdown = useInput<string>({ initialValue: dropdownOptions && dropdownOptions[0] });
 
     const formIsValid = nameInput.isValid && subtasksInput.isValid;
@@ -35,7 +35,7 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
         nameInput.setIsTouched(true);
         subtasksInput.setIsTouched(true);
         const newColumnsValue = subtasksInput.value?.map((item) => {
-            const [isValid, errorMsg] = validateName(item.value);
+            const [isValid, errorMsg] = validateTitle(item.value);
             return { ...item, isValid, errorMsg, isTouched: true };
         });
         if (newColumnsValue) subtasksInput.customValueChangeHandler(newColumnsValue);
@@ -46,7 +46,6 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                 subtasks: subtasksInput.value?.map((item) => item.value),
                 column_uuid: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
             };
-            console.log(formData);
             fetch('/api/tasks', {
                 method: 'POST',
                 headers: {
@@ -85,14 +84,14 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                     recharge the batteries a little."
                     className="mb-6"
                 />
-
                 <MultiValueInput
+                    id="subtasks"
                     placeholder="e.g. To Do"
                     label="Subtasks"
                     className="mb-6"
                     values={subtasksInput.value}
                     changeHandler={subtasksInput.customValueChangeHandler}
-                    validationHandler={validateName}
+                    validationHandler={validateTitle}
                     addBtnText="+ Add New Subtask"
                     fieldType="textarea"
                 />
@@ -106,7 +105,7 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                         options={dropdownOptions}
                     />
                 )}
-                <ButtonPrimary>Create New Task</ButtonPrimary>
+                <ButtonPrimary data-testid="task-submit">Create New Task</ButtonPrimary>
             </form>
         </div>
     );

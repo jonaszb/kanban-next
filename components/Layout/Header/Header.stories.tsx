@@ -23,7 +23,9 @@ const boards: Board[] = [
 
 const ctxValue = {
     boards: boards,
-    selectedBoard: boards[0].uuid,
+    selectedBoard: boards[0],
+    selectedTask: null,
+    setSelectedTask: () => null,
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),

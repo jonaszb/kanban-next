@@ -6,6 +6,7 @@ type ModalHook = {
     isOpen: boolean;
     toggle: () => void;
     close: () => void;
+    open: () => void;
     Component: FC<PropsWithChildren>;
 };
 
@@ -25,6 +26,10 @@ const useModal = (options?: {
 
     const close = () => {
         setIsOpen(false);
+    };
+
+    const open = () => {
+        setIsOpen(true);
     };
 
     useEffect(() => {
@@ -47,6 +52,7 @@ const useModal = (options?: {
         isOpen,
         toggle,
         close,
+        open,
         Component,
     };
 };

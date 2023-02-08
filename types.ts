@@ -40,7 +40,7 @@ export type NewColumn = {
 };
 
 export type Task = {
-    name: UniqueIdentifier;
+    name: string;
     subtasks: Subtask[];
     position: number;
     description: string;
@@ -64,8 +64,8 @@ export type Subtask = {
 export type Column = {
     id: number;
     uuid: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
     name: string;
     position: number;
     color: string;
