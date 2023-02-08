@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 
 const LinkContainer: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
-    return (
-        <ul className={`w-48 rounded-md bg-white p-4 shadow-md dark:bg-v-dark-grey ${className ?? ''}`}>{children}</ul>
-    );
+    return <ul className={`rounded-md bg-white p-4 shadow-md dark:bg-v-dark-grey ${className ?? ''}`}>{children}</ul>;
 };
 
 const PopoverLink: FC<

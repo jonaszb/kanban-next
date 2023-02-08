@@ -128,7 +128,7 @@ const Header: FC = () => {
                     <VerticalEllipsisIcon className="pointer-events-none" />
                 </button>
                 <Popover className="mt-8 -translate-x-full md:mt-12">
-                    <LinkContainer>
+                    <LinkContainer className="w-48">
                         <Link disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
                             Edit Board
                         </Link>
