@@ -28,6 +28,7 @@ const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: 
 
     return (
         <li
+            data-testid="subtask"
             key={subtask.uuid}
             className={`mb-2 flex cursor-pointer items-center gap-4 rounded bg-light-grey p-3 transition-all  dark:bg-v-dark-grey  ${
                 isChecked ? '' : 'hover:bg-primary hover:bg-opacity-25 dark:hover:bg-primary dark:hover:bg-opacity-25'
@@ -135,12 +136,14 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
     }, [taskData?.column_uuid]);
 
     return (
-        <div className={deleteTaskModal.isOpen ? 'hidden' : ''}>
+        <div data-testid="task-details" className={deleteTaskModal.isOpen ? 'hidden' : ''}>
             {taskData && (
                 <>
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-lg font-bold dark:text-white">{taskData.name}</h2>
-                        <button className="h-5 pl-5" onClick={handleOptionsClick}>
+                        <h2 data-testid="task-name" className="text-lg font-bold dark:text-white">
+                            {taskData.name}
+                        </h2>
+                        <button data-testid="task-options" className="h-5 pl-5" onClick={handleOptionsClick}>
                             <VerticalEllipsisIcon className="pointer-events-none" />
                         </button>
                         <OptionsPopover className="mt-8 -translate-x-16">
@@ -155,10 +158,14 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                         </OptionsPopover>
                         <DeleteTaskModal />
                     </div>
-                    <p className="mb-6 text-sm font-medium leading-6 text-mid-grey">{taskData.description}</p>
-                    <span className="text-sm font-bold text-mid-grey dark:text-white">
-                        {`Subtasks (${completedTasks} of ${taskData.subtasks.length})`}
-                    </span>
+                    <p data-testid="task-description" className="mb-6 text-sm font-medium leading-6 text-mid-grey">
+                        {taskData.description}
+                    </p>
+                    {taskData.subtasks.length > 0 && (
+                        <span data-testid="subtasks-header" className="text-sm font-bold text-mid-grey dark:text-white">
+                            {`Subtasks (${completedTasks} of ${taskData.subtasks.length})`}
+                        </span>
+                    )}
                     <ul className="mt-4 mb-6">
                         {taskData.subtasks.map((subtask, i) => (
                             <SubtaskRow

@@ -40,7 +40,7 @@ export type NewColumn = {
 };
 
 export type Task = {
-    name: UniqueIdentifier;
+    name: string;
     subtasks: Subtask[];
     position: number;
     description: string;

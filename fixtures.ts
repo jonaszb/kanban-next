@@ -12,6 +12,7 @@ type CustomFixtures = {
     apiUtils: ApiUtils;
     basePage: BasePage;
     boardPage: [BoardPage, Board];
+    boardPageWithColumn: [BoardPage, Board];
     pageObjects: typeof pageObjects;
 };
 
@@ -35,6 +36,12 @@ export const test = base.extend<CustomFixtures>({
         const board = await apiUtils.getBoard(response.uuid);
         await use(board);
         await apiUtils.deleteBoard(board.uuid, { failOnStatusCode: false });
+    },
+
+    boardPageWithColumn: async ({ testBoardWithColumn, page, pageObjects }, use) => {
+        const boardPage = new pageObjects.BoardPage(page, testBoardWithColumn.uuid);
+        await boardPage.goto();
+        await use([boardPage, testBoardWithColumn]);
     },
 
     /** Create a test board with 2 columns and 2 tasks (1 per column) */

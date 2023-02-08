@@ -1,4 +1,4 @@
-import React, { FC, RefObject, useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import { MultiInput, MultiInputChangeEvent, MultiInputFocusEvent } from '../../types';
 import { ButtonSecondary } from '../Buttons/Buttons';
 import Droppable from '../Drag-and-drop/Droppable';
@@ -115,6 +115,11 @@ const Dropdown: FC<
         popover.toggle(e);
     };
 
+    const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setValue(e.target.value);
+        onValueSelected && onValueSelected(e.target.value);
+    };
+
     const handleOptionSelect = (e: React.MouseEvent<HTMLElement>) => {
         const input = e.target as HTMLElement;
         setValue(input.innerText);
@@ -168,7 +173,7 @@ const Dropdown: FC<
             <div className="relative">
                 <select
                     id={props.id}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={onSelectChange}
                     onClick={handleSelectClick}
                     onKeyDown={handleSelectKeyDown}
                     value={value}
