@@ -9,6 +9,7 @@ import usePopover from '../../../hooks/usePopover';
 import { useRouter } from 'next/router';
 import BoardForm from '../../Modals/BoardForm';
 import { mutate } from 'swr';
+import { LinkContainer, PopoverLink } from '../../Popover/Popover';
 
 const Header: FC = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -37,7 +38,7 @@ const Header: FC = () => {
     });
     const DeleteBoardModal = deleteBoardModal.Component;
 
-    const { Component: Popover, Link, LinkContainer, ...optionsPopover } = usePopover();
+    const { Component: Popover, ...optionsPopover } = usePopover();
 
     const NewTaskModal = newTaskModal.Component;
     const MenuModal = mobileMenu.Component;
@@ -128,13 +129,18 @@ const Header: FC = () => {
                     <VerticalEllipsisIcon className="pointer-events-none" />
                 </button>
                 <Popover className="mt-8 -translate-x-full md:mt-12">
-                    <LinkContainer className="w-48">
-                        <Link disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
+                    <LinkContainer>
+                        <PopoverLink disabled={!selectedBoard} onClick={handleEditBoard} id="board-edit">
                             Edit Board
-                        </Link>
-                        <Link disabled={!selectedBoard} danger={true} onClick={handleDeleteBoard} id="board-delete">
+                        </PopoverLink>
+                        <PopoverLink
+                            disabled={!selectedBoard}
+                            danger={true}
+                            onClick={handleDeleteBoard}
+                            id="board-delete"
+                        >
                             Delete Board
-                        </Link>
+                        </PopoverLink>
                     </LinkContainer>
                 </Popover>
                 <DeleteBoardModal />
