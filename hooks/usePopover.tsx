@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import React from 'react';
 
