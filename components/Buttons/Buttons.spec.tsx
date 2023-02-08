@@ -1,53 +1,62 @@
 import { render, screen } from '../../utils/test-utils';
-import { ButtonPrimaryLarge } from './Buttons';
+import { ButtonPrimary, ButtonSecondary, ButtonDanger, ButtonPrimaryLarge } from './Buttons';
 import '@testing-library/jest-dom';
 
-describe('ButtonPrimaryLarge', () => {
-    test('works with children', async () => {
-        render(<ButtonPrimaryLarge>Test button!</ButtonPrimaryLarge>);
-        const btnElement = screen.getByRole('button');
-        expect(btnElement).toBeInTheDocument();
-    });
+const testData = {
+    ButtonPrimaryLarge: ButtonPrimaryLarge,
+    ButtonPrimary: ButtonPrimary,
+    ButtonSecondary: ButtonSecondary,
+    ButtonDanger: ButtonDanger,
+};
 
-    test('executes onClick callback', () => {
-        let clicked = false;
-        render(<ButtonPrimaryLarge onClick={() => (clicked = true)}>Test</ButtonPrimaryLarge>);
-        screen.getByRole('button').click();
-        expect(clicked).toBe(true);
-    });
+for (const [buttonName, ButtonComponent] of Object.entries(testData)) {
+    describe(buttonName, () => {
+        test('works with children', async () => {
+            render(<ButtonComponent>Test button!</ButtonComponent>);
+            const btnElement = screen.getByRole('button');
+            expect(btnElement).toBeInTheDocument();
+        });
 
-    test('can be disabled', () => {
-        render(<ButtonPrimaryLarge disabled>Test</ButtonPrimaryLarge>);
-        const btnElement = screen.getByRole('button');
-        expect(btnElement).toBeDisabled();
-    });
+        test('executes onClick callback', () => {
+            let clicked = false;
+            render(<ButtonComponent onClick={() => (clicked = true)}>Test</ButtonComponent>);
+            screen.getByRole('button').click();
+            expect(clicked).toBe(true);
+        });
 
-    test('does not execute onClick callback if disabled', () => {
-        let clicked = false;
-        render(
-            <ButtonPrimaryLarge disabled onClick={() => (clicked = true)}>
-                Test
-            </ButtonPrimaryLarge>
-        );
-        screen.getByRole('button').click();
-        expect(clicked).toBe(false);
-    });
+        test('can be disabled', () => {
+            render(<ButtonComponent disabled>Test</ButtonComponent>);
+            const btnElement = screen.getByRole('button');
+            expect(btnElement).toBeDisabled();
+        });
 
-    test('can take a custom className', () => {
-        render(<ButtonPrimaryLarge className="test">Test</ButtonPrimaryLarge>);
-        const btnElement = screen.getByRole('button');
-        expect(btnElement).toHaveClass('test');
-    });
+        test('does not execute onClick callback if disabled', () => {
+            let clicked = false;
+            render(
+                <ButtonComponent disabled onClick={() => (clicked = true)}>
+                    Test
+                </ButtonComponent>
+            );
+            screen.getByRole('button').click();
+            expect(clicked).toBe(false);
+        });
 
-    test('custom class name does not override default class name', () => {
-        render(<ButtonPrimaryLarge className="test">Test</ButtonPrimaryLarge>);
-        const btnElement = screen.getByRole('button');
-        expect(btnElement).toHaveClass('bg-primary');
-    });
+        test('can take a custom className', () => {
+            render(<ButtonComponent className="test">Test</ButtonComponent>);
+            const btnElement = screen.getByRole('button');
+            expect(btnElement).toHaveClass('test');
+        });
 
-    test('can take other button props', () => {
-        render(<ButtonPrimaryLarge type="submit">Test</ButtonPrimaryLarge>);
-        const btnElement = screen.getByRole('button');
-        expect(btnElement).toHaveAttribute('type', 'submit');
+        test('custom class name does not override default class name', () => {
+            render(<ButtonComponent className="test">Test</ButtonComponent>);
+            const btnElement = screen.getByRole('button');
+            expect(btnElement).toHaveClass('rounded-full');
+        });
+
+        test('can take other button props', () => {
+            render(<ButtonComponent type="submit">Test</ButtonComponent>);
+            const btnElement = screen.getByRole('button');
+            expect(btnElement).toHaveAttribute('type', 'submit');
+        });
     });
-});
+}

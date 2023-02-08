@@ -105,8 +105,8 @@ describe('Header', () => {
             {
                 id: 1,
                 uuid: uuidv4(),
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                created_at: new Date(),
+                updated_at: new Date(),
                 name: 'Col',
                 tasks: [],
                 position: 1,

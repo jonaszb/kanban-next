@@ -64,14 +64,14 @@ export type Subtask = {
 export type Column = {
     id: number;
     uuid: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
     name: string;
     position: number;
     color: string;
     board_uuid: string;
     user_uuid: string;
-    tasks: Task[];
+    tasks?: Task[];
 };
 
 export type MultiInputChangeEvent =
