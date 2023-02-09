@@ -1,10 +1,7 @@
-import { fireEvent, render, screen, act } from '../../utils/test-utils';
+import { render, screen } from '../../utils/test-utils';
 import { LinkContainer, PopoverLink } from './Popover';
 import '@testing-library/jest-dom';
-import { v4 as uuidv4 } from 'uuid';
-import React, { ReactElement } from 'react';
-import BoardListContextProvider, { BoardListContextProps } from '../../store/BoardListContext';
-import { Board } from '../../types';
+import React from 'react';
 
 describe('Popover', () => {
     test('can be rendered without links', () => {
@@ -32,10 +29,10 @@ describe('Popover', () => {
     });
 
     test('should execute onClick callback', () => {
-        let clicked = false;
-        render(<PopoverLink onClick={() => (clicked = true)}>Test</PopoverLink>);
+        const mockFn = jest.fn();
+        render(<PopoverLink onClick={mockFn}>Test</PopoverLink>);
         screen.getByRole('button').click();
-        expect(clicked).toBe(true);
+        expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     test('can be disabled', () => {
@@ -49,14 +46,14 @@ describe('Popover', () => {
     });
 
     test('does not execute onClick callback if disabled', () => {
-        let clicked = false;
+        const mockFn = jest.fn();
         render(
-            <PopoverLink onClick={() => (clicked = true)} disabled>
+            <PopoverLink onClick={mockFn} disabled>
                 Test
             </PopoverLink>
         );
         screen.getByRole('button').click();
-        expect(clicked).toBe(false);
+        expect(mockFn).toHaveBeenCalledTimes(0);
     });
 
     test('link container can take a custom className', () => {

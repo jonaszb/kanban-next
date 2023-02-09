@@ -13,6 +13,7 @@ import BoardListContextProvider from '../../../store/BoardListContext';
 import type { BoardListContextProps } from '../../../store/BoardListContext';
 import React from 'react';
 import { Board } from '../../../types';
+import { act } from 'react-dom/test-utils';
 
 const sharedProps = {
     created_at: new Date(),
@@ -52,8 +53,10 @@ jest.mock('next/router', () => ({
     },
 }));
 
-const renderWithCtx = (ui: ReactElement, providerProps: BoardListContextProps) => {
-    return render(<BoardListContextProvider value={providerProps}>{ui}</BoardListContextProvider>);
+const renderWithCtx = async (ui: ReactElement, providerProps: BoardListContextProps) => {
+    return await act(async () =>
+        render(<BoardListContextProvider value={providerProps}>{ui}</BoardListContextProvider>)
+    );
 };
 
 const providerProps = {
@@ -68,33 +71,33 @@ const providerProps = {
 
 describe('Header', () => {
     test('Board name is displayed if provided', async () => {
-        const result = renderWithCtx(<Header />, providerProps);
+        const result = await renderWithCtx(<Header />, providerProps);
         const header = result.container.querySelector('#board-header');
         expect(header).toBeVisible();
         expect(header).toHaveTextContent('Marketing Plan');
     });
 
     test('Board name is not displayed if not provided', async () => {
-        const result = renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
+        const result = await renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
         const header = result.container.querySelector('#board-header');
         expect(header).toBeEmptyDOMElement();
     });
 
     test('New Task button is displayed', async () => {
-        const result = renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
+        const result = await renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
         const button = result.container.querySelector('#new-task');
         expect(button).toBeVisible();
         expect(button).toHaveTextContent('+ Add New Task');
     });
 
     test('New Task button is disabled if no board is selected', async () => {
-        const result = renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
+        const result = await renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
         const button = result.container.querySelector('#new-task');
         expect(button).toBeDisabled();
     });
 
     test('New Task button is disabled if a board is selected but has no columns', async () => {
-        const result = renderWithCtx(<Header />, providerProps);
+        const result = await renderWithCtx(<Header />, providerProps);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeDisabled();
     });
@@ -115,26 +118,26 @@ describe('Header', () => {
                 user_uuid: uuidv4(),
             },
         ];
-        const result = renderWithCtx(<Header />, propsWithColumn);
+        const result = await renderWithCtx(<Header />, propsWithColumn);
         const button = result.container.querySelector('#new-task');
         expect(button).toBeEnabled();
     });
 
     test('Board Options button is displayed', async () => {
-        const result = renderWithCtx(<Header />, providerProps);
+        const result = await renderWithCtx(<Header />, providerProps);
         const button = result.container.querySelector('#board-options');
         expect(button).toBeVisible();
     });
 
     test('Board Options button is enabled if a board is selected', async () => {
-        const result = renderWithCtx(<Header />, providerProps);
+        const result = await renderWithCtx(<Header />, providerProps);
         const button = result.container.querySelector('#board-options');
         expect(button).toBeEnabled();
     });
 
     // Popover is used for logout as well
     test('Board Options button is enabled if no board is selected', async () => {
-        const result = renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
+        const result = await renderWithCtx(<Header />, { ...providerProps, selectedBoard: null });
         const button = result.container.querySelector('#board-options');
         expect(button).toBeEnabled();
     });
