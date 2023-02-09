@@ -1,8 +1,8 @@
 import BoardList from './BoardList';
 import type { Meta, StoryObj } from '@storybook/react';
 import { v4 as uuidv4 } from 'uuid';
-import BoardListContextProvider from '../../../store/BoardListContext';
-import { Board } from '../../../types';
+import BoardListContextProvider from '../../store/BoardListContext';
+import { Board } from '../../types';
 
 const sharedProps = {
     created_at: new Date(),

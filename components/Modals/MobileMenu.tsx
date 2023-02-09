@@ -1,6 +1,6 @@
 import React, { Dispatch, FC, SetStateAction } from 'react';
-import BoardList from '../Layout/Sidebar/BoardList';
-import ThemeToggle from '../Layout/Sidebar/ThemeToggle';
+import BoardList from '../BoardList/BoardList';
+import ThemeToggle from '../BoardList/ThemeToggle';
 
 const MobileMenu: FC<{
     setMenuIsOpen: Dispatch<SetStateAction<boolean>>;

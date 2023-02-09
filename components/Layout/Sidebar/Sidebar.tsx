@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler } from 'react';
+import BoardList from '../../BoardList/BoardList';
+import ThemeToggle from '../../BoardList/ThemeToggle';
 import { HideSidebarIcon } from '../../Icons/Icons';
-import BoardList from './BoardList';
-import ThemeToggle from './ThemeToggle';
 
 const HideSideBarButton: FC<React.ComponentProps<'button'>> = (props) => {
     const { className, ...restProps } = props;
