@@ -231,19 +231,24 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
                 overContainer: items[overContainer].uuid,
             };
-            setDraggingDisabled(true);
-            fetch(`/api/tasks/${draggedTask.uuid}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    column_uuid: dragData.overContainer,
-                    position: dragData.overIndex,
-                }),
-            }).then(() => {
+            // Update the task if it was moved to a different container or index
+            if (startingContainer === overContainer && startingIndex === overIndex) {
                 boardData.mutate();
-            });
+            } else {
+                setDraggingDisabled(true);
+                fetch(`/api/tasks/${draggedTask.uuid}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        column_uuid: dragData.overContainer,
+                        position: dragData.overIndex,
+                    }),
+                }).then(() => {
+                    boardData.mutate();
+                });
+            }
         }
         setClonedItems(null);
         setActiveId(null);
