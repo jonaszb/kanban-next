@@ -431,7 +431,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, React.ComponentProps<'input'
                 />
                 <label
                     htmlFor={id}
-                    className={`relative flex h-4 w-4 cursor-pointer items-center justify-center overflow-hidden rounded border border-mid-grey border-opacity-25 bg-white transition-all dark:bg-v-dark-grey ${props.className}`}
+                    className={`relative flex aspect-square min-w-[1rem] cursor-pointer items-center justify-center overflow-hidden rounded border border-mid-grey border-opacity-25 bg-white transition-all dark:bg-v-dark-grey ${props.className}`}
                 >
                     <div
                         className={`absolute z-0 h-full w-full -translate-x-2 translate-y-2 rounded-full bg-primary transition-all ${

@@ -6,7 +6,7 @@ const Button: FC<{ fullWidth?: boolean; className?: string; large?: boolean } & 
     const { fullWidth, large, className, ...restProps } = props;
     return (
         <button
-            className={`rounded-full font-jakarta  font-bold text-white transition-colors disabled:opacity-25 ${
+            className={`whitespace-nowrap rounded-full font-jakarta  font-bold text-white transition-colors disabled:opacity-25 ${
                 fullWidth ? 'w-full' : 'w-fit'
             } ${className || ''} ${large ? 'py-4 px-6 text-base' : 'py-2 px-4 text-sm'}`}
             {...restProps}

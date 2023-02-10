@@ -93,13 +93,19 @@ const Header: FC = () => {
                         className="flex items-center justify-center sm:hidden"
                         onClick={mobileMenu.toggle}
                     >
-                        <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
+                        <h1
+                            id="board-header"
+                            className="max-w-[45vw] overflow-hidden text-ellipsis whitespace-nowrap text-lg"
+                        >
                             {selectedBoard?.name || 'Select board'}
                         </h1>
                         <Chevron className={`ml-2 transition-all ${mobileMenu.isOpen ? 'rotate-180' : ''}`} />
                     </button>
                 ) : (
-                    <h1 id="board-header" className="text-lg sm:ml-6 sm:text-xl sm:font-bold lg:text-2xl">
+                    <h1
+                        id="board-header"
+                        className="ml-6 max-w-[30vw] overflow-hidden text-ellipsis whitespace-nowrap text-xl sm:font-bold lg:max-w-none lg:text-2xl"
+                    >
                         {selectedBoard?.name}
                     </h1>
                 )}

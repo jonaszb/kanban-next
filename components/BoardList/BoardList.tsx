@@ -20,8 +20,10 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
                     : ' text-mid-grey hover:bg-grey-highlight hover:text-primary dark:hover:bg-white'
             }`}
         >
-            <BoardIcon className={`mr-2 h-4 ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`} />
-            <span>{board.name}</span>
+            <BoardIcon
+                className={`mr-2 h-4 min-w-fit ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`}
+            />
+            <span className=" overflow-hidden text-ellipsis whitespace-nowrap">{board.name}</span>
         </Link>
     );
 };
