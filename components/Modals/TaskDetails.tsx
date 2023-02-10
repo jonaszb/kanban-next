@@ -147,7 +147,9 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                         <button data-testid="task-options" className="h-5 pl-5" onClick={handleOptionsClick}>
                             <VerticalEllipsisIcon className="pointer-events-none" />
                         </button>
-                        <OptionsPopover className="mt-8 -translate-x-16">
+                        <OptionsPopover
+                            className={`mt-8 ${window.innerWidth > 620 ? '-translate-x-24' : '-translate-x-44'}`}
+                        >
                             <LinkContainer>
                                 <PopoverLink id="task-edit" onClick={() => {}}>
                                     Edit Task
