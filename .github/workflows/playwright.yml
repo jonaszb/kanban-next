@@ -45,6 +45,6 @@ jobs:
                   node-version: '18'
             - run: npm ci
             - name: Run e2e tests
-              run: npm run test:e2e
+              run: HOME=/root npm run test:e2e
               env:
                   BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
