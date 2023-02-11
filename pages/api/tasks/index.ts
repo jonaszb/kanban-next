@@ -54,7 +54,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(400).json({ error: 'Invalid column UUID' });
     }
     for (const subtask of taskData.subtasks ?? []) {
-        if (typeof subtask !== 'string') {
+        if (typeof subtask.name !== 'string' || (subtask.completed && typeof subtask.completed !== 'boolean')) {
             return res.status(400).json({ error: 'Invalid subtask data' });
         }
     }
@@ -104,7 +104,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
             createMany: {
                 data: task.subtasks.map((subtask) => {
                     return {
-                        name: subtask,
+                        name: subtask.name,
                         uuid: uuidv4(),
                         completed: false,
                     };

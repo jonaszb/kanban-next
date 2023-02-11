@@ -1,6 +1,7 @@
 import { test as base, expect } from '../../fixtures';
 import { v4 as uuidv4, validate } from 'uuid';
 import { Task } from '../../types';
+import { Column } from '@prisma/client';
 
 const test = base.extend({
     testColumn: async ({ testBoard, apiUtils }, use) => {
@@ -11,12 +12,13 @@ const test = base.extend({
         });
         await apiUtils.createTask({
             name: 'Test task 1',
-            subtasks: ['Subtask 1', 'Subtask 2'],
+            subtasks: [{ name: 'Subtask 1' }, { name: 'Subtask 2' }],
             column_uuid: column.uuid,
         });
         await apiUtils.createTask({
             name: 'Test task 2',
-            subtasks: ['Subtask 3'],
+            description: 'Test description',
+            subtasks: [{ name: 'Subtask 3' }],
             column_uuid: column.uuid,
         });
         await apiUtils.createTask({
@@ -49,7 +51,7 @@ test.describe('Tasks CRUD tests', () => {
                 data: {
                     name: 'Test creating tasks',
                     column_uuid: testBoard.columns[0].uuid,
-                    subtasks: ['Subtask 1', 'Subtask 2'],
+                    subtasks: [{ name: 'Subtask 1' }, { name: 'Subtask 2' }],
                 },
             });
             expect(response.status()).toBe(201);
@@ -205,6 +207,17 @@ test.describe('Tasks CRUD tests', () => {
             expect(task.description).toBe('New description');
         });
 
+        test('Task description can be made empty', async ({ testColumn, request, apiUtils }) => {
+            const response = await request.put(`/api/tasks/${testColumn.tasks[1].uuid}`, {
+                data: {
+                    description: '',
+                },
+            });
+            expect(response.status()).toBe(200);
+            const task = await apiUtils.getTask(testColumn.tasks[1].uuid);
+            expect(task.description).toBe('');
+        });
+
         test('Task column can be updated', async ({ testBoardWithData, request, apiUtils }) => {
             const response = await request.put(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`, {
                 data: {
@@ -323,6 +336,115 @@ test.describe('Tasks CRUD tests', () => {
             expect(task2.position).toBe(0);
             const task3 = await apiUtils.getTask(testColumn.tasks[2].uuid);
             expect(task3.position).toBe(1);
+        });
+
+        test('New subtasks can be added', async ({ testColumn, request, apiUtils }) => {
+            let task = await apiUtils.getTask(testColumn.tasks[0].uuid);
+            const response = await request.put(`/api/tasks/${task.uuid}`, {
+                data: {
+                    subtasks: [
+                        ...task.subtasks,
+                        {
+                            name: 'Subtask 3',
+                        },
+                    ],
+                },
+            });
+            expect(response.status()).toBe(200);
+            task = await apiUtils.getTask(task.uuid);
+            expect(task.subtasks.length).toBe(3);
+            expect(task.subtasks[0].name).toBe('Subtask 1');
+            expect(task.subtasks[1].name).toBe('Subtask 2');
+            expect(task.subtasks[2].name).toBe('Subtask 3');
+        });
+
+        test('Status of existing subtasks is not affected when adding subtasks', async ({
+            testColumn,
+            request,
+            apiUtils,
+        }) => {
+            let task = await apiUtils.getTask(testColumn.tasks[0].uuid);
+            await apiUtils.updateSubtask(task.subtasks[0].uuid, { completed: true });
+            const response = await request.put(`/api/tasks/${task.uuid}`, {
+                data: {
+                    subtasks: [
+                        ...task.subtasks,
+                        {
+                            name: 'Subtask 3',
+                        },
+                    ],
+                },
+            });
+            expect(response.status()).toBe(200);
+            task = await apiUtils.getTask(task.uuid);
+            expect(task.subtasks.length).toBe(3);
+            expect(task.subtasks[0].completed).toBe(true);
+            expect(task.subtasks[1].completed).toBe(false);
+            expect(task.subtasks[2].completed).toBe(false);
+        });
+
+        test('Existing subtasks can be renamed', async ({ testColumn, request, apiUtils }) => {
+            let task = await apiUtils.getTask(testColumn.tasks[0].uuid);
+            await apiUtils.updateSubtask(task.subtasks[1].uuid, { completed: true });
+            const response = await request.put(`/api/tasks/${task.uuid}`, {
+                data: {
+                    subtasks: [
+                        { ...task.subtasks[0], name: 'Subtask 1 updated' },
+                        { ...task.subtasks[1], name: 'Subtask 2 updated' },
+                    ],
+                },
+            });
+            expect(response.status()).toBe(200);
+            task = await apiUtils.getTask(task.uuid);
+            expect(task.subtasks.length).toBe(2);
+            expect(task.subtasks[0].name).toBe('Subtask 1 updated');
+            expect(task.subtasks[0].completed).toBe(false);
+            expect(task.subtasks[1].name).toBe('Subtask 2 updated');
+            expect(task.subtasks[1].completed).toBe(true); // Status should not be affected
+        });
+
+        test('Existing subtasks can be replaced', async ({ testColumn, request, apiUtils }) => {
+            let task = await apiUtils.getTask(testColumn.tasks[0].uuid);
+            const response = await request.put(`/api/tasks/${task.uuid}`, {
+                data: {
+                    subtasks: [
+                        {
+                            name: 'Subtask 3',
+                        },
+                    ],
+                },
+            });
+            expect(response.status()).toBe(200);
+            task = await apiUtils.getTask(task.uuid);
+            expect(task.subtasks.length).toBe(1);
+            expect(task.subtasks[0].name).toBe('Subtask 3');
+            expect(task.subtasks[0].completed).toBe(false);
+        });
+
+        test('Status of existing subtasks is not affected when replacing other subtasks', async ({
+            testColumn,
+            request,
+            apiUtils,
+        }) => {
+            let task = await apiUtils.getTask(testColumn.tasks[0].uuid);
+            await apiUtils.updateSubtask(task.subtasks[1].uuid, { completed: true });
+            const response = await request.put(`/api/tasks/${task.uuid}`, {
+                data: {
+                    subtasks: [
+                        task.subtasks[1],
+                        {
+                            name: 'Subtask 3',
+                        },
+                    ],
+                },
+            });
+            expect(response.status()).toBe(200);
+            task = await apiUtils.getTask(task.uuid);
+            expect(task.subtasks.length).toBe(2);
+            expect(task.subtasks[0].completed).toBe(true);
+            expect(task.subtasks[0].name).toBe('Subtask 2');
+            expect(task.subtasks[1].completed).toBe(false);
+            expect(task.subtasks[1].name).toBe('Subtask 3');
         });
 
         test('Task position cannot be set to negative number', async ({ testColumn, request }) => {

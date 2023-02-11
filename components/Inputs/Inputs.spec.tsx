@@ -9,6 +9,7 @@ type MultiInputProps = {
     placeholder?: string;
     errorMsg?: string;
     hasError?: boolean;
+    draggable?: boolean;
 };
 
 const validateColumns = (val: MultiInput[]): [boolean, string] => {
@@ -30,6 +31,7 @@ const MultiInputWrapper = (props: MultiInputProps) => {
     const multiInput = useInput<MultiInput[]>({ validateFn: validateColumns });
     return (
         <MultiValueInput
+            draggable={props.draggable}
             label="Test label"
             values={multiInput.value}
             changeHandler={multiInput.customValueChangeHandler}
@@ -287,6 +289,24 @@ describe('MultiValueInput', () => {
     });
 
     test('Drag handle is not displayed when a single input is present', async () => {
+        await act(() => render(<MultiInputWrapper draggable={true} />));
+        const button = screen.getByText('Add New');
+        fireEvent.click(button);
+        await screen.findByTestId('multi-input-field');
+        const handle = screen.queryByTestId('multi-input-drag');
+        expect(handle).not.toBeInTheDocument();
+    });
+
+    test('Drag handle is displayed when multiple inputs are present', async () => {
+        await act(() => render(<MultiInputWrapper draggable={true} />));
+        const button = screen.getByText('Add New');
+        fireEvent.click(button);
+        fireEvent.click(button);
+        const handles = await screen.findAllByTestId('multi-input-drag');
+        expect(handles.length).toEqual(2);
+    });
+
+    test('Drag handle is not displayed when a single input is present (drag disabled)', async () => {
         await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
@@ -295,13 +315,13 @@ describe('MultiValueInput', () => {
         expect(handle).not.toBeInTheDocument();
     });
 
-    test('Drag handle is not displayed when a single input is present', async () => {
+    test('Drag handle is not displayed when multiple inputs are present (drag disabled)', async () => {
         await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
         fireEvent.click(button);
         fireEvent.click(button);
-        const handles = await screen.findAllByTestId('multi-input-drag');
-        expect(handles.length).toEqual(2);
+        const handles = await screen.queryAllByTestId('multi-input-drag');
+        expect(handles.length).toEqual(0);
     });
 
     test('Delete icon removes the input when clicked', async () => {

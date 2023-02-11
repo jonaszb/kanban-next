@@ -1,4 +1,4 @@
-import NewTaskFormElem from './NewTaskForm';
+import NewTaskFormElem from './TaskForm';
 import Modal from './Modal';
 import type { Meta, StoryFn } from '@storybook/react';
 
@@ -10,7 +10,7 @@ export default {
 export const NewTaskFormLight: StoryFn<typeof NewTaskFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewTaskFormElem closeModal={() => {}} />
+            <NewTaskFormElem formType="new" closeModal={() => {}} />
         </Modal>
     );
 };
@@ -22,7 +22,7 @@ NewTaskFormLight.parameters = {
 export const NewTaskFormDark: StoryFn<typeof NewTaskFormElem> = (args) => {
     return (
         <Modal closeModal={() => {}}>
-            <NewTaskFormElem closeModal={() => {}} />
+            <NewTaskFormElem formType="new" closeModal={() => {}} />
         </Modal>
     );
 };

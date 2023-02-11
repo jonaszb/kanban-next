@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import useInput from '../../hooks/useInput';
-import { Column, MultiInput } from '../../types';
+import { Column, MultiInput, Task } from '../../types';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
 import { mutate } from 'swr';
@@ -21,12 +21,24 @@ const validateSubtasks = (val: MultiInput[]): [boolean, string] => {
     return [true, ''];
 };
 
-const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) => {
+const TaskForm: FC<{
+    closeModal: Function;
+    columns?: Column[];
+    taskData?: Task;
+    formType: 'new' | 'edit';
+    onTaskUpdated?: Function;
+}> = (props) => {
+    // Set initial field values if editing an existing task
+    const initialSubtasks = props.taskData?.subtasks?.map((subtask) => {
+        return { id: subtask.uuid, value: subtask.name, isValid: true, isTouched: false, errorMsg: '' };
+    });
+    const initialColumn = props.columns?.find((column) => column.uuid === props.taskData?.column_uuid)?.name;
+
     const dropdownOptions = props.columns?.map((item) => item.name);
-    const nameInput = useInput<string>({ validateFn: validateTitle });
-    const descriptionInput = useInput<string>();
-    const subtasksInput = useInput<MultiInput[]>({ validateFn: validateSubtasks });
-    const columnDropdown = useInput<string>({ initialValue: dropdownOptions && dropdownOptions[0] });
+    const nameInput = useInput<string>({ validateFn: validateTitle, initialValue: props.taskData?.name });
+    const descriptionInput = useInput<string>({ initialValue: props.taskData?.description });
+    const subtasksInput = useInput<MultiInput[]>({ validateFn: validateSubtasks, initialValue: initialSubtasks });
+    const columnDropdown = useInput<string>({ initialValue: initialColumn ?? (dropdownOptions && dropdownOptions[0]) });
 
     const formIsValid = nameInput.isValid && subtasksInput.isValid;
 
@@ -43,29 +55,46 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
             const formData = {
                 name: nameInput.value,
                 description: descriptionInput.value,
-                subtasks: subtasksInput.value?.map((item) => item.value),
+                subtasks: subtasksInput.value?.map((item) => {
+                    const subtask = props.taskData?.subtasks?.find((subtask) => subtask.uuid === item.id);
+                    if (subtask) return { uuid: subtask.uuid, name: item.value };
+                    return { name: item.value };
+                }),
                 column_uuid: props.columns?.find((item) => item.name === columnDropdown.value)?.uuid,
             };
-            fetch('/api/tasks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-                .then((res) => res.json())
-                .then(() => {
+            if (props.formType === 'new') {
+                fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                }).then(() => {
                     mutate(`/api/boards/${props.columns?.[0].board_uuid}`);
                     props.closeModal();
                 });
+            } else {
+                fetch(`/api/tasks/${props.taskData?.uuid}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                }).then(() => {
+                    props.onTaskUpdated && props.onTaskUpdated();
+                });
+            }
         }
     };
 
     return (
-        <div className="flex flex-col">
-            <h2 className="mb-6 text-lg font-bold dark:text-white">Add New Task</h2>
+        <div data-testId="task-form" className="flex flex-col">
+            <h2 className="mb-6 text-lg font-bold dark:text-white">
+                {props.formType === 'new' ? 'Add New Task' : 'Edit Task'}
+            </h2>
             <form onSubmit={handleSubmit} action="submit" className="flex flex-col">
                 <Input
+                    value={nameInput.value ?? ''}
                     onChange={nameInput.valueChangeHandler}
                     onBlur={nameInput.inputBlurHandler}
                     haserror={nameInput.hasError}
@@ -76,6 +105,7 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                     className="mb-6"
                 />
                 <Textarea
+                    value={descriptionInput.value ?? ''}
                     onChange={descriptionInput.valueChangeHandler}
                     onBlur={descriptionInput.inputBlurHandler}
                     label="Description"
@@ -105,10 +135,12 @@ const NewTaskForm: FC<{ closeModal: Function; columns?: Column[] }> = (props) =>
                         options={dropdownOptions}
                     />
                 )}
-                <ButtonPrimary data-testid="task-submit">Create New Task</ButtonPrimary>
+                <ButtonPrimary data-testid="task-submit">
+                    {props.formType === 'new' ? 'Create New Task' : 'Save Changes'}
+                </ButtonPrimary>
             </form>
         </div>
     );
 };
 
-export default NewTaskForm;
+export default TaskForm;

@@ -11,6 +11,7 @@ export default class TaskForm extends BaseModal {
 
     constructor(page: Page) {
         super(page);
+        this.rootElement = this.page.getByTestId('task-form');
         this.title = this.rootElement.locator('#task-title');
         this.description = this.rootElement.locator('#task-description');
         this.subtaskRows = this.rootElement.locator('#subtasks > div');

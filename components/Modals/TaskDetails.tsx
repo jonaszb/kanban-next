@@ -10,6 +10,7 @@ import { Checkbox, Dropdown } from '../Inputs/Inputs';
 import useSWR from 'swr';
 import { fetcher } from '../../utils/utils';
 import { LinkContainer, PopoverLink } from '../Popover/Popover';
+import TaskForm from './TaskForm';
 
 const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: Subtask) => void }> = ({
     subtask,
@@ -80,6 +81,9 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
         closeModal();
     };
 
+    const editTaskModal = useModal();
+    const EditTaskModal = editTaskModal.Component;
+
     const { Component: DeleteTaskModal, ...deleteTaskModal } = useModal({
         type: 'danger',
         dangerHeader: modalTitle,
@@ -90,6 +94,11 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
     const taskDeleteHandler = () => {
         optionsPopover.close();
         deleteTaskModal.toggle();
+    };
+
+    const taskEditHandler = () => {
+        optionsPopover.close();
+        editTaskModal.toggle();
     };
 
     const statusChangeHandler = async (val: string) => {
@@ -129,6 +138,13 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
         mutate(`/api/boards/${selectedBoard?.uuid}`);
     };
 
+    const handleTaskUpdate = async (task: Task) => {
+        mutate(`/api/boards/${selectedBoard?.uuid}`);
+        // TODO - decide if updating should return to board page or task details
+        mutateTask(task);
+        editTaskModal.close();
+    };
+
     const completedTasks = taskData?.subtasks.filter((subtask) => subtask.completed).length;
 
     useEffect(() => {
@@ -138,7 +154,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
 
     return (
         <div data-testid="task-details" className={deleteTaskModal.isOpen ? 'hidden' : ''}>
-            {taskData && (
+            {taskData && !editTaskModal.isOpen && (
                 <>
                     <div className="mb-6 flex items-center justify-between">
                         <h2 data-testid="task-name" className="text-lg font-bold dark:text-white">
@@ -151,7 +167,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                             className={`mt-8 ${window.innerWidth > 620 ? '-translate-x-24' : '-translate-x-44'}`}
                         >
                             <LinkContainer>
-                                <PopoverLink id="task-edit" onClick={() => {}}>
+                                <PopoverLink id="task-edit" onClick={taskEditHandler}>
                                     Edit Task
                                 </PopoverLink>
                                 <PopoverLink id="task-delete" onClick={taskDeleteHandler} danger>
@@ -197,6 +213,15 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                     }
                 </>
             )}
+            <EditTaskModal>
+                <TaskForm
+                    formType="edit"
+                    taskData={taskData}
+                    closeModal={editTaskModal.close}
+                    columns={columns}
+                    onTaskUpdated={handleTaskUpdate}
+                />
+            </EditTaskModal>
         </div>
     );
 };
