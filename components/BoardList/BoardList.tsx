@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { FC } from 'react';
-import { BoardIcon } from '../../Icons/Icons';
-import type { Board } from '../../../types';
-import { useBoardsContext } from '../../../store/BoardListContext';
-import useModal from '../../../hooks/useModal';
-import BoardForm from '../../Modals/BoardForm';
+import { BoardIcon } from '../Icons/Icons';
+import type { Board } from '../../types';
+import { useBoardsContext } from '../../store/BoardListContext';
+import useModal from '../../hooks/useModal';
+import BoardForm from '../Modals/BoardForm';
 
 const BoardLink: FC<{ board: Board }> = ({ board }) => {
     const router = useRouter();
@@ -20,8 +20,10 @@ const BoardLink: FC<{ board: Board }> = ({ board }) => {
                     : ' text-mid-grey hover:bg-grey-highlight hover:text-primary dark:hover:bg-white'
             }`}
         >
-            <BoardIcon className={`mr-2 h-4 ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`} />
-            <span>{board.name}</span>
+            <BoardIcon
+                className={`mr-2 min-w-[1rem] ${isActive ? 'fill-white' : 'fill-mid-grey group-hover:fill-primary'}`}
+            />
+            <span className=" overflow-hidden text-ellipsis whitespace-nowrap">{board.name}</span>
         </Link>
     );
 };
@@ -80,7 +82,11 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${boards.length})`}</span>
             )}
-            <ul>
+            <ul
+                className={`max-h-[calc(100vh-25rem)] overflow-y-scroll ${
+                    boards && boards.length > 0 ? 'min-h-[4rem]' : ''
+                }`}
+            >
                 {boards?.map((board) => (
                     <li key={board.uuid} onClick={boardSelectHandler}>
                         <BoardLink board={board} />

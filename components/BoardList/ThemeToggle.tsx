@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
-import { ThemeContext } from '../../../store/ThemeContext';
-import { LightThemeIcon, DarkThemeIcon } from '../../Icons/Icons';
+import { ThemeContext } from '../../store/ThemeContext';
+import { LightThemeIcon, DarkThemeIcon } from '../Icons/Icons';
 
 const ThemeToggle: FC<{ className?: string }> = (props) => {
     const { darkModeEnabled, toggleTheme } = useContext(ThemeContext);

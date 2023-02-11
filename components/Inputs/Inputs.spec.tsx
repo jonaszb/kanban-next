@@ -68,7 +68,7 @@ describe('Custom Input', () => {
     });
 
     test('Can have a value if specified', async () => {
-        await act(() => render(<Input label="Test" value="Test value" />));
+        await act(() => render(<Input label="Test" value="Test value" onChange={jest.fn()} />));
         const input = screen.getByDisplayValue('Test value');
         expect(input).toBeInTheDocument();
     });
@@ -136,7 +136,7 @@ describe('Custom Textarea', () => {
     });
 
     test('Can have a value if specified', async () => {
-        await act(() => render(<Textarea label="Test" value="Test value" />));
+        await act(() => render(<Textarea label="Test" value="Test value" onChange={jest.fn()} />));
         const input = screen.getByDisplayValue('Test value');
         expect(input).toBeInTheDocument();
     });
@@ -189,7 +189,16 @@ describe('Custom Dropdown', () => {
 
     test('Can have a value if specified', async () => {
         await act(() =>
-            render(<Dropdown setValue={() => {}} id="test" label="Test" options={dropdownOptions} value="Done" />)
+            render(
+                <Dropdown
+                    setValue={() => {}}
+                    id="test"
+                    label="Test"
+                    options={dropdownOptions}
+                    value="Done"
+                    onChange={jest.fn()}
+                />
+            )
         );
         const input = screen.getByDisplayValue('Done');
         expect(input).toBeInTheDocument();
@@ -298,11 +307,13 @@ describe('MultiValueInput', () => {
     test('Delete icon removes the input when clicked', async () => {
         await act(() => render(<MultiInputWrapper />));
         const button = screen.getByText('Add New');
-        fireEvent.click(button);
+        await act(() => fireEvent.click(button));
         const input = await screen.findByTestId('multi-input-field');
         const deleteIcon = screen.getByTestId('multi-input-delete');
-        fireEvent.click(deleteIcon);
-        await new Promise((r) => setTimeout(r, 300)); // wait for animation to finish
+        await act(async () => {
+            fireEvent.click(deleteIcon);
+            await new Promise((r) => setTimeout(r, 300)); // wait for animation to finish
+        });
         expect(input).not.toBeInTheDocument();
     });
 });

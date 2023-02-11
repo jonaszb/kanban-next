@@ -16,6 +16,13 @@ import { fetcher } from '../../utils/utils';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { useBoardsContext } from '../../store/BoardListContext';
+import useInput from '../../hooks/useInput';
+
+const validateColumn = (value: string): [boolean, string] => {
+    if (!value || value.trim().length < 1) return [false, "Can't be empty"];
+    if (value.trim().length > 20) return [false, `${value.trim().length}/20`];
+    return [true, ''];
+};
 
 const NewColumnBar: FC<{
     mutateBoard: Function;
@@ -23,17 +30,17 @@ const NewColumnBar: FC<{
 }> = ({ mutateBoard, boardUUID }) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { mutateBoards } = useBoardsContext();
+    const inputHandler = useInput<string>({ validateFn: validateColumn });
 
     const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const inputRefValue = inputRef.current?.value;
-        if (!inputRefValue || inputRefValue.trim().length < 1 || inputRefValue.trim().length > 20) {
-            // TODO: add error state to input
+        if (!inputHandler.isValid) {
+            inputHandler.setIsTouched(true);
             return;
         }
         const columnData = {
             board_uuid: boardUUID,
-            name: inputRefValue,
+            name: inputHandler.value!.trim(),
             color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
         };
         fetch('/api/columns', {
@@ -43,11 +50,12 @@ const NewColumnBar: FC<{
             },
             body: JSON.stringify(columnData),
         }).then(() => {
+            inputRef.current?.blur();
+            inputHandler.setIsTouched(false);
+            inputHandler.setValue('');
             mutateBoard();
             mutateBoards();
         });
-        inputRef.current?.blur();
-        e.currentTarget.reset();
     };
 
     return (
@@ -59,11 +67,23 @@ const NewColumnBar: FC<{
                 <fieldset className="relative">
                     <input
                         ref={inputRef}
+                        value={inputHandler.value ?? ''}
+                        onChange={inputHandler.valueChangeHandler}
+                        onBlur={inputHandler.inputBlurHandler}
                         id="new-column"
                         type="text"
                         className="peer absolute w-56 -translate-x-1/2 bg-transparent py-1 text-center text-lg text-black caret-primary-light opacity-0 transition-all hover:outline-none focus:opacity-100 focus:outline-none dark:text-white"
                     />
-                    <div className="absolute h-[3px] w-56 -translate-x-1/2 translate-y-10 scale-x-0 rounded bg-primary transition-all peer-focus:scale-x-100" />
+                    <div
+                        className={`absolute h-[3px] w-56 -translate-x-1/2 translate-y-10 scale-x-0 rounded transition-all peer-focus:scale-x-100 ${
+                            inputHandler.hasError ? 'bg-danger' : 'bg-primary '
+                        }`}
+                    />
+                    {inputHandler.hasError && (
+                        <span className="absolute top-12 hidden min-w-max -translate-x-1/2 text-sm text-danger peer-focus:block">
+                            {inputHandler.errorMsg}
+                        </span>
+                    )}
                     <label
                         htmlFor="new-column"
                         className="absolute z-10 w-56 -translate-x-1/2 cursor-pointer transition-all hover:text-primary peer-focus:-translate-y-12 peer-focus:scale-75 peer-focus:text-primary"
@@ -231,19 +251,24 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 overIndex: overIndex !== -1 ? overIndex : items[overContainer].tasks.length - 1,
                 overContainer: items[overContainer].uuid,
             };
-            setDraggingDisabled(true);
-            fetch(`/api/tasks/${draggedTask.uuid}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    column_uuid: dragData.overContainer,
-                    position: dragData.overIndex,
-                }),
-            }).then(() => {
+            // Update the task if it was moved to a different container or index
+            if (startingContainer === overContainer && startingIndex === overIndex) {
                 boardData.mutate();
-            });
+            } else {
+                setDraggingDisabled(true);
+                fetch(`/api/tasks/${draggedTask.uuid}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        column_uuid: dragData.overContainer,
+                        position: dragData.overIndex,
+                    }),
+                }).then(() => {
+                    boardData.mutate();
+                });
+            }
         }
         setClonedItems(null);
         setActiveId(null);

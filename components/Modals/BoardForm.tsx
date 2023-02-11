@@ -7,7 +7,7 @@ import { Input, MultiValueInput } from '../Inputs/Inputs';
 // Validate input length - must be between 1 and 20 characters. Return tuple of boolean and error message.
 const validateName = (val: string | undefined): [boolean, string] => {
     if (!val || val?.trim().length < 1) return [false, "Can't be empty"];
-    if (val?.trim().length > 20) return [false, 'Name too long'];
+    if (val?.trim().length > 20) return [false, `${val.trim().length}/20`];
     return [true, ''];
 };
 

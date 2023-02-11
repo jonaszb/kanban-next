@@ -121,16 +121,18 @@ describe('Mobile menu', () => {
     test('Selecting a board closes the modal', async () => {
         const mockFn = jest.fn();
         await renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
-        const links = screen.getAllByRole('link');
-        fireEvent.click(links[0]);
+        const link = screen.getAllByRole('link')[0];
+        link.addEventListener('click', (event) => event.preventDefault(), false);
+        fireEvent.click(link);
         expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     test('Clicking the currently selected board closes the modal', async () => {
         const mockFn = jest.fn();
         await renderWithCtx(<MobileMenu setMenuIsOpen={mockFn} />, providerProps);
-        const links = screen.getAllByRole('link');
-        fireEvent.click(links[1]);
+        const link = screen.getAllByRole('link')[1];
+        link.addEventListener('click', (event) => event.preventDefault(), false);
+        fireEvent.click(link);
         expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
