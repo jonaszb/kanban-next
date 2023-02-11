@@ -82,7 +82,7 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
                     className="mb-5 px-3 text-xs uppercase tracking-[.2rem] text-mid-grey lg:px-6"
                 >{`All Boards (${boards.length})`}</span>
             )}
-            <ul>
+            <ul className="max-h-[50vh] overflow-y-scroll">
                 {boards?.map((board) => (
                     <li key={board.uuid} onClick={boardSelectHandler}>
                         <BoardLink board={board} />
