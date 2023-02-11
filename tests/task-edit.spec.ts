@@ -1,16 +1,9 @@
 import { test as base, expect } from '../fixtures';
-import { Board, Task } from '../types';
-import BoardPage from './pageObjects/BoardPage';
+import { Task } from '../types';
 import type TaskDetails from './pageObjects/TaskDetails';
 import TaskForm from './pageObjects/TaskForm';
 
 const test = base.extend<{
-    taskDetailsWithSubtasks: {
-        boardPage: BoardPage;
-        taskData: Task;
-        boardData: Board;
-        taskDetails: TaskDetails;
-    };
     taskDetailsModal: {
         taskData: Task;
         taskDetails: TaskDetails;
@@ -21,29 +14,6 @@ const test = base.extend<{
         taskDetails: TaskDetails;
     };
 }>({
-    taskDetailsWithSubtasks: async ({ apiUtils, page, pageObjects }, use) => {
-        const boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
-        const board = await apiUtils.createBoard({
-            name: boardName,
-            columns: [
-                { name: 'First', color: '#FFF000', position: 0 },
-                { name: 'Second', color: '#000FFF', position: 1 },
-            ],
-        });
-        const boardData = await apiUtils.getBoard(board.uuid);
-        const taskData = await apiUtils.createTask({
-            name: 'Test task',
-            subtasks: [{ name: 'One' }, { name: 'Two' }, { name: 'Three' }],
-            column_uuid: boardData.columns[0].uuid,
-            description: 'Test description',
-        });
-        const boardPage = new pageObjects.BoardPage(page, board.uuid);
-        await boardPage.goto();
-        await boardPage.taskByTitle(taskData.name).click();
-        const taskDetails = new pageObjects.TaskDetails(boardPage.page);
-        await use({ boardPage, taskData, boardData, taskDetails });
-        await apiUtils.deleteBoard(board.uuid, { failOnStatusCode: false });
-    },
     taskDetailsModal: async ({ apiUtils, page, pageObjects }, use) => {
         const boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
         const board = await apiUtils.createBoard({
@@ -69,8 +39,7 @@ const test = base.extend<{
     },
     editTaskModal: async ({ taskDetailsModal, pageObjects }, use) => {
         const { taskDetails, taskData } = taskDetailsModal;
-        await taskDetails.optionsBtn.click();
-        await taskDetails.editBtn.click();
+        await taskDetails.editTask();
         const taskForm = new pageObjects.TaskForm(taskDetails.page);
         await use({ taskData, taskForm, taskDetails });
     },
@@ -179,7 +148,6 @@ test.describe('Edit Task screen', () => {
     test('Subtask can be replaced', async ({ taskDetailsModal, pageObjects }) => {
         const { taskData, taskDetails } = taskDetailsModal;
         await taskDetails.subtaskRows.nth(0).click();
-        await taskDetails.page.waitForLoadState('networkidle');
 
         await taskDetails.editTask();
         const taskForm = new pageObjects.TaskForm(taskDetails.page);

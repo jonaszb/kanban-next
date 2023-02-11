@@ -33,6 +33,7 @@ export default class TaskDetails extends BaseModal {
     }
 
     async editTask() {
+        await this.page.waitForLoadState('networkidle');
         await this.optionsBtn.click();
         await this.editBtn.click();
     }
