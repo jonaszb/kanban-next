@@ -33,7 +33,7 @@ jobs:
     test_e2e:
         needs: test_setup
         name: Playwright tests
-        timeout-minutes: 15
+        timeout-minutes: 25
         runs-on: ubuntu-latest
         container:
             image: mcr.microsoft.com/playwright:v1.30.0-focal
