@@ -221,6 +221,7 @@ type MultiValueInputProps = React.ComponentProps<'fieldset'> & {
     label: string;
     changeHandler: Function;
     values?: MultiInput[];
+    draggable?: boolean;
     addBtnText: string;
     fieldType?: 'input' | 'textarea';
     validationHandler: (val: string | undefined) => [boolean, string];
@@ -303,7 +304,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
     return (
         <div className={props.className ?? ''}>
             <DndContext
-                sensors={sensors}
+                sensors={props.draggable ? sensors : []}
                 measuring={{
                     droppable: {
                         strategy: MeasuringStrategy.Always,
@@ -327,7 +328,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
                                     errorMsg={item.errorMsg}
                                     onBlur={handleBlur}
                                     onDelete={handleDeleteInput}
-                                    showHandle={values.length > 1}
+                                    showHandle={props.draggable && values.length > 1}
                                     animateIn={animateIn}
                                     fieldType={fieldType}
                                 />

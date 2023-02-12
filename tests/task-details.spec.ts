@@ -27,7 +27,7 @@ const test = base.extend<{
         const boardData = await apiUtils.getBoard(board.uuid);
         const taskData = await apiUtils.createTask({
             name: 'Test task',
-            subtasks: ['One', 'Two', 'Three'],
+            subtasks: [{ name: 'One' }, { name: 'Two' }, { name: 'Three' }],
             column_uuid: boardData.columns[0].uuid,
             description: 'Test description',
         });

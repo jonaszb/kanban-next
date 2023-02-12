@@ -31,4 +31,10 @@ export default class TaskDetails extends BaseModal {
     nthSubtaskText(n: number) {
         return this.subtaskRows.nth(n).locator('span');
     }
+
+    async editTask() {
+        await this.page.waitForLoadState('networkidle');
+        await this.optionsBtn.click();
+        await this.editBtn.click();
+    }
 }

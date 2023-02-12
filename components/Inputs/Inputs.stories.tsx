@@ -59,6 +59,7 @@ export const MultiValueInput: StoryFn<typeof MultiValueInputElem> = (args) => {
     return (
         <div id="popover-root">
             <MultiValueInputElem
+                draggable={args.draggable}
                 label="Test multi value input"
                 changeHandler={() => {}}
                 addBtnText="Add"
@@ -77,6 +78,7 @@ MultiValueInput.args = {
 
 export const MultiValueInputSeveralValues = MultiValueInput.bind({});
 MultiValueInputSeveralValues.args = {
+    draggable: true,
     values: [
         { id: '1', value: 'Test' },
         { id: '2', value: '', errorMsg: "Can't be empty", isValid: false, isTouched: true },
@@ -89,6 +91,7 @@ MultiValueInputSeveralValues.parameters = {
 
 export const MultiValueInputTextarea = MultiValueInput.bind({});
 MultiValueInputTextarea.args = {
+    draggable: false,
     fieldType: 'textarea',
     values: [
         { id: '1', value: 'Test' },

@@ -4,7 +4,7 @@ import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Ic
 import MobileMenu from '../../Modals/MobileMenu';
 import { useBoardsContext } from '../../../store/BoardListContext';
 import useModal from '../../../hooks/useModal';
-import NewTaskForm from '../../Modals/NewTaskForm';
+import TaskForm from '../../Modals/TaskForm';
 import usePopover from '../../../hooks/usePopover';
 import { useRouter } from 'next/router';
 import BoardForm from '../../Modals/BoardForm';
@@ -124,7 +124,7 @@ const Header: FC = () => {
                     <AddTaskIconMobile className="sm:hidden" />
                 </ButtonPrimaryLarge>
                 <NewTaskModal>
-                    <NewTaskForm closeModal={newTaskModal.close} columns={sortedColumns} />
+                    <TaskForm formType="new" closeModal={newTaskModal.close} columns={sortedColumns} />
                 </NewTaskModal>
                 <button
                     aria-label="Board options"

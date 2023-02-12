@@ -57,6 +57,9 @@ const createColumn = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!boardData) {
         return res.status(404).json({ error: 'Board not found' });
     }
+    if (boardData.columns.find((column) => column.name.toLowerCase() === columnData.name.toLowerCase())) {
+        return res.status(400).json({ error: 'Column with this name already exists on this board' });
+    }
     const positionSet = columnData.position !== undefined;
     columnData.position = columnData.position ?? boardData.columns.length;
     try {

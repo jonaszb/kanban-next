@@ -1,7 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Prisma, PrismaClient } from '@prisma/client';
-import { validate } from 'uuid';
+import { PrismaClient } from '@prisma/client';
+import { validate, v4 as uuidv4 } from 'uuid';
+import { Subtask } from '../../../types';
 
 const prisma = new PrismaClient();
 
@@ -53,12 +54,47 @@ const incrementFromPosition = (columnUUID: string, position: number) => {
     });
 };
 
-const updateTaskData = (taskUUID: string, taskData: any) => {
-    return prisma.task.update({
-        where: {
-            uuid: taskUUID,
-        },
-        data: taskData,
+const updateTaskData = (taskUUID: string, taskData: OptionalTaskData, subtasksToDelete: string[]) => {
+    console.log(taskData);
+    console.log(subtasksToDelete);
+    const { subtasks, ...data } = taskData;
+    return prisma.$transaction(async () => {
+        if (subtasksToDelete.length > 0) {
+            await prisma.subtask.deleteMany({
+                where: {
+                    uuid: {
+                        in: subtasksToDelete,
+                    },
+                },
+            });
+        }
+        if (subtasks) {
+            for (const subtask of subtasks) {
+                await prisma.subtask.upsert({
+                    where: {
+                        uuid: subtask.uuid,
+                    },
+                    update: {
+                        name: subtask.name,
+                    },
+                    create: {
+                        uuid: subtask.uuid,
+                        name: subtask.name,
+                        task: {
+                            connect: {
+                                uuid: taskUUID,
+                            },
+                        },
+                    },
+                });
+            }
+        }
+        await prisma.task.update({
+            where: {
+                uuid: taskUUID,
+            },
+            data,
+        });
     });
 };
 
@@ -167,6 +203,23 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
             : null;
     let movingToEndOfColumn = false; // No need to shift the position of other tasks if true;
 
+    // Check which subtasks are being deleted
+    const subtasksToDelete: string[] = [];
+    if (Array.isArray(subtasks)) {
+        for (const subtask of currentTaskData.subtasks) {
+            const found = subtasks.find((s: Subtask) => s.uuid === subtask.uuid);
+            if (!found) {
+                subtasksToDelete.push(subtask.uuid);
+            }
+        }
+    }
+    // Create a new array of columns
+    for (const subtask of subtasks ?? []) {
+        if (!subtask.uuid) {
+            subtask.uuid = uuidv4();
+        }
+    }
+
     if (position) {
         if (!(typeof position === 'number' && Number.isInteger(position) && !isNaN(position))) {
             return res.status(400).end('Position must be an integer');
@@ -183,50 +236,36 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
             movingToEndOfColumn = true;
         }
     }
-    const newTaskData = {
+    const newTaskData: OptionalTaskData = {
         name: name || currentTaskData.name,
-        description: description || currentTaskData.description,
+        description: typeof description === undefined ? currentTaskData.description : description,
         column_uuid: column_uuid || currentTaskData.column_uuid,
+        subtasks: subtasks || currentTaskData.subtasks,
         position: position !== undefined ? position : currentTaskData.position,
     };
 
-    if (columnChanged) {
-        if (!column) {
+    await prisma.$transaction(async () => {
+        if (!columnChanged && !positionChanged) {
+            await updateTaskData(taskUUID, newTaskData, subtasksToDelete);
+            return res.status(200).end('Task updated');
+        }
+        if (columnChanged && !column) {
             return res.status(404).end('Column not found');
         }
-        if (positionChanged) {
-            console.log(1);
-            // Handle column and position change
-            await prisma.$transaction([
-                decrementHigherPositions(currentTaskData.column_uuid, currentTaskData.position),
-                ...(movingToEndOfColumn ? [] : [incrementFromPosition(column_uuid, position)]),
-                updateTaskData(taskUUID, newTaskData),
-            ]);
-            res.status(200).end('Task updated');
-        } else {
-            console.log(2);
-            newTaskData.position = column.tasks.length;
-            await prisma.$transaction([
-                decrementHigherPositions(currentTaskData.column_uuid, currentTaskData.position),
-                updateTaskData(taskUUID, newTaskData),
-            ]);
-            res.status(200).end('Task updated');
+        if (columnChanged && !positionChanged) newTaskData.position = column!.tasks.length; // If position is not set, move to end of column
+        await decrementHigherPositions(currentTaskData.column_uuid, currentTaskData.position);
+        if (positionChanged && !movingToEndOfColumn) {
+            await incrementFromPosition(columnChanged ? column_uuid : currentTaskData.column_uuid, position);
         }
-    } else {
-        if (positionChanged) {
-            console.log(3);
-            // Handle position change within the same column
-            await prisma.$transaction([
-                decrementHigherPositions(currentTaskData.column_uuid, currentTaskData.position),
-                ...(movingToEndOfColumn ? [] : [incrementFromPosition(currentTaskData.column_uuid, position)]),
-                updateTaskData(taskUUID, newTaskData),
-            ]);
-            res.status(200).end('Task updated');
-        } else {
-            console.log(4);
-            // Handle no column or position change
-            await updateTaskData(taskUUID, newTaskData);
-            res.status(200).end('Task updated');
-        }
-    }
+        await updateTaskData(taskUUID, newTaskData, subtasksToDelete);
+        return res.status(200).end('Task updated');
+    });
+};
+
+type OptionalTaskData = {
+    name?: string;
+    description?: string;
+    column_uuid?: string;
+    subtasks?: Subtask[];
+    position?: number;
 };

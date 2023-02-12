@@ -120,6 +120,7 @@ const BoardForm: FC<{
                     className="mb-6"
                 />
                 <MultiValueInput
+                    draggable={true}
                     id="board-columns"
                     placeholder="e.g. To Do"
                     label="Board Columns"

@@ -52,7 +52,7 @@ export type NewTask = {
     name: string;
     description?: string;
     column_uuid: string;
-    subtasks?: string[];
+    subtasks?: { name: string; uuid?: string; completed?: boolean }[];
 };
 
 export type Subtask = {

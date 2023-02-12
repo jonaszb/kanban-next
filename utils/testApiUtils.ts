@@ -113,6 +113,12 @@ export default class TestApiUtils {
         const tasks = await this.getTasks();
         return tasks.find((task) => task.name === name);
     };
+
+    /* SUBTASKS */
+
+    updateSubtask: AsyncPutFn = async (uuid, payload, options?) => {
+        return await this.put(`/api/subtasks/${uuid}`, { data: payload, ...options });
+    };
 }
 
 type CrudRequest = (url: string, options?: RequestOptionsWithBody & { rawResponse?: boolean }) => Promise<APIResponse>;
