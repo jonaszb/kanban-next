@@ -112,50 +112,42 @@ const updateBoard = async (req: NextApiRequest, res: NextApiResponse) => {
             column.uuid = uuidv4();
         }
     }
-    try {
-        // Delete old columns and upsert new ones
-        await prisma.$transaction([
-            ...(req.body.name !== currentBoardData.name
-                ? [prisma.board.update({ where: { uuid: boardUUID }, data: { name: req.body.name } })]
-                : []),
-            ...(columnsToDelete.length
-                ? [
-                      prisma.column.deleteMany({
-                          where: {
-                              uuid: {
-                                  in: columnsToDelete,
-                              },
-                          },
-                      }),
-                  ]
-                : []),
-            ...columns.map((column) => {
-                return prisma.column.upsert({
-                    where: {
-                        uuid: column.uuid,
+
+    await prisma.$transaction(async () => {
+        if (req.body.name !== currentBoardData.name) {
+            await prisma.board.update({ where: { uuid: boardUUID }, data: { name: req.body.name } });
+        }
+        if (columnsToDelete.length) {
+            await prisma.column.deleteMany({
+                where: {
+                    uuid: {
+                        in: columnsToDelete,
                     },
-                    create: {
-                        uuid: column.uuid,
-                        name: column.name,
-                        position: column.position,
-                        color: column.color,
-                        board: {
-                            connect: {
-                                uuid: boardUUID,
-                            },
+                },
+            });
+        }
+        for (const column of columns) {
+            await prisma.column.upsert({
+                where: {
+                    uuid: column.uuid,
+                },
+                create: {
+                    uuid: column.uuid,
+                    name: column.name,
+                    position: column.position,
+                    color: column.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+                    board: {
+                        connect: {
+                            uuid: boardUUID,
                         },
                     },
-                    update: {
-                        name: column.name,
-                        position: column.position,
-                        color: column.color,
-                    },
-                });
-            }),
-        ]);
-    } catch (e) {
-        console.error(e);
-        return res.status(500).end('Something went wrong');
-    }
-    return res.status(200).json('Board updated');
+                },
+                update: {
+                    name: column.name,
+                    position: column.position,
+                },
+            });
+        }
+        return res.status(200).json('Board updated');
+    });
 };

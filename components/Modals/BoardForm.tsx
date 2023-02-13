@@ -73,14 +73,12 @@ const BoardForm: FC<{
                         if (existingColumn) {
                             columns.push({
                                 uuid: existingColumn.uuid,
-                                color: existingColumn.color,
                                 name: column.value,
                                 position: i,
                             });
                         } else {
                             columns.push({
                                 name: column.value,
-                                color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
                                 position: i,
                             });
                         }
