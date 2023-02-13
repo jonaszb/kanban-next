@@ -13,5 +13,13 @@ const pickerProps = {
 };
 
 export const ColorPicker: StoryFn<typeof ColorPickerElem> = () => {
-    return <ColorPicker {...pickerProps} />;
+    return (
+        <div className="w-max">
+            <ColorPickerElem {...pickerProps} />
+        </div>
+    );
+};
+
+ColorPicker.parameters = {
+    theme: 'light',
 };
