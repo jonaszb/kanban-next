@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import React from 'react';
+import useClickOutside from './useClickOutside';
 
 type PopoverHook = {
     anchorEl: HTMLElement | null;
@@ -16,6 +17,10 @@ const usePopover = (): PopoverHook => {
     const [isOpen, setIsOpen] = useState(false);
     const [popoverRoot, setPopoverRoot] = useState<HTMLElement | null>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
+
+    useClickOutside(popoverRef, () => {
+        setIsOpen(false);
+    });
 
     const open = (event: React.MouseEvent | React.KeyboardEvent) => {
         setAnchorEl(event.currentTarget as HTMLElement);
@@ -56,23 +61,6 @@ const usePopover = (): PopoverHook => {
     useEffect(() => {
         setPopoverRoot(document.getElementById('popover-root'));
     }, []);
-
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (
-                isOpen &&
-                popoverRef.current &&
-                !popoverRef.current.contains(event.target as Node) &&
-                !((event.target as Node) === anchorEl)
-            ) {
-                close();
-            }
-        }
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [popoverRef, anchorEl]);
 
     return { anchorEl, isOpen, open, close, toggle, Component };
 };

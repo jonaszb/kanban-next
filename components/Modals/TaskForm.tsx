@@ -5,7 +5,6 @@ import { ButtonPrimary } from '../Buttons/Buttons';
 import { Dropdown, Input, MultiValueInput, Textarea } from '../Inputs/Inputs';
 import { mutate } from 'swr';
 
-// Validate input length - must be between 1 and 100 characters. Return tuple of boolean and error message.
 const validateTitle = (val: string | undefined): [boolean, string] => {
     if (!val || val?.trim().length < 1) return [false, "Can't be empty"];
     if (val?.trim().length > 100) return [false, `${val?.trim().length}/100`];
@@ -88,7 +87,7 @@ const TaskForm: FC<{
     };
 
     return (
-        <div data-testId="task-form" className="flex flex-col">
+        <div data-testid="task-form" className="flex flex-col">
             <h2 className="mb-6 text-lg font-bold dark:text-white">
                 {props.formType === 'new' ? 'Add New Task' : 'Edit Task'}
             </h2>

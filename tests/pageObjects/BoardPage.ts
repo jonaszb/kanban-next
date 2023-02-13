@@ -8,6 +8,11 @@ export default class BoardPage extends BasePage {
     readonly newColumnLabel: Locator;
     readonly newColumnInput: Locator;
     readonly tasks: Locator;
+    readonly colorPicker: Locator;
+    readonly colorPickerSaturation: Locator;
+    readonly colorPickerHue: Locator;
+    readonly colorPickerInput: Locator;
+    readonly colorSubmit: Locator;
 
     constructor(page: Page, boardUUID: string) {
         super(page);
@@ -17,10 +22,19 @@ export default class BoardPage extends BasePage {
         this.newColumnLabel = this.page.getByText('+ New Column');
         this.newColumnInput = this.page.getByLabel('+ New Column');
         this.tasks = this.page.getByTestId('task');
+        this.colorPicker = this.page.getByTestId('color-picker-container');
+        this.colorPickerSaturation = this.colorPicker.locator('react-colorful__saturation');
+        this.colorPickerHue = this.colorPicker.locator('react-colorful__hue');
+        this.colorPickerInput = this.colorPicker.getByTestId('color-input');
+        this.colorSubmit = this.colorPicker.getByTestId('color-submit');
     }
 
     nthColumnHeader = (n: number) => {
         return this.columns.nth(n).locator('h3');
+    };
+
+    nthColumnColorIndicator = (n: number) => {
+        return this.columns.nth(n).getByTestId('column-color');
     };
 
     tasksInColumn = (column: string | number) => {
