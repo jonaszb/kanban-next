@@ -116,6 +116,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         if (!boardData.data) return;
         for (const column of boardData.data.columns) {
             newValue[column.name] = {
+                board_uuid: column.board_uuid,
                 uuid: column.uuid,
                 color: column.color,
                 tasks: column.tasks ?? [],
@@ -291,13 +292,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 {items &&
                     Object.entries(items).map(([colName, colData]) => {
                         return (
-                            <Column
-                                key={colName}
-                                name={colName}
-                                color={colData.color}
-                                tasks={colData.tasks}
-                                validating={draggingDisabled}
-                            />
+                            <Column key={colName} name={colName} columnData={colData} validating={draggingDisabled} />
                         );
                     })}
                 {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
