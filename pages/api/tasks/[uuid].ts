@@ -3,22 +3,29 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { validate, v4 as uuidv4 } from 'uuid';
 import { Subtask } from '../../../types';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
+
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
         return res.status(400).end('Invalid board UUID');
     }
     switch (req.method) {
         case 'DELETE': {
-            return await deleteTask(req, res);
+            return await deleteTask(req, res, session);
         }
         case 'GET': {
-            return await getTask(req, res);
+            return await getTask(req, res, session);
         }
         case 'PUT': {
-            return await updateTask(req, res);
+            return await updateTask(req, res, session);
         }
         default:
             res.status(405).end('Method not allowed');
@@ -54,9 +61,7 @@ const incrementFromPosition = (columnUUID: string, position: number) => {
     });
 };
 
-const updateTaskData = (taskUUID: string, taskData: OptionalTaskData, subtasksToDelete: string[]) => {
-    console.log(taskData);
-    console.log(subtasksToDelete);
+const updateTaskData = (taskUUID: string, taskData: OptionalTaskData, subtasksToDelete: string[], session: Session) => {
     const { subtasks, ...data } = taskData;
     return prisma.$transaction(async () => {
         if (subtasksToDelete.length > 0) {
@@ -80,6 +85,7 @@ const updateTaskData = (taskUUID: string, taskData: OptionalTaskData, subtasksTo
                     create: {
                         uuid: subtask.uuid,
                         name: subtask.name,
+                        userId: session.user.id,
                         task: {
                             connect: {
                                 uuid: taskUUID,
@@ -117,7 +123,7 @@ const validateTaskUpdateData = (taskData: any) => {
     return;
 };
 
-const getTask = async (req: NextApiRequest, res: NextApiResponse) => {
+const getTask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const taskUUID = req.query.uuid?.toString();
     if (!taskUUID) {
         return res.status(400).end('Task uuid is required');
@@ -126,6 +132,7 @@ const getTask = async (req: NextApiRequest, res: NextApiResponse) => {
         const task = await prisma.task.findFirst({
             where: {
                 uuid: taskUUID,
+                userId: session.user.id,
             },
             include: {
                 subtasks: true,
@@ -142,7 +149,7 @@ const getTask = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-const deleteTask = async (req: NextApiRequest, res: NextApiResponse) => {
+const deleteTask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const taskUUID = req.query.uuid?.toString();
     if (!taskUUID) {
         return res.status(400).end('Task uuid is required');
@@ -150,6 +157,7 @@ const deleteTask = async (req: NextApiRequest, res: NextApiResponse) => {
     const taskData = await prisma.task.findFirst({
         where: {
             uuid: taskUUID,
+            userId: session.user.id,
         },
     });
     if (!taskData) {
@@ -171,7 +179,7 @@ const deleteTask = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
+const updateTask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const taskUUID = req.query.uuid?.toString();
     if (!taskUUID) {
         return res.status(400).end('Task uuid is required');
@@ -183,6 +191,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
     const currentTaskData = await prisma.task.findFirst({
         where: {
             uuid: taskUUID,
+            userId: session.user.id,
         },
         include: {
             subtasks: true,
@@ -246,7 +255,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
 
     await prisma.$transaction(async () => {
         if (!columnChanged && !positionChanged) {
-            await updateTaskData(taskUUID, newTaskData, subtasksToDelete);
+            await updateTaskData(taskUUID, newTaskData, subtasksToDelete, session);
             return res.status(200).end('Task updated');
         }
         if (columnChanged && !column) {
@@ -257,7 +266,7 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse) => {
         if (positionChanged && !movingToEndOfColumn) {
             await incrementFromPosition(columnChanged ? column_uuid : currentTaskData.column_uuid, position);
         }
-        await updateTaskData(taskUUID, newTaskData, subtasksToDelete);
+        await updateTaskData(taskUUID, newTaskData, subtasksToDelete, session);
         return res.status(200).end('Task updated');
     });
 };

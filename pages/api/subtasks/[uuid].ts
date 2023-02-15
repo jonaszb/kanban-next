@@ -2,16 +2,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { validate } from 'uuid';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
         return res.status(400).end('Invalid subtask UUID');
     }
     switch (req.method) {
         case 'PUT': {
-            return await updateSubtask(req, res);
+            return await updateSubtask(req, res, session);
         }
         default:
             res.status(405).end('Method not allowed');
@@ -19,11 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-const updateSubtask = async (req: NextApiRequest, res: NextApiResponse) => {
+const updateSubtask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const subtaskUUID = req.query.uuid!.toString();
     const currentSubtaskData = await prisma.subtask.findFirst({
         where: {
             uuid: subtaskUUID,
+            userId: session.user.id,
         },
     });
     const { name, completed } = req.body;

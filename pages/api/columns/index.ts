@@ -3,6 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4, validate } from 'uuid';
 import { NewColumn } from '../../../types';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
@@ -13,12 +15,17 @@ const isNewColumn = (column: unknown): column is NewColumn => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
+
     switch (req.method) {
         case 'POST': {
-            return await createColumn(req, res);
+            return await createColumn(req, res, session);
         }
         case 'GET': {
-            return await getColumns(res);
+            return await getColumns(res, session);
         }
         default:
             res.status(405).end('Method not allowed');
@@ -26,16 +33,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 }
 
-const getColumns = async (res: NextApiResponse) => {
+const getColumns = async (res: NextApiResponse, session: Session) => {
     try {
-        const tasks = await prisma.column.findMany();
+        const tasks = await prisma.column.findMany({
+            where: {
+                userId: session.user.id,
+            },
+        });
         res.status(200).json(tasks);
     } catch (error) {
         res.status(500).json({ error });
     }
 };
 
-const createColumn = async (req: NextApiRequest, res: NextApiResponse) => {
+const createColumn = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const columnData: unknown = req.body;
     if (!isNewColumn(columnData)) {
         return res.status(400).json({ error: 'Invalid column data' });
@@ -46,9 +57,10 @@ const createColumn = async (req: NextApiRequest, res: NextApiResponse) => {
     if (columnData.name.length < 1 || columnData.name.length > 20) {
         return res.status(400).json({ error: 'Column name must be between 1 and 20 characters' });
     }
-    const boardData = await prisma.board.findUnique({
+    const boardData = await prisma.board.findFirst({
         where: {
             uuid: columnData.board_uuid,
+            userId: session.user.id,
         },
         include: {
             columns: true,
@@ -85,6 +97,7 @@ const createColumn = async (req: NextApiRequest, res: NextApiResponse) => {
                     color: columnData.color,
                     position: columnData.position as number,
                     uuid: uuidv4(),
+                    userId: session.user.id,
                     board: {
                         connect: {
                             uuid: columnData.board_uuid,

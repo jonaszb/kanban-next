@@ -1,7 +1,9 @@
+import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { mutate } from 'swr';
 import Board from '../../../components/Board/Board';
+import Layout from '../../../components/Layout/Layout';
 import TaskDetails from '../../../components/Modals/TaskDetails';
 import useModal from '../../../hooks/useModal';
 import { useBoardsContext } from '../../../store/BoardListContext';
@@ -25,7 +27,7 @@ export default function BoardPage() {
     }, [taskDetailsModal.isOpen]);
 
     return (
-        <>
+        <Layout>
             <Head>
                 <title>{`Kanban - ${selectedBoard?.name}`}</title>
                 <meta name="description" content={`Task management web app`} />
@@ -44,6 +46,23 @@ export default function BoardPage() {
                     )}
                 </Modal>
             </main>
-        </>
+        </Layout>
     );
+}
+
+export async function getServerSideProps(context: any) {
+    const session = await getSession(context);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: { session },
+    };
 }

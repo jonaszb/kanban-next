@@ -14,9 +14,18 @@ module.exports = {
         'collapse-input': {
           '0%': { height: '2.5rem', opacity: 1, 'margin-bottom': '.75rem' },
           '100%': { height: 0, opacity: 0, 'margin-bottom': 0 },
+        },
+        'background-float': {
+          '0%': { transform: 'translate(0, 0)' },
+          '20%': { transform: 'translate(10px, 15px)' },
+          '40%': { transform: 'translate(-10px, -10px) scale(1.1)' },
+          '60%': { transform: 'translate(0, 0) scale(1.05)' },
+          '80%': { transform: 'translate(5px, -5px) scale(1.1)' },
+          '100%': { transform: 'translate(0, 0) scale(1)' },
         }
       },
       animation: {
+        'spin-slow': 'spin 16s linear infinite',
         'collapse-input': 'collapse-input .25s ease-in-out',
         'expand-input': 'collapse-input .25s ease-in-out reverse',
       },
