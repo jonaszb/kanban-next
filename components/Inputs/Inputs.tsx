@@ -78,11 +78,15 @@ const TextareaField: FC<
     );
 };
 
-const Input: FC<React.ComponentProps<'input'> & { label: string; haserror?: boolean; errorMsg?: string }> = (props) => {
-    const { label, className, ...inputProps } = props;
+const Input: FC<
+    React.ComponentProps<'input'> & { label: string; haserror?: boolean; errorMsg?: string; hideLabel?: boolean }
+> = (props) => {
+    const { label, className, hideLabel, ...inputProps } = props;
     return (
         <fieldset className={`flex flex-col text-mid-grey dark:text-white ${className ?? ''}`}>
-            <FormFieldLabel htmlFor={props.id}>{props.label}</FormFieldLabel>
+            <FormFieldLabel htmlFor={props.id} hidden={hideLabel}>
+                {props.label}
+            </FormFieldLabel>
             <InputField {...inputProps} />
         </fieldset>
     );

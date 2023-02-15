@@ -37,22 +37,14 @@ const deleteBoard = async (req: NextApiRequest, res: NextApiResponse, session: S
     if (!boardUUID) {
         return res.status(400).end('Board uuid is required');
     }
-    try {
-        await prisma.board.deleteMany({
-            where: {
-                uuid: boardUUID,
-                userId: session.user.id,
-            },
-        });
-        res.status(200).end();
-    } catch (error: any) {
-        if (error.code === 'P2025') {
-            return res.status(404).end('Board not found');
-        } else {
-            console.error(error);
-            return res.status(500).end('Something went wrong');
-        }
-    }
+    const result = await prisma.board.deleteMany({
+        where: {
+            uuid: boardUUID,
+            userId: session.user.id,
+        },
+    });
+    if (result.count === 0) return res.status(404).end('Board not found');
+    return res.status(200).end();
 };
 
 const getBoard = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {

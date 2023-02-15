@@ -17,7 +17,7 @@ test.describe('Add new board', () => {
         }
     });
 
-    test('Modal is opened when "Create New Board" button is clicked', async ({ basePage, pageObjects }) => {
+    test('Modal is opened when "New Board" button is clicked', async ({ basePage, pageObjects }) => {
         if (mobile) await basePage.mobileMenuToggle.click();
         await expect(basePage.newBoardBtn).toBeVisible();
         await expect(basePage.newBoardBtn).toHaveText('+ Create New Board');
@@ -69,7 +69,7 @@ test.describe('Add new board', () => {
         await modal.submitBtn.click();
         await expect(modal.rootElement).not.toBeVisible();
         const boardData = await apiUtils.getBoardByName(boardName);
-        expect(basePage.page.url()).toContain(`/board/${boardData?.uuid}`);
+        await expect.poll(() => basePage.page.url()).toContain(`/board/${boardData?.uuid}`);
     });
 
     test('Board cannot be created without a name', async ({ basePage, pageObjects }) => {

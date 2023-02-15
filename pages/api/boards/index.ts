@@ -78,6 +78,7 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse, session: S
                 name: column.name,
                 color: column.color,
                 position: i,
+                userId: session.user.id,
                 uuid: uuidv4(),
             };
         });
