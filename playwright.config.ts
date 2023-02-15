@@ -25,6 +25,8 @@ const config: PlaywrightTestConfig = {
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
+    /* Stop test execution after 20 failures */
+    maxFailures: 20,
     /* Retry on CI only */
     retries: process.env.CI ? 1 : 0,
     /* Opt out of parallel tests on CI. */
