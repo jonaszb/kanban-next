@@ -23,9 +23,7 @@ const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: 
     const subtaskClickHandler = async () => {
         const newValue = !isChecked;
         setIsChecked(newValue);
-        setTimeout(() => {
-            setSubtaskStatus(subtask);
-        }, 150);
+        setSubtaskStatus(subtask);
     };
 
     return (
@@ -119,7 +117,13 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
     };
 
     const subtaskChangeHandler = async (subtask: Subtask) => {
-        await fetch(`/api/subtasks/${subtask.uuid}`, {
+        const newSubtasks = taskData!.subtasks.map((sub) => {
+            if (sub.uuid === subtask.uuid) {
+                return { ...sub, completed: !sub.completed };
+            }
+            return sub;
+        });
+        const fetchPromise = fetch(`/api/subtasks/${subtask.uuid}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -128,12 +132,8 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                 completed: !subtask.completed,
             }),
         });
-        const newSubtasks = taskData!.subtasks.map((sub) => {
-            if (sub.uuid === subtask.uuid) {
-                return { ...sub, completed: !sub.completed };
-            }
-            return sub;
-        });
+        taskData!.subtasks = newSubtasks;
+        await fetchPromise;
         mutateTask({ ...taskData!, subtasks: newSubtasks });
         mutate(`/api/boards/${selectedBoard?.uuid}`);
     };
