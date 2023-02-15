@@ -15,10 +15,10 @@ model Board {
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
   columns    Column[]  @relation(name: "BoardColumn")
-  user_uuid  String
-  user       User      @relation(fields: [user_uuid], references: [uuid])
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
 
-  @@index([user_uuid])
+  @@index([userId])
 }
 
 model Column {
@@ -32,6 +32,7 @@ model Column {
   color      String    @db.VarChar(255)
   board      Board     @relation(name: "BoardColumn", fields: [board_uuid], references: [uuid], onDelete: Cascade)
   tasks      Task[]    @relation(name: "ColumnTask")
+  userId     String
 
   @@index([board_uuid])
 }
@@ -47,6 +48,7 @@ model Task {
   column_uuid String
   column      Column    @relation(name: "ColumnTask", fields: [column_uuid], references: [uuid], onDelete: Cascade)
   subtasks    Subtask[] @relation(name: "TaskSubtask")
+  userId      String
 
   @@index([column_uuid])
 }
@@ -59,17 +61,57 @@ model Subtask {
   name       String    @db.VarChar(255)
   task_uuid  String
   completed  Boolean   @default(false)
+  userId     String
   task       Task      @relation(name: "TaskSubtask", fields: [task_uuid], references: [uuid], onDelete: Cascade)
 
   @@index([task_uuid])
 }
 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model User {
-  id         Int       @id @default(autoincrement())
-  uuid       String    @unique @db.Char(36)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  email      String    @db.VarChar(255)
-  password   String    @db.VarChar(255)
-  boards     Board[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  Board         Board[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

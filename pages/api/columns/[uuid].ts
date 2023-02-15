@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { validate } from 'uuid';
-import { Column } from '../../../types';
-import { v4 as uuidv4 } from 'uuid';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 type UpdatedColumnData = {
@@ -41,29 +41,35 @@ const incrementFromPosition = (boardUUID: string, position: number) => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
+
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
         return res.status(400).end('Invalid column UUID');
     }
     switch (req.method) {
         case 'DELETE': {
-            return await deleteColumn(req, res);
+            return await deleteColumn(req, res, session);
         }
         case 'GET': {
-            return await getColumn(req, res);
+            return await getColumn(req, res, session);
         }
         case 'PUT': {
-            return await updateColumn(req, res);
+            return await updateColumn(req, res, session);
         }
         default:
             return res.status(405).end('Method not allowed');
     }
 }
 
-const deleteColumn = async (req: NextApiRequest, res: NextApiResponse) => {
+const deleteColumn = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const columnUUID = req.query.uuid?.toString();
     const columnData = await prisma.column.findFirst({
         where: {
             uuid: columnUUID,
+            userId: session.user.id,
         },
     });
     if (!columnData) {
@@ -85,12 +91,13 @@ const deleteColumn = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-const getColumn = async (req: NextApiRequest, res: NextApiResponse) => {
+const getColumn = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const columnUUID = req.query.uuid?.toString();
     try {
         const column = await prisma.column.findFirst({
             where: {
                 uuid: columnUUID,
+                userId: session.user.id,
             },
             include: {
                 tasks: true,
@@ -106,12 +113,13 @@ const getColumn = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-const updateColumn = async (req: NextApiRequest, res: NextApiResponse) => {
+const updateColumn = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const columnUUID = req.query.uuid?.toString();
     const columnData: UpdatedColumnData = req.body;
     const currentColumnData = await prisma.column.findFirst({
         where: {
             uuid: columnUUID,
+            userId: session.user.id,
         },
     });
     if (!currentColumnData) {

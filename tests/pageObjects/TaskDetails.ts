@@ -33,8 +33,13 @@ export default class TaskDetails extends BaseModal {
     }
 
     async editTask() {
-        await this.page.waitForLoadState('networkidle');
         await this.optionsBtn.click();
         await this.editBtn.click();
+    }
+
+    async clickNthSubtask(n: number) {
+        const revalidatePromise = this.page.waitForResponse('**/api/subtasks/**');
+        await this.subtaskRows.nth(n).click();
+        await revalidatePromise;
     }
 }

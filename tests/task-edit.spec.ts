@@ -129,7 +129,7 @@ test.describe('Edit Task screen', () => {
 
     test("Editing the subtask name doesn't affect its status", async ({ taskDetailsModal, pageObjects }) => {
         const { taskData, taskDetails } = taskDetailsModal;
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
         await taskDetails.editTask();
         const taskForm = new pageObjects.TaskForm(taskDetails.page);
 
@@ -147,7 +147,7 @@ test.describe('Edit Task screen', () => {
 
     test('Subtask can be replaced', async ({ taskDetailsModal, pageObjects }) => {
         const { taskData, taskDetails } = taskDetailsModal;
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
 
         await taskDetails.editTask();
         const taskForm = new pageObjects.TaskForm(taskDetails.page);

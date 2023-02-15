@@ -2,6 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
@@ -20,12 +22,17 @@ type Column = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
+
     switch (req.method) {
         case 'POST': {
-            return await createBoard(req, res);
+            return await createBoard(req, res, session);
         }
         case 'GET': {
-            return await getBoards(res);
+            return await getBoards(res, session);
         }
         default:
             return res.status(405).end('Method not allowed');
@@ -42,9 +49,12 @@ const validateBoard = (board: Board) => {
     }
 };
 
-const getBoards = async (res: NextApiResponse) => {
+const getBoards = async (res: NextApiResponse, session: Session) => {
     try {
         const boards = await prisma.board.findMany({
+            where: {
+                userId: session.user.id,
+            },
             include: {
                 columns: true,
             },
@@ -55,12 +65,12 @@ const getBoards = async (res: NextApiResponse) => {
     }
 };
 
-const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
+const createBoard = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const boardData: { name: string; columns: { name: string; color: string }[] } = req.body;
     const board: Board = {
         name: boardData.name,
         uuid: uuidv4(),
-        user: 'd5d375f9-5fa3-4d3d-ba9c-7bf942a58e09',
+        user: session.user.id,
     };
     if (boardData.columns) {
         board.columns = boardData.columns.map((column, i) => {
@@ -68,6 +78,7 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
                 name: column.name,
                 color: column.color,
                 position: i,
+                userId: session.user.id,
                 uuid: uuidv4(),
             };
         });
@@ -84,7 +95,7 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse) => {
             uuid: board.uuid,
             user: {
                 connect: {
-                    uuid: board.user,
+                    id: board.user,
                 },
             },
             columns: {},

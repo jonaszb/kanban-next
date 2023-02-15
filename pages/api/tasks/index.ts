@@ -3,16 +3,23 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4, validate } from 'uuid';
 import { NewTask } from '../../../types';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
+
     switch (req.method) {
         case 'POST': {
-            return await createTask(req, res);
+            return await createTask(req, res, session);
         }
         case 'GET': {
-            return await getTasks(res);
+            return await getTasks(res, session);
         }
         default:
             res.status(405).end('Method not allowed');
@@ -33,16 +40,20 @@ const isNewTask = (data: unknown): data is NewTask => {
     );
 };
 
-const getTasks = async (res: NextApiResponse) => {
+const getTasks = async (res: NextApiResponse, session: Session) => {
     try {
-        const tasks = await prisma.task.findMany();
+        const tasks = await prisma.task.findMany({
+            where: {
+                userId: session.user.id,
+            },
+        });
         res.status(200).json(tasks);
     } catch (error) {
         res.status(500).json({ error });
     }
 };
 
-const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
+const createTask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const taskData: unknown = req.body;
     if (!isNewTask(taskData)) {
         return res.status(400).json({ error: 'Invalid task data' });
@@ -92,6 +103,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
             subtasks: {},
             description: task.description,
             position: nextPosition,
+            userId: session.user.id,
             column: {
                 connect: {
                     uuid: task.column_uuid,
@@ -105,6 +117,7 @@ const createTask = async (req: NextApiRequest, res: NextApiResponse) => {
                 data: task.subtasks.map((subtask) => {
                     return {
                         name: subtask.name,
+                        userId: session.user.id,
                         uuid: uuidv4(),
                         completed: false,
                     };

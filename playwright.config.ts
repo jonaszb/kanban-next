@@ -25,14 +25,18 @@ const config: PlaywrightTestConfig = {
     fullyParallel: true,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
+    /* Stop test execution after 20 failures */
+    maxFailures: 20,
     /* Retry on CI only */
     retries: process.env.CI ? 1 : 0,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 4 : undefined,
+    globalSetup: require.resolve('./globalSetup'),
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [['html', { open: 'never' }], ['list']],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
+        storageState: 'storageState.json',
         /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
         actionTimeout: 0,
         /* Base URL to use in actions like `await page.goto('/')`. */

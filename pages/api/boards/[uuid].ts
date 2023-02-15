@@ -4,55 +4,55 @@ import { PrismaClient } from '@prisma/client';
 import { validate } from 'uuid';
 import { Column } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
+import { getSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const session = await getSession({ req });
+    if (!session) {
+        return res.status(401).end('Unauthorized');
+    }
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
         return res.status(400).end('Invalid board UUID');
     }
     switch (req.method) {
         case 'DELETE': {
-            return await deleteBoard(req, res);
+            return await deleteBoard(req, res, session);
         }
         case 'GET': {
-            return await getBoard(req, res);
+            return await getBoard(req, res, session);
         }
         case 'PUT': {
-            return await updateBoard(req, res);
+            return await updateBoard(req, res, session);
         }
         default:
             return res.status(405).end('Method not allowed');
     }
 }
 
-const deleteBoard = async (req: NextApiRequest, res: NextApiResponse) => {
+const deleteBoard = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const boardUUID = req.query.uuid?.toString();
     if (!boardUUID) {
         return res.status(400).end('Board uuid is required');
     }
-    try {
-        await prisma.board.delete({
-            where: {
-                uuid: boardUUID,
-            },
-        });
-        res.status(200).end();
-    } catch (error: any) {
-        if (error.code === 'P2025') {
-            return res.status(404).end('Board not found');
-        } else {
-            console.error(error);
-            return res.status(500).end('Something went wrong');
-        }
-    }
+    const result = await prisma.board.deleteMany({
+        where: {
+            uuid: boardUUID,
+            userId: session.user.id,
+        },
+    });
+    if (result.count === 0) return res.status(404).end('Board not found');
+    return res.status(200).end();
 };
 
-const getBoard = async (req: NextApiRequest, res: NextApiResponse) => {
+const getBoard = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     try {
         const board = await prisma.board.findFirst({
             where: {
                 uuid: req.query.uuid?.toString(),
+                userId: session.user.id,
             },
             include: {
                 columns: {
@@ -83,11 +83,12 @@ const getBoard = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-const updateBoard = async (req: NextApiRequest, res: NextApiResponse) => {
+const updateBoard = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
     const boardUUID = req.query.uuid?.toString();
     const currentBoardData = await prisma.board.findFirst({
         where: {
             uuid: boardUUID,
+            userId: session.user.id,
         },
         include: {
             columns: true,
@@ -112,50 +113,46 @@ const updateBoard = async (req: NextApiRequest, res: NextApiResponse) => {
             column.uuid = uuidv4();
         }
     }
-    try {
-        // Delete old columns and upsert new ones
-        await prisma.$transaction([
-            ...(req.body.name !== currentBoardData.name
-                ? [prisma.board.update({ where: { uuid: boardUUID }, data: { name: req.body.name } })]
-                : []),
-            ...(columnsToDelete.length
-                ? [
-                      prisma.column.deleteMany({
-                          where: {
-                              uuid: {
-                                  in: columnsToDelete,
-                              },
-                          },
-                      }),
-                  ]
-                : []),
-            ...columns.map((column) => {
-                return prisma.column.upsert({
-                    where: {
-                        uuid: column.uuid,
+
+    await prisma.$transaction(async () => {
+        if (req.body.name !== currentBoardData.name) {
+            await prisma.board.updateMany({
+                where: { uuid: boardUUID, userId: session.user.id },
+                data: { name: req.body.name },
+            });
+        }
+        if (columnsToDelete.length) {
+            await prisma.column.deleteMany({
+                where: {
+                    uuid: {
+                        in: columnsToDelete,
                     },
-                    create: {
-                        uuid: column.uuid,
-                        name: column.name,
-                        position: column.position,
-                        color: column.color,
-                        board: {
-                            connect: {
-                                uuid: boardUUID,
-                            },
+                },
+            });
+        }
+        for (const column of columns) {
+            await prisma.column.upsert({
+                where: {
+                    uuid: column.uuid,
+                },
+                create: {
+                    uuid: column.uuid,
+                    name: column.name,
+                    position: column.position,
+                    userId: session.user.id,
+                    color: column.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+                    board: {
+                        connect: {
+                            uuid: boardUUID,
                         },
                     },
-                    update: {
-                        name: column.name,
-                        position: column.position,
-                        color: column.color,
-                    },
-                });
-            }),
-        ]);
-    } catch (e) {
-        console.error(e);
-        return res.status(500).end('Something went wrong');
-    }
-    return res.status(200).json('Board updated');
+                },
+                update: {
+                    name: column.name,
+                    position: column.position,
+                },
+            });
+        }
+        return res.status(200).json('Board updated');
+    });
 };

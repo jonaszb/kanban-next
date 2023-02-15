@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import BoardForm from '../../Modals/BoardForm';
 import { mutate } from 'swr';
 import { LinkContainer, PopoverLink } from '../../Popover/Popover';
+import { signOut } from 'next-auth/react';
 
 const Header: FC = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -146,6 +147,9 @@ const Header: FC = () => {
                             id="board-delete"
                         >
                             Delete Board
+                        </PopoverLink>
+                        <PopoverLink id="logout" onClick={() => signOut()}>
+                            Logout
                         </PopoverLink>
                     </LinkContainer>
                 </Popover>

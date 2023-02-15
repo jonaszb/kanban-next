@@ -17,6 +17,6 @@
     "incremental": true,
     "downlevelIteration": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "playwright/index.js"],
+  "include": ["next-env.d.ts", "types/**/*.ts", "**/*.ts", "**/*.tsx", "playwright/index.js"],
   "exclude": ["node_modules"]
 }

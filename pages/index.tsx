@@ -1,11 +1,10 @@
 import Head from 'next/head';
-// import { useSession, signIn, signOut } from 'next-auth/react';
+import Layout from '../components/Layout/Layout';
+import { getSession } from 'next-auth/react';
 
 export default function Home() {
-    // const { data: session } = useSession();
-    // console.log(session);
     return (
-        <>
+        <Layout>
             <Head>
                 <title>Kanban Board</title>
                 <meta name="description" content="Task management web app" />
@@ -17,6 +16,23 @@ export default function Home() {
                     Create a new board or select an existing one to get started.
                 </p>
             </main>
-        </>
+        </Layout>
     );
+}
+
+export async function getServerSideProps(context: any) {
+    const session = await getSession(context);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/login',
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: { session },
+    };
 }
