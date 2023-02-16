@@ -111,6 +111,17 @@ test.describe('Columns CRUD tests', () => {
             });
             expect(response.status()).toBe(400);
         });
+
+        test('Column cannot be created if not logged in', async ({ testBoard, noAuthRequest }) => {
+            const response = await noAuthRequest.post('/api/columns', {
+                data: {
+                    name: 'Auto test',
+                    board_uuid: testBoard.uuid,
+                    color: '#FFFFFF',
+                },
+            });
+            expect(response.status()).toBe(401);
+        });
     });
 
     test.describe('GET', () => {
@@ -141,6 +152,16 @@ test.describe('Columns CRUD tests', () => {
             const response = await request.get(`/api/columns/${uuidv4()}`);
             expect(response.status()).toBe(404);
         });
+
+        test('Columns cannot be retrieved if not logged in', async ({ noAuthRequest }) => {
+            const response = await noAuthRequest.get('/api/columns/');
+            expect(response.status()).toBe(401);
+        });
+
+        test('Specific column cannot be retrieved if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
+            const response = await noAuthRequest.get(`/api/columns/${testBoardWithData.columns[0].uuid}`);
+            expect(response.status()).toBe(401);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -166,6 +187,11 @@ test.describe('Columns CRUD tests', () => {
         test('Deleting a non-existent column returns 404', async ({ request }) => {
             const response = await request.delete(`/api/columns/${uuidv4()}`);
             expect(response.status()).toBe(404);
+        });
+
+        test('Column cannot be deleted if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
+            const response = await noAuthRequest.delete(`/api/columns/${testBoardWithData.columns[0].uuid}`);
+            expect(response.status()).toBe(401);
         });
     });
 
@@ -268,6 +294,15 @@ test.describe('Columns CRUD tests', () => {
             const response2 = await request.get(`/api/columns/${testBoardWithData.columns[1].uuid}`);
             expect(response1.status()).toBe(404);
             expect(response2.status()).toBe(404);
+        });
+
+        test('Column cannot be updated if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
+            const response = await noAuthRequest.put(`/api/columns/${testBoardWithData.columns[0].uuid}`, {
+                data: {
+                    name: 'Updated name',
+                },
+            });
+            expect(response.status()).toBe(401);
         });
     });
 });

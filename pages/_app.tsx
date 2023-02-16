@@ -8,12 +8,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
     return (
         <SessionProvider session={session}>
             <ThemeContextProvider>
-                {!session && <Component {...pageProps} />}
-                {session && (
-                    <BoardListContextProvider>
-                        <Component {...pageProps} />
-                    </BoardListContextProvider>
-                )}
+                <BoardListContextProvider>
+                    <Component {...pageProps} />
+                </BoardListContextProvider>
             </ThemeContextProvider>
         </SessionProvider>
     );

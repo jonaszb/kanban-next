@@ -4,6 +4,7 @@ import { Board } from '../types';
 import useSWR from 'swr';
 import type { KeyedMutator } from 'swr';
 import { fetcher } from '../utils/utils';
+import { useSession } from 'next-auth/react';
 
 export type BoardListContextProps = {
     boards?: Board[];
@@ -26,6 +27,11 @@ export const BoardListContext = React.createContext<BoardListContextProps>({
 });
 
 const BoardListContextProvider: React.FC<PropsWithChildren<{ value?: BoardListContextProps }>> = (props) => {
+    const session = useSession();
+    if (!session || session.status === 'unauthenticated') {
+        return <>{props.children}</>;
+    }
+
     const router = useRouter();
 
     const [selectedBoard, setSelectedBoard] = React.useState<Board | null>(null);
