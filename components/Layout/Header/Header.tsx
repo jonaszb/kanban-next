@@ -150,9 +150,9 @@ const Header: FC = () => {
                             Delete Board
                         </PopoverLink>
                         <div className="relative mb-4 mt-8 h-px w-full bg-mid-grey">
-                            {session.data?.user.image && (
+                            {session.data?.user?.image && (
                                 <img
-                                    src={session.data?.user.image}
+                                    src={session.data?.user?.image}
                                     className="absolute left-1/2 top-1/2 w-8 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white p-1 dark:bg-v-dark-grey"
                                 />
                             )}
