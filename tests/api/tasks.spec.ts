@@ -1,7 +1,6 @@
 import { test as base, expect } from '../../fixtures';
 import { v4 as uuidv4, validate } from 'uuid';
 import { Task } from '../../types';
-import { Column } from '@prisma/client';
 
 const test = base.extend({
     testColumn: async ({ testBoard, apiUtils }, use) => {
@@ -136,6 +135,16 @@ test.describe('Tasks CRUD tests', () => {
             });
             expect(response.status()).toBe(400);
         });
+
+        test('Task cannot be created if not logged in', async ({ testBoardWithColumn: testBoard, noAuthRequest }) => {
+            const response = await noAuthRequest.post('/api/tasks', {
+                data: {
+                    name: 'Test',
+                    column_uuid: testBoard.columns[0].uuid,
+                },
+            });
+            expect(response.status()).toBe(401);
+        });
     });
 
     test.describe('GET', () => {
@@ -163,6 +172,21 @@ test.describe('Tasks CRUD tests', () => {
             const response = await request.get('/api/tasks/invalid');
             expect(response.status()).toBe(400);
         });
+
+        test('Tasks cannot be retrieved if not logged in', async ({ noAuthRequest }) => {
+            const response = await noAuthRequest.get(`/api/tasks`);
+            expect(response.status()).toBe(401);
+        });
+
+        test('Specific task cannot be retrieved if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
+            const response = await noAuthRequest.get(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(401);
+        });
+
+        test('Cannot retrieve a task belonging to another user', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.get(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(404);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -181,6 +205,16 @@ test.describe('Tasks CRUD tests', () => {
         test('task cannot be deleted with an invalid uuid', async ({ request }) => {
             const response = await request.delete('/api/tasks/invalid');
             expect(response.status()).toBe(400);
+        });
+
+        test('task cannot be deleted if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
+            const response = await noAuthRequest.delete(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(401);
+        });
+
+        test('Cannot delete a task belonging to another user', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.delete(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(404);
         });
     });
 
@@ -485,6 +519,24 @@ test.describe('Tasks CRUD tests', () => {
 
         test('Task cannot be updated if uuid does not exist', async ({ request }) => {
             const response = await request.put(`/api/tasks/${uuidv4()}`, {
+                data: {
+                    name: 'New name',
+                },
+            });
+            expect(response.status()).toBe(404);
+        });
+
+        test('Task cannot be updated if not logged in', async ({ testColumn, noAuthRequest }) => {
+            const response = await noAuthRequest.put(`/api/tasks/${testColumn.tasks[0].uuid}`, {
+                data: {
+                    name: 'New name',
+                },
+            });
+            expect(response.status()).toBe(401);
+        });
+
+        test('Cannot update a task belonging to another user', async ({ testColumn, altRequest }) => {
+            const response = await altRequest.put(`/api/tasks/${testColumn.tasks[0].uuid}`, {
                 data: {
                     name: 'New name',
                 },

@@ -73,6 +73,10 @@ const createBoard = async (req: NextApiRequest, res: NextApiResponse, session: S
         user: session.user.id,
     };
     if (boardData.columns) {
+        const set = new Set();
+        if (boardData.columns.some((col) => set.size === (set.add(col.name), set.size))) {
+            return res.status(400).json({ error: 'Column names must be unique' });
+        }
         board.columns = boardData.columns.map((column, i) => {
             return {
                 name: column.name,

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState, useEffect, FC, PropsWithChildren, MouseEventHandler } from 'react';
 import ReactDOM from 'react-dom';
 import ModalElem from '../components/Modals/Modal';
@@ -16,6 +17,7 @@ const useModal = (options?: {
     dangerMessage?: string;
     onConfirmDelete?: MouseEventHandler<HTMLButtonElement>;
 }): ModalHook => {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null);
     const [mobileMenuRoot, setMobileMenuRoot] = useState<HTMLElement | null>(null);
@@ -31,6 +33,10 @@ const useModal = (options?: {
     const open = () => {
         setIsOpen(true);
     };
+
+    useEffect(() => {
+        close();
+    }, [router.asPath]);
 
     useEffect(() => {
         setMobileMenuRoot(document.getElementById('mobile-menu-root'));

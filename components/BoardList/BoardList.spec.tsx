@@ -46,6 +46,18 @@ jest.mock('next/router', () => ({
 
 jest.spyOn(React, 'useEffect').mockImplementation((f) => {});
 
+jest.mock('next-auth/react', () => {
+    const mockSession = {
+        expires: new Date(Date.now() + 2 * 86400).toISOString(),
+        user: { username: 'test' },
+    };
+    return {
+        useSession: jest.fn(() => {
+            return { data: mockSession, status: 'authenticated' };
+        }),
+    };
+});
+
 const renderWithCtx = async (ui: ReactElement, providerProps: BoardListContextProps) => {
     return await act(async () =>
         render(<BoardListContextProvider value={providerProps}>{ui}</BoardListContextProvider>)

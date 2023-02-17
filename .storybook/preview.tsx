@@ -3,6 +3,7 @@ import React from 'react';
 import '../styles/globals.css';
 import ThemeContextProvider from '../store/ThemeContext';
 import { ThemeContext } from '../store/ThemeContext';
+import { SessionProvider } from 'next-auth/react';
 
 export const ThemeCtxProvider: Decorator = (StoryFn, context) => {
     return (
@@ -24,6 +25,18 @@ export const withTheme: Decorator = (StoryFn, context) => {
     }, context);
 };
 
+export const withSession: Decorator = (StoryFn) => {
+    const mockSession = {
+        expires: new Date(Date.now() + 2 * 86400).toISOString(),
+        auth: { username: 'storybook' },
+    };
+    return (
+        <SessionProvider session={mockSession}>
+            <StoryFn />
+        </SessionProvider>
+    );
+};
+
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
@@ -34,4 +47,4 @@ export const parameters = {
     },
 };
 
-export const decorators = [withTheme];
+export const decorators = [withTheme, withSession];

@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { test as base, request, APIRequestContext, Page } from '@playwright/test';
 import pageObjects from './tests/pageObjects/';
 import ApiUtils from './utils/testApiUtils';
 import type { Board } from './types';
@@ -14,6 +14,9 @@ type CustomFixtures = {
     boardPage: [BoardPage, Board];
     boardPageWithColumn: [BoardPage, Board];
     pageObjects: typeof pageObjects;
+    noAuthRequest: APIRequestContext;
+    noAuthPage: Page;
+    altRequest: APIRequestContext;
 };
 
 export const test = base.extend<CustomFixtures>({
@@ -84,6 +87,32 @@ export const test = base.extend<CustomFixtures>({
 
     pageObjects: async ({}, use) => {
         await use(pageObjects);
+    },
+
+    noAuthRequest: async ({}, use) => {
+        const context = await request.newContext({
+            baseURL: process.env.BASE_URL,
+        });
+        await use(context);
+        await context.dispose();
+    },
+
+    noAuthPage: async ({ browser }, use) => {
+        const page = await browser.newPage({
+            baseURL: process.env.BASE_URL,
+            storageState: undefined,
+        });
+        await use(page);
+        await page.close();
+    },
+
+    altRequest: async ({}, use) => {
+        const context = await request.newContext({
+            baseURL: process.env.BASE_URL,
+            storageState: 'storageStateAlt.json',
+        });
+        await use(context);
+        await context.dispose();
     },
 });
 export { expect } from '@playwright/test';

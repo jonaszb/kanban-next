@@ -49,6 +49,7 @@ jobs:
               env:
                   BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
                   WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
+                  WEBHOOK_ID_ALT: ${{ secrets.WEBHOOK_ID_ALT }}
             - uses: actions/upload-artifact@v2
               if: always()
               with:

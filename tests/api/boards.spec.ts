@@ -23,6 +23,21 @@ test.describe('Boards CRUD tests', () => {
             const response = await apiUtils.getBoard('notUUID', { rawResponse: true });
             expect(response.status()).toBe(400);
         });
+
+        test('GET a single board - 401 if not logged in', async ({ testBoard, noAuthRequest }) => {
+            const response = await noAuthRequest.get(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(401);
+        });
+
+        test('GET all boards - 401 if not logged in', async ({ noAuthRequest }) => {
+            const response = await noAuthRequest.get('/api/boards', { failOnStatusCode: false });
+            expect(response.status()).toBe(401);
+        });
+
+        test('GET board belonging to another user - 404', async ({ testBoard, altRequest }) => {
+            const response = await altRequest.get(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(404);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -39,6 +54,16 @@ test.describe('Boards CRUD tests', () => {
         test('DELETE a board - 400 if invalid uuid', async ({ apiUtils }) => {
             const response = await apiUtils.deleteBoard('notUUID', { failOnStatusCode: false });
             expect(response.status()).toBe(400);
+        });
+
+        test('DELETE a board - 401 if not logged in', async ({ testBoard, noAuthRequest }) => {
+            const response = await noAuthRequest.delete(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(401);
+        });
+
+        test('DELETE a board belonging to another user - 404', async ({ testBoard, altRequest }) => {
+            const response = await altRequest.delete(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(404);
         });
     });
 
@@ -80,6 +105,16 @@ test.describe('Boards CRUD tests', () => {
         test('POST a board - 400 if name is too long', async ({ apiUtils }) => {
             const response = await apiUtils.createBoard({ name: 'a'.repeat(31) }, { rawResponse: true });
             expect(response.status()).toBe(400);
+        });
+
+        test('POST a board - 401 if not logged in', async ({ noAuthRequest }) => {
+            const response = await noAuthRequest.post('/api/boards', {
+                failOnStatusCode: false,
+                data: {
+                    name: 'Test board',
+                },
+            });
+            expect(response.status()).toBe(401);
         });
     });
 });
