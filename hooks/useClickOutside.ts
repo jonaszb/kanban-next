@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-type ClickEvent = MouseEvent | TouchEvent | KeyboardEvent;
+type ClickEvent = MouseEvent | TouchEvent;
 type ClickOutsideHook = (ref: React.RefObject<HTMLElement>, handler: (e: ClickEvent) => void) => void;
 
 const useClickOutside: ClickOutsideHook = (ref, handler) => {
@@ -15,19 +15,21 @@ const useClickOutside: ClickOutsideHook = (ref, handler) => {
             handler(event);
         };
 
-        const validateEventStart = (event: MouseEvent | TouchEvent | KeyboardEvent) => {
+        const validateEventStart = (event: ClickEvent) => {
             startedWhenMounted = !!ref.current;
             startedInside = !!ref.current && ref.current.contains(event.target as Node);
         };
 
         document.addEventListener('mousedown', validateEventStart);
         document.addEventListener('touchstart', validateEventStart);
-        document.addEventListener('click', listener);
+        document.addEventListener('mouseup', listener);
+        document.addEventListener('touchend', listener);
 
         return () => {
             document.removeEventListener('mousedown', validateEventStart);
             document.removeEventListener('touchstart', validateEventStart);
-            document.removeEventListener('click', listener);
+            document.removeEventListener('mouseup', listener);
+            document.removeEventListener('touchend', listener);
         };
     }, [ref, handler]);
 };

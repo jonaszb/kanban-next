@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
+import { ButtonPrimaryLarge, ButtonSecondary } from '../../Buttons/Buttons';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
 import MobileMenu from '../../Modals/MobileMenu';
 import { useBoardsContext } from '../../../store/BoardListContext';
@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import BoardForm from '../../Modals/BoardForm';
 import { mutate } from 'swr';
 import { LinkContainer, PopoverLink } from '../../Popover/Popover';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 const Header: FC = () => {
     const [isMobile, setIsMobile] = useState(false);
@@ -18,6 +18,7 @@ const Header: FC = () => {
     const newTaskModal = useModal();
     const router = useRouter();
     const { selectedBoard, mutateBoards } = useBoardsContext();
+    const session = useSession();
 
     // Strings for the delete modal
     const modalTitle = 'Delete this board?';
@@ -148,8 +149,16 @@ const Header: FC = () => {
                         >
                             Delete Board
                         </PopoverLink>
+                        <div className="relative mb-4 mt-8 h-px w-full bg-mid-grey">
+                            {session.data?.user.image && (
+                                <img
+                                    src={session.data?.user.image}
+                                    className="absolute left-1/2 top-1/2 w-8 -translate-y-1/2 -translate-x-1/2 rounded-full bg-white p-1 dark:bg-v-dark-grey"
+                                />
+                            )}
+                        </div>
                         <PopoverLink id="logout" onClick={() => signOut()}>
-                            Logout
+                            Log out
                         </PopoverLink>
                     </LinkContainer>
                 </Popover>
