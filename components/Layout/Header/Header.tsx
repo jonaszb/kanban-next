@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { ButtonPrimaryLarge, ButtonSecondary } from '../../Buttons/Buttons';
+import { ButtonPrimaryLarge } from '../../Buttons/Buttons';
 import { VerticalEllipsisIcon, AddTaskIconMobile, Chevron } from '../../Icons/Icons';
 import MobileMenu from '../../Modals/MobileMenu';
 import { useBoardsContext } from '../../../store/BoardListContext';

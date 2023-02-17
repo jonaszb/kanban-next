@@ -1,5 +1,5 @@
 import Logo from './Logo';
-import React, { FC } from 'react';
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 export default {
