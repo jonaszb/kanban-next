@@ -31,7 +31,10 @@ const ColumnHeader: FC<ColumnHeaderProps> = ({ name, columnData }) => {
     const [pickerIsOpen, setPickerIsOpen] = useState(false);
 
     const pickerRef = useRef<HTMLDivElement>(null);
-    useClickOutside(pickerRef, () => {
+    const colorIndicatorRef = useRef<HTMLButtonElement>(null);
+
+    useClickOutside(pickerRef, (e) => {
+        if (e.target === colorIndicatorRef.current) return;
         setColor(columnData.color);
         setPickerIsOpen(false);
     });
@@ -60,6 +63,7 @@ const ColumnHeader: FC<ColumnHeaderProps> = ({ name, columnData }) => {
         <>
             <div className="relative mb-6 flex">
                 <button
+                    ref={colorIndicatorRef}
                     data-testid="column-color"
                     className={`mr-3 h-4 w-4 rounded-full`}
                     style={{ backgroundColor: color }}
