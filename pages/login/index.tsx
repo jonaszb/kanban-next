@@ -71,7 +71,7 @@ export default function Home() {
                             />
                             <ButtonPrimary className="mt-4">Sign in with email</ButtonPrimary>
                         </form>
-                        <p className="mt-2 text-mid-grey dark:text-light-grey">or</p>
+                        <div className="mt-6 mb-2 h-px w-full bg-mid-grey" />
                         <ProviderButton
                             className="border border-mid-grey bg-black text-white dark:border-none"
                             provider="github"
