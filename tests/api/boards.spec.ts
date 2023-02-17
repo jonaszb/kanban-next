@@ -33,6 +33,11 @@ test.describe('Boards CRUD tests', () => {
             const response = await noAuthRequest.get('/api/boards', { failOnStatusCode: false });
             expect(response.status()).toBe(401);
         });
+
+        test('GET board belonging to another user - 404', async ({ testBoard, altRequest }) => {
+            const response = await altRequest.get(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(404);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -54,6 +59,11 @@ test.describe('Boards CRUD tests', () => {
         test('DELETE a board - 401 if not logged in', async ({ testBoard, noAuthRequest }) => {
             const response = await noAuthRequest.delete(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
             expect(response.status()).toBe(401);
+        });
+
+        test('DELETE a board belonging to another user - 404', async ({ testBoard, altRequest }) => {
+            const response = await altRequest.delete(`/api/boards/${testBoard.uuid}`, { failOnStatusCode: false });
+            expect(response.status()).toBe(404);
         });
     });
 

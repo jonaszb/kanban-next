@@ -182,6 +182,11 @@ test.describe('Tasks CRUD tests', () => {
             const response = await noAuthRequest.get(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
             expect(response.status()).toBe(401);
         });
+
+        test('Cannot retrieve a task belonging to another user', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.get(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(404);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -205,6 +210,11 @@ test.describe('Tasks CRUD tests', () => {
         test('task cannot be deleted if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
             const response = await noAuthRequest.delete(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
             expect(response.status()).toBe(401);
+        });
+
+        test('Cannot delete a task belonging to another user', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.delete(`/api/tasks/${testBoardWithData.columns[0].tasks[0].uuid}`);
+            expect(response.status()).toBe(404);
         });
     });
 
@@ -523,6 +533,15 @@ test.describe('Tasks CRUD tests', () => {
                 },
             });
             expect(response.status()).toBe(401);
+        });
+
+        test('Cannot update a task belonging to another user', async ({ testColumn, altRequest }) => {
+            const response = await altRequest.put(`/api/tasks/${testColumn.tasks[0].uuid}`, {
+                data: {
+                    name: 'New name',
+                },
+            });
+            expect(response.status()).toBe(404);
         });
     });
 });

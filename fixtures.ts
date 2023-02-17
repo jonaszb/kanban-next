@@ -16,6 +16,7 @@ type CustomFixtures = {
     pageObjects: typeof pageObjects;
     noAuthRequest: APIRequestContext;
     noAuthPage: Page;
+    altRequest: APIRequestContext;
 };
 
 export const test = base.extend<CustomFixtures>({
@@ -103,6 +104,15 @@ export const test = base.extend<CustomFixtures>({
         });
         await use(page);
         await page.close();
+    },
+
+    altRequest: async ({}, use) => {
+        const context = await request.newContext({
+            baseURL: process.env.BASE_URL,
+            storageState: 'storageStateAlt.json',
+        });
+        await use(context);
+        await context.dispose();
     },
 });
 export { expect } from '@playwright/test';

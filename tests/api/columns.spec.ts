@@ -162,6 +162,11 @@ test.describe('Columns CRUD tests', () => {
             const response = await noAuthRequest.get(`/api/columns/${testBoardWithData.columns[0].uuid}`);
             expect(response.status()).toBe(401);
         });
+
+        test('Column belonging to another user cannot be retrieved', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.get(`/api/columns/${testBoardWithData.columns[0].uuid}`);
+            expect(response.status()).toBe(404);
+        });
     });
 
     test.describe('DELETE', () => {
@@ -192,6 +197,11 @@ test.describe('Columns CRUD tests', () => {
         test('Column cannot be deleted if not logged in', async ({ testBoardWithData, noAuthRequest }) => {
             const response = await noAuthRequest.delete(`/api/columns/${testBoardWithData.columns[0].uuid}`);
             expect(response.status()).toBe(401);
+        });
+
+        test('Column belonging to another user cannot be deleted', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.delete(`/api/columns/${testBoardWithData.columns[0].uuid}`);
+            expect(response.status()).toBe(404);
         });
     });
 
@@ -303,6 +313,15 @@ test.describe('Columns CRUD tests', () => {
                 },
             });
             expect(response.status()).toBe(401);
+        });
+
+        test('Cannot update column belonging to another user', async ({ testBoardWithData, altRequest }) => {
+            const response = await altRequest.put(`/api/columns/${testBoardWithData.columns[0].uuid}`, {
+                data: {
+                    name: 'Updated name',
+                },
+            });
+            expect(response.status()).toBe(404);
         });
     });
 });
