@@ -100,6 +100,13 @@ const updateBoard = async (req: NextApiRequest, res: NextApiResponse, session: S
     const columns: Column[] = req.body.columns;
     const columnsToDelete: string[] = [];
 
+    if (columns) {
+        const set = new Set();
+        if (columns.some((col) => set.size === (set.add(col.name), set.size))) {
+            return res.status(400).json({ error: 'Column names must be unique' });
+        }
+    }
+
     // Find out which columns were removed and delete them
     for (const column of currentBoardData.columns) {
         const found = columns.find((c) => c.uuid === column.uuid);

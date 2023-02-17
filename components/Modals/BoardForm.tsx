@@ -34,17 +34,21 @@ const BoardForm: FC<{
     const nameInput = useInput<string>({ validateFn: validateName, initialValue: props.boardData?.name });
     const columnsInput = useInput<MultiInput[]>({ validateFn: validateColumns, initialValue: initialColumns });
 
-    const formIsValid = nameInput.isValid && columnsInput.isValid;
-
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         nameInput.setIsTouched(true);
         columnsInput.setIsTouched(true);
+
         const newColumnsValue = columnsInput.value?.map((item) => {
-            const [isValid, errorMsg] = validateName(item.value);
+            let [isValid, errorMsg] = validateName(item.value);
+            if (columnsInput.value?.find((col) => col.value === item.value && col.id !== item.id)) {
+                [isValid, errorMsg] = [false, 'Must be unique'];
+                columnsInput.isValid = false;
+            }
             return { ...item, isValid, errorMsg, isTouched: true };
         });
         if (newColumnsValue) columnsInput.customValueChangeHandler(newColumnsValue);
+        const formIsValid = nameInput.isValid && columnsInput.isValid;
         if (formIsValid) {
             if (props.formType === 'new') {
                 const columns = columnsInput.value?.map((item) => {
