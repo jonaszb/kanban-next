@@ -26,7 +26,7 @@ export default async () => {
                     responseData = data;
                     return responseData;
                 },
-                { intervals: [500], timeout: 20000 }
+                { intervals: [500], timeout: 30000 }
             )
             .toHaveLength(1);
         const magicLink = responseData[0]['text_content'].match(/http.*site/)[0];
