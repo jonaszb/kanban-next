@@ -18,7 +18,8 @@ const usePopover = (): PopoverHook => {
     const [popoverRoot, setPopoverRoot] = useState<HTMLElement | null>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
 
-    useClickOutside(popoverRef, () => {
+    useClickOutside(popoverRef, (e) => {
+        if (e.target === anchorEl) return;
         setIsOpen(false);
     });
 
@@ -41,16 +42,33 @@ const usePopover = (): PopoverHook => {
     };
 
     const Component = (props: React.PropsWithChildren<{ anchorWidth?: boolean; className?: string }>) => {
-        const pos = anchorEl?.getBoundingClientRect();
-        const style = {
-            top: pos?.top,
-            left: pos?.left,
-            width: props.anchorWidth ? pos?.width : undefined,
+        const handleResize = () => {
+            if (isOpen) {
+                const pos = anchorEl?.getBoundingClientRect();
+                const style = {
+                    top: pos?.top,
+                    left: pos?.left,
+                    width: props.anchorWidth ? pos?.width : undefined,
+                };
+                popoverRef.current?.setAttribute(
+                    'style',
+                    `top: ${style.top}px; left: ${style.left}px; width: ${style.width}px`
+                );
+            }
         };
+
+        useEffect(() => {
+            if (popoverRef.current) handleResize();
+        }, [popoverRef.current]);
+
+        useEffect(() => {
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }, [isOpen]);
 
         return isOpen && popoverRoot
             ? ReactDOM.createPortal(
-                  <div ref={popoverRef} className={`absolute z-50 ${props.className}`} style={style}>
+                  <div ref={popoverRef} className={`absolute z-50 ${props.className}`}>
                       {props.children}
                   </div>,
                   popoverRoot
