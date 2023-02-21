@@ -11,7 +11,7 @@ const sharedProps = {
     user_uuid: uuidv4(),
     columns: [],
 };
-const boards: Board[] = [
+export const testBoards: Board[] = [
     {
         name: 'Platform Launch',
         uuid: uuidv4(),
@@ -33,8 +33,8 @@ const boards: Board[] = [
 ];
 
 export const boardsCtxValue = {
-    boards: boards,
-    selectedBoard: boards[1].uuid,
+    boards: testBoards,
+    selectedBoard: testBoards[1].uuid,
     isLoading: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),

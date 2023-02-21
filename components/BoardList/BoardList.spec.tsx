@@ -1,39 +1,10 @@
-import { fireEvent, render, screen } from '../../utils/test-utils';
+import { fireEvent, render, screen, testBoards as boards } from '../../utils/test-utils';
 import BoardList from './BoardList';
 import '@testing-library/jest-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { ReactElement } from 'react';
 import BoardListContextProvider, { BoardListContextProps } from '../../store/BoardListContext';
 import React from 'react';
-import { Board } from '../../types';
 import { act } from 'react-dom/test-utils';
-
-const sharedProps = {
-    created_at: new Date(),
-    updated_at: new Date(),
-    user_uuid: uuidv4(),
-    columns: [],
-};
-const boards: Board[] = [
-    {
-        name: 'Platform Launch',
-        uuid: uuidv4(),
-        id: 1,
-        ...sharedProps,
-    },
-    {
-        name: 'Marketing Plan',
-        uuid: uuidv4(),
-        id: 2,
-        ...sharedProps,
-    },
-    {
-        name: 'Roadmap',
-        uuid: uuidv4(),
-        id: 3,
-        ...sharedProps,
-    },
-];
 
 jest.mock('next/router', () => ({
     useRouter() {

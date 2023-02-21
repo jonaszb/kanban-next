@@ -47,4 +47,4 @@ export const parameters = {
     },
 };
 
-export const decorators = [withTheme, withSession];
+export const decorators = [withSession, withTheme];
