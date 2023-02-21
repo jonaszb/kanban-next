@@ -1,6 +1,6 @@
 import BoardElem from './Board';
 import React from 'react';
-import type { Meta, StoryFn, StoryObj } from '@storybook/react';
+import type { Meta, StoryFn } from '@storybook/react';
 import { v4 as uuidv4 } from 'uuid';
 import fetchMock from 'fetch-mock';
 
