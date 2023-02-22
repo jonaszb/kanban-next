@@ -11,6 +11,7 @@ import useSWR from 'swr';
 import { fetcher } from '../../utils/utils';
 import { LinkContainer, PopoverLink } from '../Popover/Popover';
 import TaskForm from './TaskForm';
+import Spinner from '../Spinner/Spinner';
 
 const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: Subtask) => void }> = ({
     subtask,
@@ -153,8 +154,8 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
     }, [taskData?.column_uuid]);
 
     return (
-        <div data-testid="task-details" className={deleteTaskModal.isOpen ? 'hidden' : ''}>
-            {taskData && !editTaskModal.isOpen && (
+        <div data-testid="task-details" className={deleteTaskModal.isOpen || editTaskModal.isOpen ? 'hidden' : ''}>
+            {taskData && !editTaskModal.isOpen ? (
                 <>
                     <div className="mb-6 flex items-center justify-between">
                         <h2 data-testid="task-name" className="text-lg font-bold dark:text-white">
@@ -212,6 +213,10 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                         />
                     }
                 </>
+            ) : (
+                <div className="my-16 flex justify-center">
+                    <Spinner />
+                </div>
             )}
             <EditTaskModal>
                 <TaskForm

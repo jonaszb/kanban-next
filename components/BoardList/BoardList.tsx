@@ -58,7 +58,7 @@ const NewBoardButton: FC<React.ComponentProps<'button'> & { handleBoardSelect?: 
                 {...restProps}
             >
                 <BoardIcon className="mr-2 h-4 fill-primary group-hover:fill-primary-light" />
-                <span>+ Create New Board</span>
+                <span>{props.children}</span>
             </button>
             <NewBoardModal>
                 <BoardForm formType="new" onNewBoardCreated={handleNewBoardCreated} />
@@ -93,7 +93,9 @@ const BoardList: FC<{ handleBoardSelect?: Function }> = ({ handleBoardSelect }) 
                     </li>
                 ))}
             </ul>
-            {!isLoading && <NewBoardButton handleBoardSelect={handleBoardSelect} />}
+            <NewBoardButton handleBoardSelect={handleBoardSelect} disabled={isLoading}>
+                {isLoading ? 'Loading boards...' : '+ Create New Board'}
+            </NewBoardButton>
         </div>
     );
 };
