@@ -4,40 +4,11 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
-import { fireEvent, render, screen, act } from '../../utils/test-utils';
+import { fireEvent, render, screen, act, testBoards as boards } from '../../utils/test-utils';
 import MobileMenu from './MobileMenu';
 import '@testing-library/jest-dom';
-import { v4 as uuidv4 } from 'uuid';
 import React, { ReactElement } from 'react';
 import BoardListContextProvider, { BoardListContextProps } from '../../store/BoardListContext';
-import { Board } from '../../types';
-
-const sharedProps = {
-    created_at: new Date(),
-    updated_at: new Date(),
-    user_uuid: uuidv4(),
-    columns: [],
-};
-const boards: Board[] = [
-    {
-        name: 'Platform Launch',
-        uuid: uuidv4(),
-        id: 1,
-        ...sharedProps,
-    },
-    {
-        name: 'Marketing Plan',
-        uuid: uuidv4(),
-        id: 2,
-        ...sharedProps,
-    },
-    {
-        name: 'Roadmap',
-        uuid: uuidv4(),
-        id: 3,
-        ...sharedProps,
-    },
-];
 
 jest.mock('next/router', () => ({
     useRouter() {
