@@ -5,6 +5,7 @@ import { mutate } from 'swr';
 import Board from '../../../components/Board/Board';
 import Layout from '../../../components/Layout/Layout';
 import TaskDetails from '../../../components/Modals/TaskDetails';
+import Spinner from '../../../components/Spinner/Spinner';
 import useModal from '../../../hooks/useModal';
 import { useBoardsContext } from '../../../store/BoardListContext';
 
@@ -34,8 +35,14 @@ export default function BoardPage() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.svg" />
             </Head>
-            <main className="text-bold h-full flex-col overflow-scroll p-6 text-center font-jakarta text-lg text-mid-grey dark:text-white">
-                {selectedBoard && <Board boardUUID={selectedBoard.uuid} />}
+            <main className="text-bold h-full overflow-scroll p-6 text-center font-jakarta text-lg text-mid-grey dark:text-white">
+                {selectedBoard ? (
+                    <Board boardUUID={selectedBoard.uuid} />
+                ) : (
+                    <div className="flex h-full items-center justify-center">
+                        <Spinner />
+                    </div>
+                )}
                 <Modal>
                     {selectedBoard && selectedTask && (
                         <TaskDetails
