@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, PropsWithChildren } from 'react';
+import { FC, MouseEventHandler, PropsWithChildren, useEffect } from 'react';
 import { ButtonDanger, ButtonSecondary } from '../Buttons/Buttons';
 
 type ModalProps = {
@@ -44,6 +44,18 @@ const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
     const onClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
         event.currentTarget !== event.target ? null : props.closeModal();
     };
+
+    useEffect(() => {
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                props.closeModal();
+            }
+        };
+        document.addEventListener('keydown', handleEscape, false);
+        return () => {
+            document.removeEventListener('keydown', handleEscape, false);
+        };
+    });
 
     const DangerModal = (props: PropsWithChildren<ModalProps>) => {
         return (
