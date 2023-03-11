@@ -13,15 +13,17 @@ import { LinkContainer, PopoverLink } from '../Popover/Popover';
 import TaskForm from './TaskForm';
 import Spinner from '../Spinner/Spinner';
 
-const SubtaskRow: FC<{ subtask: Subtask; i: number; setSubtaskStatus: (subtask: Subtask) => void }> = ({
-    subtask,
-    i,
-    setSubtaskStatus,
-}) => {
+const SubtaskRow: FC<{
+    subtask: Subtask;
+    i: number;
+    setSubtaskStatus: (subtask: Subtask) => void;
+    disabled: boolean;
+}> = ({ subtask, i, setSubtaskStatus, disabled }) => {
     const checkboxRef = useRef<HTMLInputElement>(null);
     const [isChecked, setIsChecked] = useState(subtask.completed);
 
     const subtaskClickHandler = async () => {
+        if (disabled) return;
         const newValue = !isChecked;
         setIsChecked(newValue);
         setSubtaskStatus(subtask);
@@ -59,6 +61,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
     closeModal,
 }) => {
     const { mutate: mutateTask, data: taskData } = useSWR<Task>(`/api/tasks/${taskUUID}`, fetcher, {});
+    const [subtaskUpdating, setSubtaskUpdating] = useState(false);
     const { selectedBoard } = useBoardsContext();
     const columnDropdown = useInput<string>({
         initialValue: columns.find((col) => col.uuid === taskData?.column_uuid)?.name,
@@ -80,8 +83,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
         closeModal();
     };
 
-    const editTaskModal = useModal();
-    const EditTaskModal = editTaskModal.Component;
+    const { Component: EditTaskModal, ...editTaskModal } = useModal();
 
     const { Component: DeleteTaskModal, ...deleteTaskModal } = useModal({
         type: 'danger',
@@ -124,6 +126,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
             }
             return sub;
         });
+        setSubtaskUpdating(true);
         const fetchPromise = fetch(`/api/subtasks/${subtask.uuid}`, {
             method: 'PUT',
             headers: {
@@ -135,13 +138,13 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
         });
         taskData!.subtasks = newSubtasks;
         await fetchPromise;
+        setSubtaskUpdating(false);
         mutateTask({ ...taskData!, subtasks: newSubtasks });
         mutate(`/api/boards/${selectedBoard?.uuid}`);
     };
 
     const handleTaskUpdate = async (task: Task) => {
         mutate(`/api/boards/${selectedBoard?.uuid}`);
-        // TODO - decide if updating should return to board page or task details
         mutateTask(task);
         editTaskModal.close();
     };
@@ -189,6 +192,7 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                     <ul className="mt-4 mb-6">
                         {taskData.subtasks.map((subtask, i) => (
                             <SubtaskRow
+                                disabled={subtaskUpdating}
                                 key={subtask.uuid}
                                 subtask={subtask}
                                 i={i}
