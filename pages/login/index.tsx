@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { FC, PropsWithChildren, useContext } from 'react';
 import { LogoDark, LogoLight } from '../../components/Icons/Icons';
 import { ThemeContext } from '../../store/ThemeContext';
-import { signIn, getSession } from 'next-auth/react';
+import { signIn, getSession, GetSessionParams } from 'next-auth/react';
 import { Input } from '../../components/Inputs/Inputs';
 import { ButtonPrimary } from '../../components/Buttons/Buttons';
 import useInput from '../../hooks/useInput';
@@ -99,7 +99,7 @@ export default function Home() {
     );
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetSessionParams) {
     const session = await getSession(context);
 
     if (session) {

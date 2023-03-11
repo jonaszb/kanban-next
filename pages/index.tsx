@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import Layout from '../components/Layout/Layout';
-import { getSession } from 'next-auth/react';
+import { getSession, GetSessionParams } from 'next-auth/react';
 
 export default function Home() {
     return (
@@ -20,7 +20,7 @@ export default function Home() {
     );
 }
 
-export async function getServerSideProps(context: any) {
+export async function getServerSideProps(context: GetSessionParams) {
     const session = await getSession(context);
 
     if (!session) {
