@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import useInput from '../../hooks/useInput';
 import { Board, MultiInput } from '../../types';
+import { randomHexColor } from '../../utils/utils';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Input, MultiValueInput } from '../Inputs/Inputs';
 
@@ -52,7 +53,10 @@ const BoardForm: FC<{
         if (formIsValid) {
             if (props.formType === 'new') {
                 const columns = columnsInput.value?.map((item) => {
-                    return { name: item.value, color: `#${Math.floor(Math.random() * 16777215).toString(16)}` };
+                    return {
+                        name: item.value,
+                        color: randomHexColor(),
+                    };
                 });
 
                 fetch('/api/boards', {

@@ -2,7 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['./components', './pages'],
+  roots: ['./components', './pages', './utils'],
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': [
