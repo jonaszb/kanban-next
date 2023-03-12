@@ -6,6 +6,7 @@ import { Column } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { randomHexColor } from '../../../utils/utils';
 
 const prisma = new PrismaClient();
 
@@ -147,7 +148,7 @@ const updateBoard = async (req: NextApiRequest, res: NextApiResponse, session: S
                     name: column.name,
                     position: column.position,
                     userId: session.user.id,
-                    color: column.color || `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+                    color: column.color || randomHexColor(),
                     board: {
                         connect: {
                             uuid: boardUUID,

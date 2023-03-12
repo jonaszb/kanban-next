@@ -22,12 +22,17 @@ module.exports = {
           '60%': { transform: 'translate(0, 0) scale(1.05)' },
           '80%': { transform: 'translate(5px, -5px) scale(1.1)' },
           '100%': { transform: 'translate(0, 0) scale(1)' },
+        },
+        "fade-in": {
+          "0%": { opacity: 0, transform: 'translateY(-10px)' },
+          "100%": { opacity: 1, transform: 'translateY(0)' },
         }
       },
       animation: {
         'spin-slow': 'spin 16s linear infinite',
         'collapse-input': 'collapse-input .25s ease-in-out',
         'expand-input': 'collapse-input .25s ease-in-out reverse',
+        'fade-in': 'fade-in .15s ease-out forwards',
       },
       boxShadow: {
         'menu-dark': '0 1rem 3rem -1rem rgba(59,130,246,.2)',

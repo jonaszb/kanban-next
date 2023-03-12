@@ -80,7 +80,10 @@ const ColumnHeader: FC<ColumnHeaderProps> = ({ name, columnData }) => {
                     </div>
                 )}
 
-                <h3 className="text-xs font-bold uppercase tracking-[.2rem] dark:text-mid-grey">
+                <h3
+                    data-testid="column-header"
+                    className="text-xs font-bold uppercase tracking-[.2rem] dark:text-mid-grey"
+                >
                     {name} {`(${columnData.tasks.length})`}
                 </h3>
             </div>

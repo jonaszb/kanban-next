@@ -14,4 +14,5 @@ export const LogoDark: StoryObj<typeof Logo> = {
 
 export const LogoLight: StoryObj<typeof Logo> = {
     render: () => <Logo />,
+    parameters: { theme: 'light', backgrounds: { default: 'light' } },
 };

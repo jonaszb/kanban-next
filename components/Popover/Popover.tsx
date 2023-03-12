@@ -4,7 +4,7 @@ export const LinkContainer: FC<PropsWithChildren<{ className?: string }>> = ({ c
     return (
         <ul
             data-testid="popover-menu"
-            className={`w-48 rounded-md bg-white p-4 shadow-md dark:bg-v-dark-grey ${className ?? ''}`}
+            className={`w-48 animate-fade-in rounded-md bg-white p-4 shadow-md dark:bg-v-dark-grey ${className ?? ''}`}
         >
             {children}
         </ul>

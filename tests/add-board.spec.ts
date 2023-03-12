@@ -32,6 +32,24 @@ test.describe('Add new board', () => {
         await expect(modal.columnRows).toHaveCount(0);
     });
 
+    test('Modal can be closed by pressing Escape', async ({ basePage, pageObjects }) => {
+        if (mobile) await basePage.mobileMenuToggle.click();
+        await basePage.newBoardBtn.click();
+        const modal = new pageObjects.BoardModal(basePage.page);
+        await expect(modal.rootElement).toBeVisible();
+        await modal.rootElement.press('Escape');
+        await expect(modal.rootElement).not.toBeVisible();
+    });
+
+    test('Modal can be closed by clicking outside of it', async ({ basePage, pageObjects }) => {
+        if (mobile) await basePage.mobileMenuToggle.click();
+        await basePage.newBoardBtn.click();
+        const modal = new pageObjects.BoardModal(basePage.page);
+        await expect(modal.rootElement).toBeVisible();
+        await modal.rootElement.click({ position: { x: -10, y: -10 }, force: true });
+        await expect(modal.rootElement).not.toBeVisible();
+    });
+
     test('New board can be created without columns', async ({ basePage, pageObjects }) => {
         boardName = `Test ${Math.floor(Math.random() * 10 ** 10)}`;
         if (mobile) await basePage.mobileMenuToggle.click();

@@ -98,6 +98,10 @@ test.describe('Editing a board', () => {
         await modal.nthColDeleteBtn(0).click();
         await expect(modal.columnRows).toHaveCount(1);
         await modal.submitBtn.click();
+        const deleteModal = new pageObjects.DeleteModal(boardPage.page);
+        await expect(deleteModal.rootElement).toBeVisible();
+        await expect(deleteModal.header).toHaveText('Delete column(s)?');
+        await deleteModal.deleteBtn.click();
         await expect(boardPage.nthColumnHeader(0)).toHaveText(['Column 2 (0)']);
     });
 

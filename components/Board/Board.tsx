@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { Board as BoardT, Columns, Task } from '../../types';
-import { fetcher } from '../../utils/utils';
+import { fetcher, randomHexColor } from '../../utils/utils';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { useBoardsContext } from '../../store/BoardListContext';
@@ -41,7 +41,7 @@ const NewColumnBar: FC<{
         const columnData = {
             board_uuid: boardUUID,
             name: inputHandler.value!.trim(),
-            color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+            color: randomHexColor(),
         };
         fetch('/api/columns', {
             method: 'POST',

@@ -388,6 +388,7 @@ const MultiInputRow: FC<{
         haserror: props.haserror,
         errorMsg: props.errorMsg,
         onBlur: props.onBlur,
+        'data-testid': 'multi-input-field',
     };
 
     return (
@@ -400,9 +401,9 @@ const MultiInputRow: FC<{
             }`}
         >
             {props.fieldType === 'input' ? (
-                <InputField {...inputProps} data-testid="multi-input-field" />
+                <InputField {...inputProps} />
             ) : (
-                <TextareaField {...inputProps} small={true} data-testid="multi-input-field" />
+                <TextareaField {...inputProps} small={true} />
             )}
             <Cross
                 id={`delete-${props.id}`}

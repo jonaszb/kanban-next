@@ -73,25 +73,25 @@ test.describe('Task details screen', () => {
 
     test('Subtask status can be toggled', async ({ taskDetailsWithSubtasks: { taskDetails } }) => {
         await expect(taskDetails.nthSubtaskCheckbox(0)).not.toBeChecked();
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
         await expect(taskDetails.nthSubtaskCheckbox(0)).toBeChecked();
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
         await expect(taskDetails.nthSubtaskCheckbox(0)).not.toBeChecked();
     });
 
     test('Subtask count is updated', async ({ taskDetailsWithSubtasks: { taskDetails } }) => {
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (0 of 3)');
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (1 of 3)');
-        await taskDetails.subtaskRows.nth(1).click();
+        await taskDetails.clickNthSubtask(1);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (2 of 3)');
-        await taskDetails.subtaskRows.nth(2).click();
+        await taskDetails.clickNthSubtask(2);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (3 of 3)');
-        await taskDetails.subtaskRows.nth(0).click();
+        await taskDetails.clickNthSubtask(0);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (2 of 3)');
-        await taskDetails.subtaskRows.nth(1).click();
+        await taskDetails.clickNthSubtask(1);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (1 of 3)');
-        await taskDetails.subtaskRows.nth(2).click();
+        await taskDetails.clickNthSubtask(2);
         await expect(taskDetails.subtasksHeader).toHaveText('Subtasks (0 of 3)');
     });
 

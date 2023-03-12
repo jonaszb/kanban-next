@@ -50,5 +50,6 @@ export const HeaderLight: StoryObj<typeof Header> = {
     ),
     parameters: {
         theme: 'light',
+        backgrounds: { default: 'light' },
     },
 };
