@@ -17,6 +17,7 @@ export const Input: StoryFn<typeof InputElem> = (args) => {
 };
 Input.parameters = {
     theme: 'light',
+    backgrounds: { default: 'light' },
 };
 export const InputDark = Input.bind({});
 InputDark.parameters = {
@@ -29,6 +30,7 @@ export const Textarea: StoryFn<typeof TextareaElem> = (args) => {
 };
 Textarea.parameters = {
     theme: 'light',
+    backgrounds: { default: 'light' },
 };
 export const TextareaDark = Textarea.bind({});
 TextareaDark.parameters = {
@@ -49,6 +51,7 @@ export const Dropdown: StoryFn<typeof DropdownElem> = (args) => {
 };
 Dropdown.parameters = {
     theme: 'light',
+    backgrounds: { default: 'light' },
 };
 export const DropdownDark = Dropdown.bind({});
 DropdownDark.parameters = {
@@ -85,9 +88,6 @@ MultiValueInputSeveralValues.args = {
         { id: '3', value: 'Test 2' },
     ],
 };
-MultiValueInputSeveralValues.parameters = {
-    theme: 'light',
-};
 
 export const MultiValueInputTextarea = MultiValueInput.bind({});
 MultiValueInputTextarea.args = {
@@ -99,12 +99,9 @@ MultiValueInputTextarea.args = {
         { id: '3', value: 'Test 2' },
     ],
 };
-MultiValueInputTextarea.parameters = {
-    theme: 'light',
-};
 
 export const Checkbox: StoryFn<typeof CheckboxElem> = (args) => {
-    return <CheckboxElem {...args} />;
+    return <CheckboxElem className="w-5" {...args} />;
 };
 Checkbox.argTypes = {
     checked: { control: 'boolean' },

@@ -46,7 +46,7 @@ const payload = {
             color: '#8471F2',
             tasks: [
                 {
-                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc4',
+                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc5',
                     name: 'Placeholder 2',
                     description: null,
                     position: 1,
@@ -69,7 +69,7 @@ const payload = {
                     ],
                 },
                 {
-                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc5',
+                    uuid: '707022e2-2abe-499a-b0b6-a440b1abfcc6',
                     name: 'Placeholder 3',
                     description: null,
                     position: 2,
@@ -99,6 +99,7 @@ export default {
 
 export const DarkTheme: StoryFn<typeof BoardElem> = (args) => {
     fetchMock.restore().mock(`/api/boards/${boardUUID}`, payload);
+    fetchMock.mock(/\/api\/tasks\/.*/, 200);
     return <BoardElem {...args} />;
 };
 export const LightTheme = DarkTheme.bind({});
@@ -117,4 +118,5 @@ LightTheme.args = {
 
 LightTheme.parameters = {
     theme: 'light',
+    backgrounds: { default: 'light' },
 };

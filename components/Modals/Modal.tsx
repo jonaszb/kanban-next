@@ -60,12 +60,20 @@ const Modal: FC<PropsWithChildren<ModalProps>> = (props) => {
     const DangerModal = (props: PropsWithChildren<ModalProps>) => {
         return (
             <ModalBase {...props} onClickHandler={onClickHandler}>
-                <h2 className="mb-6 text-lg font-bold text-danger">{props.options?.dangerHeader}</h2>
-                <p className="mb-6 text-sm text-mid-grey">{props.options?.dangerMessage}</p>
+                <h2 data-testid="danger-header" className="mb-6 text-lg font-bold text-danger">
+                    {props.options?.dangerHeader}
+                </h2>
+                <p data-testid="danger-message" className="mb-6 text-sm text-mid-grey">
+                    {props.options?.dangerMessage}
+                </p>
                 {props.options?.onConfirmDelete && (
                     <div className="flex justify-end gap-4">
-                        <ButtonDanger onClick={props.options?.onConfirmDelete}>Delete</ButtonDanger>
-                        <ButtonSecondary onClick={props.closeModal}>Cancel</ButtonSecondary>
+                        <ButtonDanger data-testid="danger-confirm" onClick={props.options?.onConfirmDelete}>
+                            Delete
+                        </ButtonDanger>
+                        <ButtonSecondary data-testid="danger-cancel" onClick={props.closeModal}>
+                            Cancel
+                        </ButtonSecondary>
                     </div>
                 )}
             </ModalBase>
