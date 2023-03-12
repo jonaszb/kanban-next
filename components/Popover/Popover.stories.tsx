@@ -21,9 +21,11 @@ export const PopoverMenuLight: StoryFn<typeof PopoverLink> = (args) => {
 };
 PopoverMenuLight.parameters = {
     theme: 'light',
+    chromatic: { pauseAnimationAtEnd: true },
 };
 
 export const PopoverMenuDark = PopoverMenuLight.bind({});
 PopoverMenuDark.parameters = {
     theme: 'dark',
+    chromatic: { pauseAnimationAtEnd: true },
 };
