@@ -31,12 +31,18 @@ const SubtaskRow: FC<{
 
     return (
         <li
+            tabIndex={0}
             data-testid="subtask"
             key={subtask.uuid}
             className={`mb-2 flex cursor-pointer items-center gap-4 rounded bg-light-grey p-3 transition-all  dark:bg-v-dark-grey  ${
                 isChecked ? '' : 'hover:bg-primary hover:bg-opacity-25 dark:hover:bg-primary dark:hover:bg-opacity-25'
             }`}
             onClick={subtaskClickHandler}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                    subtaskClickHandler();
+                }
+            }}
         >
             <Checkbox
                 className="pointer-events-none"
