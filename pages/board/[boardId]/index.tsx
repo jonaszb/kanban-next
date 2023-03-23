@@ -30,7 +30,7 @@ export default function BoardPage() {
     return (
         <Layout>
             <Head>
-                <title>{`Kanban - ${selectedBoard?.name}`}</title>
+                <title>{`Kanban${selectedBoard?.name ? ' - ' + selectedBoard.name : ''}`}</title>
                 <meta name="description" content={`Task management web app`} />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.svg" />
