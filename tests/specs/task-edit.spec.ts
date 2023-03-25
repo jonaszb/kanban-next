@@ -190,6 +190,7 @@ test.describe('Edit Task screen', () => {
         const { taskData, taskForm, taskDetails } = editTaskModal;
 
         await taskForm.nthSubtaskDeleteBtn(0).click();
+        await expect(taskForm.subtaskRows).toHaveCount(0);
         await taskForm.submitBtn.click();
 
         await expect(taskForm.rootElement).toBeHidden();
