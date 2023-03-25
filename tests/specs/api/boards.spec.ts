@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures';
+import { test, expect } from '../../../fixtures';
 import { v4 as uuidv4 } from 'uuid';
 
 test.describe('Boards CRUD tests', () => {

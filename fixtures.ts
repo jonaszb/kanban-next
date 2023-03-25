@@ -92,6 +92,7 @@ export const test = base.extend<CustomFixtures>({
     noAuthRequest: async ({}, use) => {
         const context = await request.newContext({
             baseURL: process.env.BASE_URL,
+            storageState: { cookies: [], origins: [] },
         });
         await use(context);
         await context.dispose();

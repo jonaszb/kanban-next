@@ -1,6 +1,6 @@
-import { test as base, expect } from '../../fixtures';
+import { test as base, expect } from '../../../fixtures';
 import { v4 as uuidv4, validate } from 'uuid';
-import { Task } from '../../types';
+import { Task } from '../../../types';
 
 const test = base.extend({
     testColumn: async ({ testBoard, apiUtils }, use) => {

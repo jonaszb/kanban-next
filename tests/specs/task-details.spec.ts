@@ -1,7 +1,7 @@
-import { test as base, expect } from '../fixtures';
-import { Board, Task } from '../types';
-import BoardPage from './pageObjects/BoardPage';
-import type TaskDetails from './pageObjects/TaskDetails';
+import { test as base, expect } from '../../fixtures';
+import { Board, Task } from '../../types';
+import BoardPage from '../pageObjects/BoardPage';
+import type TaskDetails from '../pageObjects/TaskDetails';
 
 const test = base.extend<{
     taskDetailsWithSubtasks: {

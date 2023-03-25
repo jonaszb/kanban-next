@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { test, expect } from '../../fixtures';
 
 test.describe('Delete board', () => {
     test('Modal is opened when "Delete Board" button is clicked', async ({

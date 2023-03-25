@@ -27,6 +27,11 @@ const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDi
                 {...attributes}
                 {...(dragDisabled ? {} : listeners)}
                 onClick={handleTaskClick}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        handleTaskClick();
+                    }
+                }}
                 data-testid="task"
                 className="group mb-5 cursor-pointer rounded-md bg-white px-4 py-6 text-left font-bold shadow-md dark:bg-dark-grey"
             >
