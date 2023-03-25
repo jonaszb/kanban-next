@@ -1,7 +1,7 @@
-import { test as base, expect } from '../fixtures';
-import { Board } from '../types';
-import BoardPage from './pageObjects/BoardPage';
-import TaskForm from './pageObjects/TaskForm';
+import { test as base, expect } from '../../fixtures';
+import { Board } from '../../types';
+import BoardPage from '../pageObjects/BoardPage';
+import TaskForm from '../pageObjects/TaskForm';
 
 const test = base.extend<{ addTaskModal: [TaskForm, Board]; boardPageWithData: [BoardPage, Board] }>({
     addTaskModal: async ({ boardPageWithColumn: [boardPage, boardData], pageObjects }, use) => {

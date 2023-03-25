@@ -1,7 +1,7 @@
-import { test as base, expect } from '../fixtures';
-import { Task } from '../types';
-import type TaskDetails from './pageObjects/TaskDetails';
-import TaskForm from './pageObjects/TaskForm';
+import { test as base, expect } from '../../fixtures';
+import { Task } from '../../types';
+import type TaskDetails from '../pageObjects/TaskDetails';
+import TaskForm from '../pageObjects/TaskForm';
 
 const test = base.extend<{
     taskDetailsModal: {

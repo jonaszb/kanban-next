@@ -1,6 +1,6 @@
-import { test as base, expect } from '../fixtures';
-import { Board } from '../types';
-import BoardPage from './pageObjects/BoardPage';
+import { test as base, expect } from '../../fixtures';
+import { Board } from '../../types';
+import BoardPage from '../pageObjects/BoardPage';
 
 let mobile: boolean;
 let boardName: string;

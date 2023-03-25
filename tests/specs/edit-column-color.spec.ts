@@ -1,4 +1,4 @@
-import { test, expect } from '../fixtures';
+import { test, expect } from '../../fixtures';
 
 test.describe('Edit column color', () => {
     test('Color picker can be toggled', async ({ boardPageWithColumn: [boardPage] }) => {

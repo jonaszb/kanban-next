@@ -1,6 +1,6 @@
-import { test, expect } from '../../fixtures';
+import { test, expect } from '../../../fixtures';
 import { v4 as uuidv4, validate } from 'uuid';
-import { Column } from '../../types';
+import { Column } from '../../../types';
 
 test.describe('Columns CRUD tests', () => {
     test.describe('POST', () => {

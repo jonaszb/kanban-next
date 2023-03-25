@@ -1,8 +1,8 @@
 import type { Coordinates } from '@dnd-kit/core/dist/types';
 import type { Locator, Mouse } from '@playwright/test';
-import { test as base, expect } from '../fixtures';
-import { Board } from '../types';
-import BoardPage from './pageObjects/BoardPage';
+import { test as base, expect } from '../../fixtures';
+import { Board } from '../../types';
+import BoardPage from '../pageObjects/BoardPage';
 
 const test = base.extend<{ boardPageWithData: [BoardPage, Board] }>({
     boardPageWithData: async ({ testBoardWithData, page, pageObjects }, use) => {
