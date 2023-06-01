@@ -1,14 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../utils/db';
 import { validate } from 'uuid';
 import { Column } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
 import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { randomHexColor } from '../../../utils/utils';
-
-const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({ req });

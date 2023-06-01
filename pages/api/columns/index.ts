@@ -1,12 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../utils/db';
 import { v4 as uuidv4, validate } from 'uuid';
 import { NewColumn } from '../../../types';
 import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-
-const prisma = new PrismaClient();
 
 const isNewColumn = (column: unknown): column is NewColumn => {
     return (
