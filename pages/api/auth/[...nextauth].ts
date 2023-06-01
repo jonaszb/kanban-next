@@ -5,10 +5,8 @@ import GoogleProvider from 'next-auth/providers/google';
 import EmailProvider from 'next-auth/providers/email';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../utils/db';
 dotenv.config();
-
-const prisma = new PrismaClient();
 
 export const options = {
     providers: [

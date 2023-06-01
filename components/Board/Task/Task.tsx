@@ -3,7 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { Task as TaskT } from '../../../types';
 import { useBoardsContext } from '../../../store/BoardListContext';
 
-const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDisabled }) => {
+const Task: FC<{ taskData: TaskT }> = ({ taskData }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: taskData.uuid });
     const { setSelectedTask } = useBoardsContext();
     const style = transform
@@ -25,7 +25,7 @@ const Task: FC<{ taskData: TaskT; dragDisabled: boolean }> = ({ taskData, dragDi
                 ref={setNodeRef}
                 style={style}
                 {...attributes}
-                {...(dragDisabled ? {} : listeners)}
+                {...listeners}
                 onClick={handleTaskClick}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter') {

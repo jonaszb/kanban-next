@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, waitForElementToBeRemoved } from '../../../utils/test-utils';
+import { fireEvent, render, screen, waitForElementToBeRemoved } from '../../../utils/test-utils';
 import Column from './Column';
 import '@testing-library/jest-dom';
 import { v4 as uuidv4 } from 'uuid';

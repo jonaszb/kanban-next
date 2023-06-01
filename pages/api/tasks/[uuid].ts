@@ -1,12 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../utils/db';
 import { validate, v4 as uuidv4 } from 'uuid';
 import { Subtask } from '../../../types';
 import { getSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-
-const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const session = await getSession({ req });
@@ -121,6 +119,29 @@ const validateTaskUpdateData = (taskData: any) => {
         return 'Invalid description';
     }
     return;
+};
+
+const validateColumns = async (columnUUIDs: string[]) => {
+    let columnsAreValid = true;
+    for (const columnUUID of columnUUIDs) {
+        const tasks = await prisma.task.findMany({
+            where: {
+                column_uuid: columnUUID,
+            },
+            orderBy: {
+                position: 'asc',
+            },
+        });
+        let position = 0;
+        for (const task of tasks) {
+            if (task.position !== position) {
+                columnsAreValid = false;
+                break;
+            }
+            position++;
+        }
+    }
+    return columnsAreValid;
 };
 
 const getTask = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
@@ -267,6 +288,13 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse, session: Se
             await incrementFromPosition(columnChanged ? column_uuid : currentTaskData.column_uuid, position);
         }
         await updateTaskData(taskUUID, newTaskData, subtasksToDelete, session);
+        const dataAfterUpdateIsValid = await validateColumns(
+            columnChanged ? [column_uuid, currentTaskData.column_uuid] : [currentTaskData.column_uuid]
+        );
+        if (!dataAfterUpdateIsValid) {
+            console.log('FUCKUP!');
+            throw new Error('Invalid position of tasks after update');
+        }
         return res.status(200).end('Task updated');
     });
 };

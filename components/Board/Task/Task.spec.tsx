@@ -31,29 +31,29 @@ const taskData = {
 
 describe('Task', () => {
     test('Renders Task component', () => {
-        render(<Task taskData={taskData} dragDisabled={false} />);
+        render(<Task taskData={taskData} />);
         expect(screen.getByTestId('task')).toBeInTheDocument();
     });
 
     test('Renders Task component with title', () => {
-        render(<Task taskData={taskData} dragDisabled={false} />);
+        render(<Task taskData={taskData} />);
         expect(screen.getByText('Placeholder 1')).toBeInTheDocument();
     });
 
     test('Renders Task component with subtasks', () => {
-        render(<Task taskData={taskData} dragDisabled={false} />);
+        render(<Task taskData={taskData} />);
         expect(screen.getByText('0 of 3 subtasks done')).toBeInTheDocument();
     });
 
     test('Contains number of subtasks done/total', () => {
         const data = { ...taskData, subtasks: [...taskData.subtasks, { uuid: uuidv4(), name: 'd', completed: true }] };
-        render(<Task taskData={data} dragDisabled={false} />);
+        render(<Task taskData={data} />);
         expect(screen.getByText('1 of 4 subtasks done')).toBeInTheDocument();
     });
 
     test('Can render a task with no subtasks', () => {
         const data = { ...taskData, subtasks: [] };
-        const { container } = render(<Task taskData={data} dragDisabled={false} />);
+        const { container } = render(<Task taskData={data} />);
         expect(container.querySelector('span')).not.toBeInTheDocument();
     });
 });
