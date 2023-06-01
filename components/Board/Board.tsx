@@ -109,7 +109,6 @@ const Board: FC<{ boardUUID: string }> = (props) => {
     const [clonedItems, setClonedItems] = useState<Columns | null>(items);
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const [draggedTask, setDraggedTask] = useState<Task | null>(null);
-    const [draggingDisabled, setDraggingDisabled] = useState(false); // Disable dragging when loading or validating data
 
     useEffect(() => {
         const newValue: Columns = {};
@@ -124,10 +123,6 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         }
         setItems(newValue);
     }, [boardData.data?.columns, boardData.error]);
-
-    useEffect(() => {
-        setDraggingDisabled(boardData.isLoading || boardData.isValidating);
-    }, [boardData.isLoading, boardData.isValidating]);
 
     const mouseSensor = useSensor(MouseSensor, {
         // Require the mouse to move by 10 pixels before activating
@@ -256,7 +251,6 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             if (startingContainer === overContainer && startingIndex === overIndex) {
                 boardData.mutate();
             } else {
-                setDraggingDisabled(true);
                 fetch(`/api/tasks/${draggedTask.uuid}`, {
                     method: 'PUT',
                     headers: {
@@ -291,9 +285,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
             >
                 {items &&
                     Object.entries(items).map(([colName, colData]) => {
-                        return (
-                            <Column key={colName} name={colName} columnData={colData} validating={draggingDisabled} />
-                        );
+                        return <Column key={colName} name={colName} columnData={colData} />;
                     })}
                 {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
             </DndContext>
