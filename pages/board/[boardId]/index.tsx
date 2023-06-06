@@ -46,7 +46,7 @@ export default function BoardPage() {
                             <div>
                                 <h2 className="mb-4 text-3xl font-bold">Board not found</h2>
                                 <p>
-                                    This board doesn't exist or is not available to you. <br />
+                                    This board does not exist or is not available to you. <br />
                                     Please select another board
                                 </p>
                             </div>
