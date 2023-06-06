@@ -10,7 +10,7 @@ import useModal from '../../../hooks/useModal';
 import { useBoardsContext } from '../../../store/BoardListContext';
 
 export default function BoardPage() {
-    const { selectedBoard, selectedTask, setSelectedTask } = useBoardsContext();
+    const { selectedBoard, selectedTask, setSelectedTask, isLoading, isValidating } = useBoardsContext();
     const taskDetailsModal = useModal();
     const Modal = taskDetailsModal.Component;
 
@@ -40,7 +40,17 @@ export default function BoardPage() {
                     <Board boardUUID={selectedBoard.uuid} />
                 ) : (
                     <div className="flex h-full items-center justify-center">
-                        <Spinner />
+                        {isLoading || isValidating ? (
+                            <Spinner />
+                        ) : (
+                            <div>
+                                <h2 className="mb-4 text-3xl font-bold">Board not found</h2>
+                                <p>
+                                    This board doesn't exist or is not available to you. <br />
+                                    Please select another board
+                                </p>
+                            </div>
+                        )}
                     </div>
                 )}
                 <Modal>

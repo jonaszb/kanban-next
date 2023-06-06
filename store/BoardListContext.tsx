@@ -13,6 +13,7 @@ export type BoardListContextProps = {
     setSelectedTask: React.Dispatch<React.SetStateAction<string | null>>;
     mutateBoards: KeyedMutator<Board[]>;
     isLoading: boolean;
+    isValidating: boolean;
     error: any;
 };
 
@@ -22,6 +23,7 @@ export const BoardListContext = React.createContext<BoardListContextProps>({
     selectedTask: null,
     setSelectedTask: () => null,
     isLoading: false,
+    isValidating: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),
 });
@@ -36,7 +38,13 @@ const BoardListContextProvider: React.FC<PropsWithChildren<{ value?: BoardListCo
 
     const [selectedBoard, setSelectedBoard] = React.useState<Board | null>(null);
     const [selectedTask, setSelectedTask] = React.useState<string | null>(null);
-    const { data: boards, mutate: mutateBoards, isLoading, error } = useSWR<Board[]>(`/api/boards`, fetcher);
+    const {
+        data: boards,
+        mutate: mutateBoards,
+        isLoading,
+        isValidating,
+        error,
+    } = useSWR<Board[]>(`/api/boards`, fetcher);
 
     useEffect(() => {
         setSelectedBoard(boards?.find((board) => board.uuid === router.query.boardId) ?? null);
@@ -48,6 +56,7 @@ const BoardListContextProvider: React.FC<PropsWithChildren<{ value?: BoardListCo
         selectedTask,
         setSelectedTask,
         isLoading,
+        isValidating,
         error,
         mutateBoards,
     };
