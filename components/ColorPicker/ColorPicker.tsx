@@ -1,14 +1,4 @@
-import {
-    Dispatch,
-    FC,
-    forwardRef,
-    MouseEventHandler,
-    MutableRefObject,
-    RefObject,
-    SetStateAction,
-    SyntheticEvent,
-    useState,
-} from 'react';
+import { Dispatch, FC, MouseEventHandler, SetStateAction, useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 import { ButtonPrimary } from '../Buttons/Buttons';
 import { Input } from '../Inputs/Inputs';
@@ -30,7 +20,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
     return (
         <div
             data-testid="color-picker-container"
-            className={`flex flex-col items-center rounded-md bg-white p-4 shadow-lg dark:bg-dark-grey ${
+            className={`flex flex-col items-center rounded-md bg-white p-4 shadow-lg dark:bg-dark-grey dark:shadow-menu-dark ${
                 className ?? ''
             }`}
         >
