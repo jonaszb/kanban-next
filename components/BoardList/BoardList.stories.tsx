@@ -15,6 +15,7 @@ const ctxValue = {
     selectedTask: null,
     setSelectedTask: () => {},
     isLoading: false,
+    isValidating: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),
 };

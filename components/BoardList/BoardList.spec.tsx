@@ -41,6 +41,7 @@ const providerProps = {
     selectedTask: null,
     setSelectedTask: () => null,
     isLoading: false,
+    isValidating: false,
     error: null,
     mutateBoards: () => Promise.resolve([]),
 };
