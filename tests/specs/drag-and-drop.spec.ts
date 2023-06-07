@@ -48,6 +48,7 @@ async function drag(
     await mouse.move(source.x, source.y);
     await mouse.down();
     await mouse.move(target.x, target.y, { steps: options?.steps ?? 30 });
+    await new Promise((resolve) => setTimeout(resolve, 150));
     await mouse.up();
 }
 
