@@ -129,7 +129,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-Special thanks to the following technologies and libraries used:
+Special thanks to [Frontend Mentor](https://www.frontendmentor.io/) for providing the design and to the following technologies and libraries used:
 
 - [Next.js](https://nextjs.org/)
 - [Prisma](https://www.prisma.io/)
