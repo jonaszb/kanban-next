@@ -187,7 +187,10 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                         </OptionsPopover>
                         <DeleteTaskModal />
                     </div>
-                    <p data-testid="task-description" className="mb-6 text-sm font-medium leading-6 text-mid-grey">
+                    <p
+                        data-testid="task-description"
+                        className="mb-6 whitespace-pre-wrap text-sm font-medium leading-6 text-mid-grey"
+                    >
                         {taskData.description}
                     </p>
                     {taskData.subtasks.length > 0 && (
