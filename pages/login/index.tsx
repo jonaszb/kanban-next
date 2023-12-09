@@ -75,7 +75,7 @@ export default function Home() {
                         <ProviderButton
                             className="border border-mid-grey bg-black text-white dark:border-none"
                             provider="github"
-                            icon="https://authjs.dev/img/providers/github-dark.svg"
+                            icon="https://authjs.dev/img/providers/github.svg"
                         >
                             Sign in with GitHub
                         </ProviderButton>
