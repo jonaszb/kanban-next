@@ -3,26 +3,26 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgres"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Board {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(cuid())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
   name       String    @db.VarChar(255)
-  columns    Column[]  @relation(name: "BoardColumn")
   userId     String
+  columns    Column[]  @relation("BoardColumn")
   user       User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Column {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(cuid())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
@@ -30,15 +30,15 @@ model Column {
   board_uuid String
   position   Int
   color      String    @db.VarChar(255)
-  board      Board     @relation(name: "BoardColumn", fields: [board_uuid], references: [uuid], onDelete: Cascade)
-  tasks      Task[]    @relation(name: "ColumnTask")
   userId     String
+  board      Board     @relation("BoardColumn", fields: [board_uuid], references: [uuid], onDelete: Cascade)
+  tasks      Task[]    @relation("ColumnTask")
 
   @@index([board_uuid])
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   uuid        String    @unique @db.Char(36)
   created_at  DateTime? @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
@@ -46,15 +46,15 @@ model Task {
   description String?   @db.VarChar(1023)
   position    Int
   column_uuid String
-  column      Column    @relation(name: "ColumnTask", fields: [column_uuid], references: [uuid], onDelete: Cascade)
-  subtasks    Subtask[] @relation(name: "TaskSubtask")
   userId      String
+  column      Column    @relation("ColumnTask", fields: [column_uuid], references: [uuid], onDelete: Cascade)
+  subtasks    Subtask[] @relation("TaskSubtask")
 
   @@index([column_uuid])
 }
 
 model Subtask {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(cuid())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
@@ -62,7 +62,7 @@ model Subtask {
   task_uuid  String
   completed  Boolean   @default(false)
   userId     String
-  task       Task      @relation(name: "TaskSubtask", fields: [task_uuid], references: [uuid], onDelete: Cascade)
+  task       Task      @relation("TaskSubtask", fields: [task_uuid], references: [uuid], onDelete: Cascade)
 
   @@index([task_uuid])
 }
@@ -73,15 +73,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
