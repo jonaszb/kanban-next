@@ -59,12 +59,9 @@ const getBoard = async (req: NextApiRequest, res: NextApiResponse, session: Sess
                         tasks: {
                             include: {
                                 subtasks: {
-                                    orderBy: [
-                                        {
-                                            created_at: 'asc',
-                                        },
-                                        { name: 'asc' },
-                                    ],
+                                    orderBy: {
+                                        id: 'asc',
+                                    },
                                 },
                             },
                             orderBy: {

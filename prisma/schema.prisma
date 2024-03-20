@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Board {
-  id         String    @id @default(cuid())
+  id         Int       @id @default(autoincrement())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
@@ -22,7 +22,7 @@ model Board {
 }
 
 model Column {
-  id         String    @id @default(cuid())
+  id         Int       @id @default(autoincrement())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
@@ -38,7 +38,7 @@ model Column {
 }
 
 model Task {
-  id          String    @id @default(cuid())
+  id          Int       @id @default(autoincrement())
   uuid        String    @unique @db.Char(36)
   created_at  DateTime? @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
@@ -54,7 +54,7 @@ model Task {
 }
 
 model Subtask {
-  id         String    @id @default(cuid())
+  id         Int       @id @default(autoincrement())
   uuid       String    @unique @db.Char(36)
   created_at DateTime? @default(now()) @db.Timestamp(0)
   updated_at DateTime? @default(now()) @db.Timestamp(0)
