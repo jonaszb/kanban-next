@@ -156,7 +156,14 @@ const getTask = async (req: NextApiRequest, res: NextApiResponse, session: Sessi
                 userId: session.user.id,
             },
             include: {
-                subtasks: true,
+                subtasks: {
+                    orderBy: [
+                        {
+                            created_at: 'asc',
+                        },
+                        { name: 'asc' },
+                    ],
+                },
             },
         });
         if (!task) {

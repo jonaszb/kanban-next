@@ -39,6 +39,5 @@ export const options = {
     secret: process.env.SECRET,
     DEBUG: true,
 };
-// we will define `options` up next
 const authHandler: NextApiHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
