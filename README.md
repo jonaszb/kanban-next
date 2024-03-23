@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/jonaszb/kanban-next/actions/workflows/playwright.yml/badge.svg?event=pull_request)](https://github.com/jonaszb/kanban-next/actions/workflows/playwright.yml) [![Build Status](https://github.com/jonaszb/kanban-next/actions/workflows/chromatic.yml/badge.svg?event=pull_request)](https://github.com/jonaszb/kanban-next/actions/workflows/chromatic.yml)    [![MIT License](https://badgen.net/badge/license/MIT/blue)](https://github.com/jonaszb/kanban-next/blob/main/LICENSE)
+[![Build Status](https://github.com/jonaszb/kanban-next/actions/workflows/playwright.yml/badge.svg?event=pull_request)](https://github.com/jonaszb/kanban-next/actions/workflows/playwright.yml) [![Build Status](https://github.com/jonaszb/kanban-next/actions/workflows/chromatic.yml/badge.svg?event=pull_request)](https://github.com/jonaszb/kanban-next/actions/workflows/chromatic.yml) [![MIT License](https://badgen.net/badge/license/MIT/blue)](https://github.com/jonaszb/kanban-next/blob/main/LICENSE)
 
 # Kanban
 
@@ -6,12 +6,12 @@ Kanban is a Kanban board application built using Next.js. It provides a user-fri
 
 ## Features
 
-- **Kanban Board**: Create boards with customizable columns and cards to manage tasks efficiently.
-- **User Authentication**: Users can create accounts and log in using Google, GitHub, or email (magic link).
-- **Cloud Database**: Utilizes a cloud-hosted database on PlanetScale to store board and user data securely.
-- **Continuous Integration**: Integrates with GitHub Actions for automated testing and deployment.
-- **Automated Tests**: Includes unit tests, Playwright tests for API and UI, and Chromatic tests for visual regression.
-- **Documentation**: Utilizes Storybook to create interactive component documentation for easy reference.
+-   **Kanban Board**: Create boards with customizable columns and cards to manage tasks efficiently.
+-   **User Authentication**: Users can create accounts and log in using Google, GitHub, or email (magic link).
+-   **Cloud Database**: Utilizes a cloud-hosted database on PlanetScale to store board and user data securely.
+-   **Continuous Integration**: Integrates with GitHub Actions for automated testing and deployment.
+-   **Automated Tests**: Includes unit tests, Playwright tests for API and UI, and Chromatic tests for visual regression.
+-   **Documentation**: Utilizes Storybook to create interactive component documentation for easy reference.
 
 ## Getting Started
 
@@ -19,23 +19,23 @@ To get started with Kanban, follow these steps:
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm package manager
+-   Node.js (v14 or higher)
+-   npm package manager
 
 ### Installation
 
 1. Clone the project repository from GitHub:
 
-   ```bash
-   git clone https://github.com/jonaszb/kanban-next.git
-   ```
+    ```bash
+    git clone https://github.com/jonaszb/kanban-next.git
+    ```
 
 2. Install the project dependencies:
 
-   ```bash
-   cd kanban-next
-   npm install
-   ```
+    ```bash
+    cd kanban-next
+    npm install
+    ```
 
 ### Configuration
 
@@ -75,11 +75,12 @@ Open your web browser and navigate to `http://localhost:3000` to access the appl
 
 Kanban utilizes GitHub Actions for continuous integration. When a pull request is created, automated tests are triggered, including unit tests, Playwright tests, and Chromatic tests. Merging the pull request is only allowed if all checks pass.
 The following environment variables need to be set for this project:
-  ```bash
-  WEBHOOK_ID=webhook-id # Obtained by visiting webhook.site
-  WEBHOOK_ID_ALT=webhook-id-alt # Obtained by visiting webhook.site
-  CHROMATIC_PROJECT_TOKEN=project-token # Create a new project on Chromatic to obtain a token
-  ```
+
+```bash
+WEBHOOK_ID=webhook-id # Obtained by visiting webhook.site
+WEBHOOK_ID_ALT=webhook-id-alt # Obtained by visiting webhook.site
+CHROMATIC_PROJECT_TOKEN=project-token # Create a new project on Chromatic to obtain a token
+```
 
 ### Deployment
 
@@ -89,19 +90,21 @@ The project is hosted on Vercel, which automatically deploys the application whe
 
 Kanban includes various testing options:
 
-- **Unit Tests**: Execute unit tests using the following command:
+-   **Unit Tests**: Execute unit tests using the following command:
 
-  ```bash
-  npm test
-  ```
+    ```bash
+    npm test
+    ```
 
-- **Playwright Tests**: Run Playwright tests for API and UI using the command:
+-   **Playwright Tests**: Run Playwright tests for API and UI using the command:
 
-  ```bash
-  npm run test:e2e
-  ```
-  Running Playwright tests locally requires the WEBHOOK_ID and WEBHOOK_ID_ALT environment variables mentioned in [Continuous Integration](#continuous-integration) to be set.
-- **Chromatic Tests**: Chromatic tests for visual regression are executed during the CI process.
+    ```bash
+    npm run test:e2e
+    ```
+
+    Running Playwright tests locally requires the WEBHOOK_ID and WEBHOOK_ID_ALT environment variables mentioned in [Continuous Integration](#continuous-integration) to be set.
+
+-   **Chromatic Tests**: Chromatic tests for visual regression are executed during the CI process.
 
 ## Documentation
 
@@ -113,15 +116,15 @@ npm run storybook
 
 Open your browser and navigate to `http://localhost:6006` to access the Storybook
 
- interface.
+interface.
 
 ## External Services
 
 Kanban relies on several external services, such as authentication providers, SMTP servers, and the cloud-hosted database. To set up these services, refer to their respective documentation:
 
-- [Google OAuth](https://developers.google.com/identity/protocols/oauth2)
-- [GitHub OAuth](https://docs.github.com/en/developers/apps/building-oauth-apps)
-- [PlanetScale](https://planetscale.com/docs/)
+-   [Google OAuth](https://developers.google.com/identity/protocols/oauth2)
+-   [GitHub OAuth](https://docs.github.com/en/developers/apps/building-oauth-apps)
+-   [Supabase](https://supabase.com/)
 
 ## License
 
@@ -131,11 +134,11 @@ This project is licensed under the [MIT License](LICENSE).
 
 Special thanks to [Frontend Mentor](https://www.frontendmentor.io/) for providing the design and to the following technologies and libraries used:
 
-- [Next.js](https://nextjs.org/)
-- [Prisma](https://www.prisma.io/)
-- [Storybook](https://storybook.js.org/)
-- [Playwright](https://playwright.dev/)
-- [React Testing Library](https://testing-library.com/)
-- [Vercel](https://vercel.com/)
-- [Chromatic](https://www.chromatic.com/)
-- [NextAuth](https://next-auth.js.org/)
+-   [Next.js](https://nextjs.org/)
+-   [Prisma](https://www.prisma.io/)
+-   [Storybook](https://storybook.js.org/)
+-   [Playwright](https://playwright.dev/)
+-   [React Testing Library](https://testing-library.com/)
+-   [Vercel](https://vercel.com/)
+-   [Chromatic](https://www.chromatic.com/)
+-   [NextAuth](https://next-auth.js.org/)
