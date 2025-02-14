@@ -11,8 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ReactElement } from 'react';
 import BoardListContextProvider from '../../../store/BoardListContext';
 import type { BoardListContextProps } from '../../../store/BoardListContext';
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
 
 jest.spyOn(React, 'useEffect').mockImplementation((f) => {});
 

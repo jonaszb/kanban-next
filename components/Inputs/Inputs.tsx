@@ -224,6 +224,7 @@ type MultiValueInputProps = React.ComponentProps<'fieldset'> & {
     id?: string;
     label: string;
     changeHandler: Function;
+    placeholder?: string;
     values?: MultiInput[];
     draggable?: boolean;
     addBtnText: string;

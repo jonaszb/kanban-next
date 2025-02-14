@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { enableFetchMocks } from 'jest-fetch-mock';
 import fetchMock from 'fetch-mock';
-import React from 'react';
+import React, { act } from 'react';
 enableFetchMocks();
 
 class FakeMouseEvent extends MouseEvent {
