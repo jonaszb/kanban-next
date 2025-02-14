@@ -36,7 +36,7 @@ jobs:
         timeout-minutes: 35
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.32.0-focal
+            image: mcr.microsoft.com/playwright:v1.50.1-noble
         steps:
             - name: Prepare testing env
               uses: actions/checkout@v2
