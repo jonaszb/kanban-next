@@ -43,7 +43,7 @@ const ButtonSecondary: FC<React.ComponentProps<'button'>> = (props) => {
     return (
         <Button
             fullWidth
-            className={`enabled:hover:bg-secondary-light bg-primary bg-opacity-10 text-primary hover:bg-opacity-25 dark:bg-white dark:bg-opacity-100 dark:hover:bg-opacity-100 ${
+            className={`enabled:hover:bg-secondary-light bg-primary bg-opacity-10 !text-primary hover:bg-opacity-25 dark:bg-white dark:bg-opacity-100 dark:hover:bg-opacity-100 ${
                 className || ''
             }`}
             {...restProps}
