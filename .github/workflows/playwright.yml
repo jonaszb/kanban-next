@@ -13,10 +13,10 @@ jobs:
               uses: actions/setup-node@v2
               with:
                   node-version: 18
-            - name: npm ci, build and test
+            - name: install deps, build and test
               run: |
-                  npm ci
-                  npm test
+                  yarn install
+                  yarn test
     test_setup:
         needs: unit_test
         name: Test setup
