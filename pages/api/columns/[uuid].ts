@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/db';
 import { validate } from 'uuid';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { getServerSession, Session } from 'next-auth';
+import { options } from '../auth/[...nextauth]';
 
 type UpdatedColumnData = {
     name?: string;
@@ -40,26 +40,31 @@ const incrementFromPosition = (boardUUID: string, position: number) => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
 
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
-        return res.status(400).end('Invalid column UUID');
+        res.status(400).end('Invalid column UUID');
+        return;
     }
     switch (req.method) {
         case 'DELETE': {
-            return await deleteColumn(req, res, session);
+            await deleteColumn(req, res, session);
+            break;
         }
         case 'GET': {
-            return await getColumn(req, res, session);
+            await getColumn(req, res, session);
+            break;
         }
         case 'PUT': {
-            return await updateColumn(req, res, session);
+            await updateColumn(req, res, session);
+            break;
         }
         default:
-            return res.status(405).end('Method not allowed');
+            res.status(405).end('Method not allowed');
     }
 }
 

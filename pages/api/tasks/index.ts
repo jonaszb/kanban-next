@@ -3,21 +3,24 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/db';
 import { v4 as uuidv4, validate } from 'uuid';
 import { NewTask } from '../../../types';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { getServerSession, Session } from 'next-auth';
+import { options } from '../auth/[...nextauth]';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
 
     switch (req.method) {
         case 'POST': {
-            return await createTask(req, res, session);
+            await createTask(req, res, session);
+            break;
         }
         case 'GET': {
-            return await getTasks(res, session);
+            await getTasks(res, session);
+            break;
         }
         default:
             res.status(405).end('Method not allowed');
