@@ -4,30 +4,35 @@ import { prisma } from '../../../utils/db';
 import { validate } from 'uuid';
 import { Column } from '../../../types';
 import { v4 as uuidv4 } from 'uuid';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
 import { randomHexColor } from '../../../utils/utils';
+import { options } from '../auth/[...nextauth]';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
-        return res.status(400).end('Invalid board UUID');
+        res.status(400).end('Invalid board UUID');
+        return;
     }
     switch (req.method) {
         case 'DELETE': {
-            return await deleteBoard(req, res, session);
+            await deleteBoard(req, res, session);
+            break;
         }
         case 'GET': {
-            return await getBoard(req, res, session);
+            await getBoard(req, res, session);
+            break;
         }
         case 'PUT': {
-            return await updateBoard(req, res, session);
+            await updateBoard(req, res, session);
+            break;
         }
         default:
-            return res.status(405).end('Method not allowed');
+            res.status(405).end('Method not allowed');
     }
 }
 

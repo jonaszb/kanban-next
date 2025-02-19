@@ -9,14 +9,14 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - name: Use Node.js 18
+            - name: Use Node.js 23
               uses: actions/setup-node@v2
               with:
-                  node-version: 18
-            - name: npm ci, build and test
+                  node-version: 23
+            - name: install deps, build and test
               run: |
-                  npm ci
-                  npm test
+                  yarn install
+                  yarn test
     test_setup:
         needs: unit_test
         name: Test setup
@@ -36,21 +36,21 @@ jobs:
         timeout-minutes: 35
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.32.0-focal
+            image: mcr.microsoft.com/playwright:v1.50.1-noble
         steps:
             - name: Prepare testing env
               uses: actions/checkout@v2
             - uses: actions/setup-node@v2
               with:
-                  node-version: '18'
-            - run: npm ci
+                  node-version: '23'
+            - run: yarn install
             - name: Run e2e tests
-              run: HOME=/root npm run test:e2e
+              run: HOME=/root yarn test:e2e
               env:
                   BASE_URL: ${{ needs.test_setup.outputs.preview_url }}
                   WEBHOOK_ID: ${{ secrets.WEBHOOK_ID }}
                   WEBHOOK_ID_ALT: ${{ secrets.WEBHOOK_ID_ALT }}
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v4
               if: always()
               with:
                   name: playwright-report

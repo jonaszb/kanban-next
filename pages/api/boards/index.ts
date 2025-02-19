@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/db';
 import { v4 as uuidv4 } from 'uuid';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { Session, getServerSession } from 'next-auth';
+import { options } from '../auth/[...nextauth]';
 
 type Board = {
     name: string;
@@ -20,20 +20,23 @@ type Column = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
 
     switch (req.method) {
         case 'POST': {
-            return await createBoard(req, res, session);
+            await createBoard(req, res, session);
+            break;
         }
         case 'GET': {
-            return await getBoards(res, session);
+            await getBoards(res, session);
+            break;
         }
         default:
-            return res.status(405).end('Method not allowed');
+            res.status(405).end('Method not allowed');
     }
 }
 

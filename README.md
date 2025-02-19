@@ -8,7 +8,7 @@ Kanban is a Kanban board application built using Next.js. It provides a user-fri
 
 -   **Kanban Board**: Create boards with customizable columns and cards to manage tasks efficiently.
 -   **User Authentication**: Users can create accounts and log in using Google, GitHub, or email (magic link).
--   **Cloud Database**: Utilizes a cloud-hosted database on PlanetScale to store board and user data securely.
+-   **Cloud Database**: Utilizes a cloud-hosted database on Supabase to store board and user data securely.
 -   **Continuous Integration**: Integrates with GitHub Actions for automated testing and deployment.
 -   **Automated Tests**: Includes unit tests, Playwright tests for API and UI, and Chromatic tests for visual regression.
 -   **Documentation**: Utilizes Storybook to create interactive component documentation for easy reference.
@@ -20,7 +20,7 @@ To get started with Kanban, follow these steps:
 ### Prerequisites
 
 -   Node.js (v14 or higher)
--   npm package manager
+-   yarn package manager
 
 ### Installation
 
@@ -34,7 +34,7 @@ To get started with Kanban, follow these steps:
 
     ```bash
     cd kanban-next
-    npm install
+    yarn install
     ```
 
 ### Configuration
@@ -55,7 +55,7 @@ Replace each placeholder value with your specific configuration. Note that `EMAI
 
 ### Database Setup
 
-Kanban uses a cloud-hosted database on PlanetScale. To run the project locally, you will need to create your own database and set the `DATABASE_URL` environment variable accordingly. Push the Prisma schema to your database by executing the following command:
+Kanban uses a cloud-hosted database on Supabase. To run the project locally, you will need to create your own database and set the `DATABASE_URL` environment variable accordingly. Push the Prisma schema to your database by executing the following command:
 
 ```bash
 npx prisma db push --preview-feature
@@ -66,7 +66,7 @@ npx prisma db push --preview-feature
 To start the local development server, run the following command:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Open your web browser and navigate to `http://localhost:3000` to access the application.
@@ -93,13 +93,13 @@ Kanban includes various testing options:
 -   **Unit Tests**: Execute unit tests using the following command:
 
     ```bash
-    npm test
+    yarn test
     ```
 
 -   **Playwright Tests**: Run Playwright tests for API and UI using the command:
 
     ```bash
-    npm run test:e2e
+    yarn test:e2e
     ```
 
     Running Playwright tests locally requires the WEBHOOK_ID and WEBHOOK_ID_ALT environment variables mentioned in [Continuous Integration](#continuous-integration) to be set.
@@ -111,12 +111,10 @@ Kanban includes various testing options:
 Kanban utilizes Storybook to generate component documentation. To view the component documentation locally, run the following command:
 
 ```bash
-npm run storybook
+yarn storybook
 ```
 
-Open your browser and navigate to `http://localhost:6006` to access the Storybook
-
-interface.
+Open your browser and navigate to `http://localhost:6006` to access the Storybook interface.
 
 ## External Services
 
@@ -132,7 +130,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-Special thanks to [Frontend Mentor](https://www.frontendmentor.io/) for providing the design and to the following technologies and libraries used:
+Special thanks to [Frontend Mentor](https://www.frontendmentor.io/) for providing the design and to the following services, technologies and libraries used:
 
 -   [Next.js](https://nextjs.org/)
 -   [Prisma](https://www.prisma.io/)

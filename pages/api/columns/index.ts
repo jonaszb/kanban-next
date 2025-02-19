@@ -3,8 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/db';
 import { v4 as uuidv4, validate } from 'uuid';
 import { NewColumn } from '../../../types';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { getServerSession, Session } from 'next-auth';
+import { options } from '../auth/[...nextauth]';
 
 const isNewColumn = (column: unknown): column is NewColumn => {
     return (
@@ -13,21 +13,23 @@ const isNewColumn = (column: unknown): column is NewColumn => {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
 
     switch (req.method) {
         case 'POST': {
-            return await createColumn(req, res, session);
+            await createColumn(req, res, session);
+            break;
         }
         case 'GET': {
-            return await getColumns(res, session);
+            await getColumns(res, session);
+            break;
         }
         default:
             res.status(405).end('Method not allowed');
-            break;
     }
 }
 

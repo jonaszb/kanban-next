@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 type ClickEvent = MouseEvent | TouchEvent;
-type ClickOutsideHook = (ref: React.RefObject<HTMLElement>, handler: (e: ClickEvent) => void) => void;
+type ClickOutsideHook = (ref: React.RefObject<HTMLElement | null>, handler: (e: ClickEvent) => void) => void;
 
 const useClickOutside: ClickOutsideHook = (ref, handler) => {
     useEffect(() => {

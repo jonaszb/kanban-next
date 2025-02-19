@@ -1,10 +1,9 @@
 import { fireEvent, render, screen, testBoards as boards } from '../../utils/test-utils';
 import BoardList from './BoardList';
 import '@testing-library/jest-dom';
-import { ReactElement } from 'react';
+import { ReactElement, act } from 'react';
 import BoardListContextProvider, { BoardListContextProps } from '../../store/BoardListContext';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 
 jest.mock('next/router', () => ({
     useRouter() {

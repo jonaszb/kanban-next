@@ -1,11 +1,12 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 import { devices } from '@playwright/test';
+import path from 'path';
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,15 +29,14 @@ const config: PlaywrightTestConfig = {
     /* Stop test execution after 20 failures */
     maxFailures: 20,
     /* Retry on CI only */
-    retries: process.env.CI ? 1 : 0,
+    retries: process.env.CI ? 3 : 0,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
-    globalSetup: require.resolve('./globalSetup'),
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [['html', { open: 'never' }], ['list']],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-        storageState: 'storageState.json',
+        storageState: path.join(__dirname, 'storageState.json'),
         /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
         actionTimeout: 0,
         /* Base URL to use in actions like `await page.goto('/')`. */
@@ -49,7 +49,12 @@ const config: PlaywrightTestConfig = {
     /* Configure projects for major browsers */
     projects: [
         {
+            name: 'auth',
+            testDir: './test-setup',
+        },
+        {
             name: 'chromium',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['Desktop Chrome'],
@@ -58,6 +63,7 @@ const config: PlaywrightTestConfig = {
 
         {
             name: 'firefox',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['Desktop Firefox'],
@@ -66,6 +72,7 @@ const config: PlaywrightTestConfig = {
 
         {
             name: 'webkit',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['Desktop Safari'],
@@ -75,6 +82,7 @@ const config: PlaywrightTestConfig = {
         /* Test against mobile viewports. */
         {
             name: 'Mobile Chrome',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['Pixel 5'],
@@ -82,6 +90,7 @@ const config: PlaywrightTestConfig = {
         },
         {
             name: 'Mobile Safari',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['iPhone 13'],
@@ -89,6 +98,7 @@ const config: PlaywrightTestConfig = {
         },
         {
             name: 'Tablet Safari',
+            dependencies: ['auth'],
             testMatch: /^((?!\/api\/).)*$/, // Exclude API tests
             use: {
                 ...devices['iPad Pro 11'],
@@ -96,6 +106,7 @@ const config: PlaywrightTestConfig = {
         },
         /* API tests */
         {
+            dependencies: ['auth'],
             name: 'API',
             testMatch: /\/api\//,
         },

@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, act } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Input, Textarea, Dropdown, MultiValueInput } from './Inputs';
-import React from 'react';
+import React, { act } from 'react';
 import { MultiInput } from '../../types';
 import useInput from '../../hooks/useInput';
 

@@ -2,20 +2,23 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/db';
 import { validate } from 'uuid';
-import { getSession } from 'next-auth/react';
-import { Session } from 'next-auth';
+import { getServerSession, Session } from 'next-auth';
+import { options } from '../auth/[...nextauth]';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getServerSession(req, res, options);
     if (!session) {
-        return res.status(401).end('Unauthorized');
+        res.status(401).end('Unauthorized');
+        return;
     }
     if (!req.query.uuid || !validate(req.query.uuid.toString())) {
-        return res.status(400).end('Invalid subtask UUID');
+        res.status(400).end('Invalid subtask UUID');
+        return;
     }
     switch (req.method) {
         case 'PUT': {
-            return await updateSubtask(req, res, session);
+            await updateSubtask(req, res, session);
+            break;
         }
         default:
             res.status(405).end('Method not allowed');
