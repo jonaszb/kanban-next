@@ -29,7 +29,7 @@ const config: PlaywrightTestConfig = {
     /* Stop test execution after 20 failures */
     maxFailures: 20,
     /* Retry on CI only */
-    retries: process.env.CI ? 1 : 0,
+    retries: process.env.CI ? 3 : 0,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */

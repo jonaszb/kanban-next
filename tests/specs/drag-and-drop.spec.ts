@@ -30,7 +30,7 @@ const getCoordinates = async (element: Locator | Coordinates): Promise<Coordinat
  * @param mouse Mouse object from Playwright
  * @param from Element to drag
  * @param to Target element or coordinates
- * @param options.steps Number of steps to take between the two points. Defaults to 30.
+ * @param options.steps Number of steps to take between the two points. Defaults to 40.
  * @param options.targetOffset Offset from the target element's center. Defaults to 0.
  */
 async function drag(
@@ -48,7 +48,7 @@ async function drag(
     await mouse.move(source.x, source.y);
     await mouse.down();
     await new Promise((resolve) => setTimeout(resolve, 250));
-    await mouse.move(target.x, target.y, { steps: options?.steps ?? 30 });
+    await mouse.move(target.x, target.y, { steps: options?.steps ?? 40 });
     await new Promise((resolve) => setTimeout(resolve, 150));
     await mouse.up();
 }
