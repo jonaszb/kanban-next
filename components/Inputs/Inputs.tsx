@@ -236,7 +236,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
     const fieldType = props.fieldType ?? 'input';
     const values = props.values ?? [];
     const setValues = props.changeHandler;
-    const [id, setId] = React.useState(1);
+    const [id, setId] = React.useState(uuidv4());
     const [animateIn, setAnimateIn] = useState(false);
 
     const mouseSensor = useSensor(MouseSensor, {
@@ -270,7 +270,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
         setAnimateIn(true);
         const newValues = [...values, { value: '', id: `${id}`, isValid: false, isTouched: false }];
         setValues(newValues);
-        setId((prev) => prev + 1);
+        setId(uuidv4());
         setTimeout(() => setAnimateIn(false), 250);
     };
 
