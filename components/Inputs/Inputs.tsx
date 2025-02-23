@@ -280,7 +280,7 @@ const MultiValueInput: FC<MultiValueInputProps> = (props) => {
         setTimeout(() => {
             const newValues = values.filter((item) => item.id !== id.replace('delete-', ''));
             setValues(newValues);
-        }, 250);
+        }, 230);
     };
 
     const handleBlur = (e: MultiInputFocusEvent) => {
