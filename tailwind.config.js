@@ -10,6 +10,7 @@ module.exports = {
             keyframes: {
                 'collapse-input': {
                     '0%': { height: '2.5rem', opacity: 1, 'margin-bottom': '.75rem' },
+                    '85%': { height: '.5rem', opacity: 0, 'margin-bottom': '.15rem' },
                     '100%': { height: 0, opacity: 0, 'margin-bottom': 0 },
                 },
                 'background-float': {
