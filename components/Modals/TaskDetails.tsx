@@ -170,7 +170,11 @@ const TaskDetails: FC<{ taskUUID: string; columns: Column[]; closeModal: Functio
                         <h2 data-testid="task-name" className="text-lg font-bold dark:text-white">
                             {taskData.name}
                         </h2>
-                        <button data-testid="task-options" className="h-5 pl-5" onClick={handleOptionsClick}>
+                        <button
+                            data-testid="task-options"
+                            className="h-5 translate-x-3 px-3"
+                            onClick={handleOptionsClick}
+                        >
                             <VerticalEllipsisIcon className="pointer-events-none" />
                         </button>
                         <OptionsPopover
