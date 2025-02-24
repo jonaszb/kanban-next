@@ -116,6 +116,7 @@ const Board: FC<{ boardUUID: string }> = (props) => {
         for (const column of boardData.data.columns) {
             newValue[column.name] = {
                 board_uuid: column.board_uuid,
+                position: column.position,
                 uuid: column.uuid,
                 color: column.color,
                 tasks: column.tasks ?? [],
@@ -284,9 +285,11 @@ const Board: FC<{ boardUUID: string }> = (props) => {
                 onDragEnd={handleDragEnd}
             >
                 {items &&
-                    Object.entries(items).map(([colName, colData]) => {
-                        return <Column key={colName} name={colName} columnData={colData} />;
-                    })}
+                    Object.entries(items)
+                        .sort(([_col, a], [_col2, b]) => a.position - b.position)
+                        .map(([colName, colData]) => {
+                            return <Column key={colName} name={colName} columnData={colData} />;
+                        })}
                 {boardData.data && <NewColumnBar boardUUID={boardData.data.uuid} mutateBoard={boardData.mutate} />}
             </DndContext>
         </section>
