@@ -28,6 +28,7 @@ export type Columns = Record<
     {
         board_uuid: string;
         uuid: string;
+        position: number;
         color: string;
         tasks: Task[];
     }

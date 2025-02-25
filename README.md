@@ -19,7 +19,7 @@ To get started with Kanban, follow these steps:
 
 ### Prerequisites
 
--   Node.js (v14 or higher)
+-   Node.js 23
 -   yarn package manager
 
 ### Installation
@@ -58,8 +58,14 @@ Replace each placeholder value with your specific configuration. Note that `EMAI
 Kanban uses a cloud-hosted database on Supabase. To run the project locally, you will need to create your own database and set the `DATABASE_URL` environment variable accordingly. Push the Prisma schema to your database by executing the following command:
 
 ```bash
-npx prisma db push --preview-feature
+npx prisma db push
 ```
+
+For local testing, you can seed the DB with some initial data
+```bash
+yarn seed myuser@testmail.com # Replace with an email you can use to log in
+```
+You can use any permanent email, temporary mail service or [webhook.site](https://webhook.site)
 
 ### Running Locally
 
