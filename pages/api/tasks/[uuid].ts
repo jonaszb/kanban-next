@@ -301,7 +301,6 @@ const updateTask = async (req: NextApiRequest, res: NextApiResponse, session: Se
             columnChanged ? [column_uuid, currentTaskData.column_uuid] : [currentTaskData.column_uuid]
         );
         if (!dataAfterUpdateIsValid) {
-            console.log('FUCKUP!');
             throw new Error('Invalid position of tasks after update');
         }
         return res.status(200).end('Task updated');
